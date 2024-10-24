@@ -54,10 +54,12 @@ startapp app_name
 ● Install primary react packages/dependencies (Check package.json)
 ### `yarn add axios dayjs jwt-decode js-cookie react-router-dom zustand`
 ● Spin up the dev server - Tada!!
+### `yarn dev`
 
 ### Create Django Custom User Model and Profile
 
 ● Create Custom user and profile models in core.models
+### `pip install shortuuid`
 ● Register Model in Admin and Add filters, Displays, etc.
 ● Run Migration Commands
 ● Test Model in Django Admin Panel

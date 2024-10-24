@@ -192,3 +192,6 @@ JAZZMIN_UI_TWEAKS = {
     },
     "actions_sticky_top": False
 }
+
+# inja ma bayad baraye in ke oumadim model user ro khodemun sakhtim pas bayad begim biad az oun estefade kone.
+AUTH_USER_MODEL = "userauths.User"
