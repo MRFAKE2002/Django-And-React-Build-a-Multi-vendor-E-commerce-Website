@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -128,9 +129,66 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+
+# static settings
+
+STATIC_URL = '/static/'  # به جای 'static/' از '/' در اول استفاده کنیم تا مسیر بهتری داشته باشیم
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # با استفاده از os.path.join
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # استفاده از os.path.join برای مسیر static_root
+
+# media settings
+
+MEDIA_URL = '/media/'  # شبیه به static
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # استفاده از os.path.join برای سازگاری بیشتر
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# custom configuration settings
+
+# jazzmin settings
+JAZZMIN_SETTINGS = {
+    'site_title': 'Admin',
+    'site_header': 'store',
+    'site_brand': 'E-commerce',
+    'welcome_sign': "Welcome To Admin Panel",
+    'copyright': "Udemy Django And React Build a Multi-vendor E-commerce Website",
+    'show_sidebar': True, # default
+    'show_ui_builder': True
+    
+}
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-gray",
+    "accent": "accent-primary",
+    "navbar": "navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": False,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": False,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "darkly",
+    "dark_mode_theme": "slate",
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-outline-success"
+    },
+    "actions_sticky_top": False
+}
