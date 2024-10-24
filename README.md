@@ -50,7 +50,9 @@ startapp app_name
 
 ● Install Node
 ● Create new react app using vite.js (for better performance and load time)
+### `yarn create vite . --template react`
 ● Install primary react packages/dependencies (Check package.json)
+### `yarn add axios dayjs jwt-decode js-cookie react-router-dom zustand`
 ● Spin up the dev server - Tada!!
 
 ### Create Django Custom User Model and Profile
