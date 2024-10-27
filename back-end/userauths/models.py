@@ -32,7 +32,7 @@ class Profile(models.Model):
         be esm 'profile' dige ma niazi nist 'related_name' moshakhas konim.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    image = models.ImageField(upload_to='image/', default='default/default.jpg', null=True, blank=True)
+    image = models.FileField(upload_to='image/', default='default/default.jpg', null=True, blank=True)
     about = models.TextField(null=True, blank=True)
     gender = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
