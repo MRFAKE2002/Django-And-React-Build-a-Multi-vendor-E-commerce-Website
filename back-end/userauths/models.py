@@ -31,7 +31,7 @@ class Profile(models.Model):
         chon ma inja az 'OneToOneField' estefade kardim 'Django' default miad 'related_name' misaze yani yek field dar User misaze 
         be esm 'profile' dige ma niazi nist 'related_name' moshakhas konim.
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.FileField(upload_to='image/', default='default/default.jpg', null=True, blank=True)
     about = models.TextField(null=True, blank=True)
     gender = models.CharField(max_length=100, blank=True, null=True)

@@ -116,6 +116,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {"password": "Password does not match password2"}
             )
+        return attrs
 
     def create(self, validated_data):
         user = User.objects.create(
@@ -123,7 +124,11 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data["email"],
             phone=validated_data["phone"],
         )
+
+        email_username, _ = user.email.split("@")
     
+        user.username = email_username
+        
         # az 'set_password' estefade kardim ta 'password user' ramz gozari shode zakhire beshe.
         user.set_password(validated_data["password"])
         user.save()
