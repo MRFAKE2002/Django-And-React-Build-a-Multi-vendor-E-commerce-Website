@@ -19,9 +19,31 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 
+from rest_framework import permissions
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title = "E-commerce backend APIs",
+        default_version= "v1",
+        description= "This is documentation for backend API",
+        terms_of_service= "http://mywbsite.com/policies/",
+        contact= openapi.Contact(email="roozbehbadalis@gmail.com"),
+        license= openapi.License(name= "BSD license"),
+    ),
+    public= True,
+    permission_classes= (permissions.AllowAny, )
+)
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('userauths.urls')),
+
+    # Document backend API
+    path("", schema_view.with_ui("swagger", cache_timeout=0), name="schema_swagger_ui")
 ]
 
 if settings.DEBUG:  # اطمینان از اینکه فقط در حالت development سرویس‌دهی شود

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # third party apps
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
+    'drf_yasg',
     
     # my apps
     "store.apps.StoreConfig",
