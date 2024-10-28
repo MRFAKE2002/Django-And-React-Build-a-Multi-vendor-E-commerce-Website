@@ -24,6 +24,58 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
 
+"""
+    schema_view = get_schema_view(...): 
+    این کد نمای مستندات 
+    API 
+    رو تنظیم می‌کنه. در اینجا، اطلاعات مستندات از جمله عنوان، نسخه، توضیحات و سایر جزئیات 
+    API 
+    تنظیم می‌شه.
+
+    openapi.Info(...): 
+    شامل اطلاعات اصلی 
+    API 
+    می‌شه، مثل:
+
+    title: 
+    عنوان 
+    API 
+    رو مشخص می‌کنه. در اینجا، عنوان به‌صورت 
+    "E-commerce backend APIs" 
+    تنظیم شده است.
+    
+    default_version: 
+    نسخه پیش‌فرض 
+    API 
+    در اینجا 
+    v1.
+    رو مشخص می‌کنه.
+    
+    description: 
+    توضیح مختصر از 
+    API.
+    
+    terms_of_service: 
+    لینک به شرایط استفاده از 
+    API.
+    
+    contact: 
+    اطلاعات تماس، مثل ایمیل.
+    
+    license:
+    لایسنس 
+    API 
+    در اینجا 
+    "BSD license".
+    رو مشخص می‌کنه.
+    
+    public=True: 
+    تنظیم می‌کنه که این مستندات به صورت عمومی در دسترس باشند.
+
+    permission_classes=(permissions.AllowAny,): 
+    مشخص می‌کنه که هر کسی بدون احراز هویت بتونه به این مستندات دسترسی داشته باشه.
+"""
+
 schema_view = get_schema_view(
     openapi.Info(
         title = "E-commerce backend APIs",
@@ -39,13 +91,19 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
+    
+    # User Register and Login
     path('api/', include('userauths.urls')),
 
     # Document backend API
-    path("", schema_view.with_ui("swagger", cache_timeout=0), name="schema_swagger_ui")
+    path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema_swagger_ui"),
+    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema_redoc"),
+
 ]
 
+# static and media
 if settings.DEBUG:  # اطمینان از اینکه فقط در حالت development سرویس‌دهی شود
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
