@@ -25,4 +25,3 @@ const axiosAPIInstance = axios.create({
 });
 
 export default axiosAPIInstance;
-  
