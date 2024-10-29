@@ -14,14 +14,17 @@ const useAuthStore = create((set, get) => ({
   allUserData: null,
   loading: false,
 
-  // in 'function' baraye dastresi be 'allUserData' az 'get' estefade mikonad ta meghdar 'user_id, username, ...' data user ro begirad.
-  user: () => ({
+  /* 
+    in 'function' baraye dastresi be 'allUserData' az 'get' estefade mikonad ta meghdar 'user_id, username, ...' data user ro begirad. 
+    zamani ke bekhaim data user ro begirim az in function estefade mikonim.
+  */
+  getUserDetails: () => ({
     user_id: get().allUserData?.user_id || null,
     usernames: get().allUserData?.username || null,
   }),
 
-  // in 'function' baraye 'update' meghdar 'allUserData' az 'set' estefade mikonad.
-  setUser: () => set({ allUserData: user }),
+  // in 'function' baraye 'update' meghdar 'allUserData' az 'set' estefade mikonad. zamani ke bekhaim data user update beshe az in function estefade mikonim.
+  setUserData: (userData) => set({ allUserData: userData }),
 
   setLoading: (loading) => set({ loading }),
 
