@@ -47,8 +47,9 @@ const useAxios = () => {
         */
         setTokenInCookie(response.access, response.refresh);
 
-        // Update the request's 'Authorization' header with the new access token
+        // in neshun mide ke ma mikhaim user ba token ehraz hoviat kone na in ke biad har dafe ba 'email va password' bezane. 
         req.headers.Authorization = `Bearer ${response.data.access}`;
+        
         return req; // Return the updated request
     });
 
