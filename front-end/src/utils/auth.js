@@ -5,12 +5,10 @@ import { useAuthStore } from "../store/authStore";
 import axiosAPIInstance from "./axios";
 
 // az in estefade mikonim ta 'data' dakhel 'token' mesl 'fullname, email, phone, password, ...' daryaft konim.
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 // Importing the Cookies library to handle browser cookies
 import Cookies from "js-cookie";
-
-
 
 // Function to handle user registration
 export const registerUser = async (
@@ -57,18 +55,19 @@ export const loginUser = async (email, password) => {
       ma miaim be in link 'http://localhost:8000/api/user/token/' darkhast 'POST' mizanim va bayad 'email va password'
       behesh bedim miad baramun 'refresh va access token' mide ke ma oun ro az 'data' migirim.
     */
-    const { data, status } = await axiosAPIInstance.post("user/token/", {
+    const response = await axiosAPIInstance.post("user/login/token/", {
       email,
       password,
     });
+    console.log("response: ", response); // مشاهده پاسخ
 
     // If the request is successful (status code 200), set authentication user and display success toast
-    if (status === 200) {
+    if (response.status === 200) {
       /* 
       hala ke refresh va access token gereftim midim be 'setTokenInCookie' ta biad oun ro dakhel 'cookie' bezare va 
       az dakhel 'token' biad 'data user' ro begire va dakhel 'allUserData' male 'store zustand' zakhire kone.
       */
-      setTokenInCookie(data.access, data.refresh);
+      setTokenInCookie(response.data.access, response.data.refresh);
 
       // Displaying a success toast notification
       // Toast.fire({
@@ -78,16 +77,16 @@ export const loginUser = async (email, password) => {
     }
 
     // Returning data and error information
-    return { data, error: null };
+    return { data: response.data, error: null };
   } catch (error) {
     // Handling errors and returning data and error information
+    console.log("error:", error); // مشاهده خطا
     return {
       data: null,
-      error: error.response.data?.detail || "Something went wrong",
+      error: error.response?.data?.detail || "Something went wrong",
     };
   }
 };
-
 
 // dar in function miaim access va refresh token midim va dakhel cookie gharar mide.
 export const setTokenInCookie = (access_token, refresh_token) => {
@@ -103,7 +102,7 @@ export const setTokenInCookie = (access_token, refresh_token) => {
   });
 
   // inja migim age 'data user' dakhel 'token' bud pas bia dakhel 'userData' bezaresh age nabud ke 'null' bezaresh.
-  const userData = jwt_decode(access_token) ?? null;
+  const userData = jwtDecode(access_token) ?? null;
 
   // If userData null nabud va data user dakhelesh bud bia bro dakhel useAuthStore ke male state zustand ast va meghdar userData ro
   if (userData) {
@@ -112,11 +111,11 @@ export const setTokenInCookie = (access_token, refresh_token) => {
       meghdar 'data user' ke az 'token' gereftim ro ke dakhel 'userData' gozashtim behesh befrestim va oun ham miad dakhel 'store' baramun meghdar 'data user' 
       ro dakhel 'allAuthData' mizar va age ma 'data user' ro khastim mitunim az 'function user' dakhel 'useAuthStore' estefade konim.
     */
+    console.log("userData:", userData);
     useAuthStore.getState().setUserData(userData);
   }
   useAuthStore.getState().setLoading(false);
 };
-
 
 // Function to handle user logout
 export const logout = () => {
@@ -137,12 +136,11 @@ export const logout = () => {
   // });
 };
 
-
 /* 
   in function vaghti safhe ejra mishe 'check' mikone ke 'token' az 'cookie' gerefte mishe 'zaman expired' shode ya na ke age shode bud biad 'refresh token' ro bede
   va dobare token jadid begire va dakhel 'cookie' gharar bede .
 */
-export const updateUserToken  = async () => {
+export const updateUserToken = async () => {
   // Retrieving access and refresh tokens from cookies
   const accessToken = Cookies.get("access_token");
   const refreshToken = Cookies.get("refresh_token");
@@ -166,8 +164,6 @@ export const updateUserToken  = async () => {
   }
 };
 
-
-
 // Function to refresh the access token using the refresh token
 export const getRefreshToken = async () => {
   // Retrieving refresh token from cookies and making a POST request to refresh the access token
@@ -180,12 +176,11 @@ export const getRefreshToken = async () => {
   return response.data;
 };
 
-
 // Function to check if the access token is expired
 export const isAccessTokenExpired = (accessToken) => {
   try {
     // inja miaim 'data' dakhel 'cookie' ro mesl 'data user' va 'zaman expired token' ro migirim.
-    const decodedToken = jwt_decode(accessToken);
+    const decodedToken = jwtDecode(accessToken);
     // inja check mikonim 'tarikh expired token' ke be 'millisecond' kamtar az 'tarikh emruz' ke be 'millisecond' tabdil kardim hast ya na.
     return decodedToken.exp < Date.now() / 1000;
   } catch (err) {

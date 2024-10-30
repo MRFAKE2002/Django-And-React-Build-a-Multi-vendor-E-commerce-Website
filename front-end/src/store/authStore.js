@@ -2,7 +2,7 @@
 import { create } from "zustand";
 
 // baraye namayesh vaziat 'store' dar mohit 'develope' az in estefade mikonim.
-import { mountStoreDevtools } from "simple-zustand-devtools";
+import { mountStoreDevtool } from "simple-zustand-devtools";
 
 /*
   dar in khat baraye ma 'store' sakht mishe. hala baraye vorudi behesh 'set' baraye 'update va beruz resani' va 'get' baraye 'dastresi
@@ -28,12 +28,13 @@ const useAuthStore = create((set, get) => ({
 
   setLoading: (loading) => set({ loading }),
 
-  setLoggedIn: () => get().allUserData !== null,
+  isLoggedIn: () => get().allUserData !== null,
 }));
+console.log("isLoggedIn:", useAuthStore.getState().allUserData);
 
-// in khat mige age mohit 'develope' bud az 'mountStoreDevtools' estefade kon; ke be ma vaziat 'store' ro neshun mide
+// in khat mige age mohit 'develope' bud az 'mountStoreDevtool' estefade kon; ke be ma vaziat 'store' ro neshun mide
 if (import.meta.env.DEV) {
-  mountStoreDevtools("Store", useAuthStore);
+  mountStoreDevtool("Store", useAuthStore);
 }
 
 export { useAuthStore };
