@@ -12,7 +12,7 @@ import Cookies from "js-cookie";
 
 // Function to handle user registration
 export const registerUser = async (
-  full_name,
+  fullname,
   email,
   phone,
   password,
@@ -20,8 +20,8 @@ export const registerUser = async (
 ) => {
   try {
     // Making a POST request to register a new user
-    const { data } = await axiosAPIInstance.post("user/register/", {
-      full_name,
+    const response = await axiosAPIInstance.post("user/register/", {
+      fullname,
       email,
       phone,
       password,
@@ -38,12 +38,13 @@ export const registerUser = async (
     // });
 
     // Returning data and error information
-    return { data, error: null };
+    return { data:response.data, error: null };
   } catch (error) {
+    console.error("Registration error:", error.response.data); // Log server response for debugging
     // Handling errors and returning data and error information
     return {
       data: null,
-      error: error.response.data || "Something went wrong",
+      error: error.response?.data.detail || "Something went wrong",
     };
   }
 };
