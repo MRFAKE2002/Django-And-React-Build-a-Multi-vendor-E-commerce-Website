@@ -119,7 +119,7 @@ export const setTokenInCookie = (access_token, refresh_token) => {
 };
 
 // Function to handle user logout
-export const logout = () => {
+export const userLogout = () => {
   // Removing access and refresh tokens from cookies, resetting user state, and displaying success toast
   Cookies.remove("access_token");
   Cookies.remove("refresh_token");
