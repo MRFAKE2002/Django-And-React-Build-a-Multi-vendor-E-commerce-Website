@@ -1,6 +1,6 @@
 // libraries
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loginUser } from "../../utils/auth";
 import { useAuthStore } from "../../store/authStore";
 
@@ -179,7 +179,11 @@ function Login() {
           type="password"
           onChange={handelOnChangeInput}
         />
+        <br/>
+        <br/>
         <button type="submit">log in</button>
+        <hr />
+        <Link to={"/forgot-password"}>Forgot Password</Link>
       </form>
     </>
   );
