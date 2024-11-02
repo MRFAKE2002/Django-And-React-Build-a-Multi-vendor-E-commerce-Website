@@ -183,7 +183,7 @@ function Login() {
         <br/>
         <button type="submit">log in</button>
         <hr />
-        <Link to={"/forgot-password"}>Forgot Password</Link>
+        <Link to={"/password-reset"}>Forgot Password</Link>
       </form>
     </>
   );
