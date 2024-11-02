@@ -95,7 +95,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     # User Register and Login
-    path('api/', include('userauths.urls')),
+    path('api/user/', include('userauths.urls')),
 
     # Document backend API
     path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema_swagger_ui"),
