@@ -9,4 +9,5 @@ urlpatterns = [
     path("user/register/", userauths_views.RegisterJWTView.as_view(), name="user_register_jwt"),
     path("user/login/token/", userauths_views.JWTTokenView.as_view(), name="user_login_jwt_token"),
     path("user/token/refresh/", TokenRefreshView.as_view(), name="user_refresh_jwt"),
+    path("user/password-reset/<email>/", userauths_views.PasswordResetEmailVerifyView.as_view(), name="user_password_reset"),
 ]
