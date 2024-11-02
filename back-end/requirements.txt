@@ -11,6 +11,7 @@ packaging==24.1
 PyJWT==2.9.0
 pytz==2024.2
 PyYAML==6.0.2
+shortuuid==1.0.13
 sqlparse==0.5.1
 typing_extensions==4.12.2
 tzdata==2024.2
