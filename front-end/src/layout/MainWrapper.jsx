@@ -17,7 +17,7 @@ function MainWrapper({children}) {
     handle();
   }, []);
 
-  return <>{loading ? null : {children}}</>;
+  return <>{loading ? null : children}</>;
 }
 
 export default MainWrapper;
