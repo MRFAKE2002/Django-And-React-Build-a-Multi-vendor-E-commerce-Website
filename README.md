@@ -216,6 +216,9 @@ startapp app_name
 ### Configure Template In React
 
     ● Add Bootstrap CDN to index page
+    ● Install Bootstrap and Express into project
+    ### `yarn add express`
+    ### `yarn add bootstrap@v5.3.3`
     ● Create Header and Footer
     ● Import the Home page
     ● Override the register, login and logout page
