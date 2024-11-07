@@ -133,7 +133,6 @@ function Login() {
     if (error) {
       alert(error);
     } else {
-
       // bad az 'login user' miaim dakhel 'state' ro khali mikonim mesl ghabl.
       setUserData({ email: "", password: "" });
       // dige bad az 'login user' miaim isLoading ro 'false' mikonim.
@@ -154,7 +153,6 @@ function Login() {
     safhe 'home redirect' bokon.
     */
   useEffect(() => {
-    
     if (isLoggedIn()) {
       console.log("Is user logged in?", isLoggedIn());
       // inja niazi nist 'pathname' bezarim khod 'navigate' az data dakhel 'object preLocation' estefade mikone.
@@ -164,27 +162,97 @@ function Login() {
 
   return (
     <>
-      <form onSubmit={handelFormSubmit}>
-        <input
-          id="email"
-          name="email"
-          value={userData.email}
-          type="text"
-          onChange={handelOnChangeInput}
-        />
-        <input
-          id="password"
-          name="password"
-          value={userData.password}
-          type="password"
-          onChange={handelOnChangeInput}
-        />
-        <br/>
-        <br/>
-        <button type="submit">log in</button>
-        <hr />
-        <Link to={"/password-reset"}>Forgot Password</Link>
-      </form>
+      <main className="" style={{ marginBottom: 100, marginTop: 50 }}>
+        <div className="container">
+          {/* Section: Login form */}
+          <section className="">
+            <div className="row d-flex justify-content-center">
+              <div className="col-xl-5 col-md-8">
+                <div className="card rounded-5">
+                  <div className="card-body p-4">
+                    <h3 className="text-center">Login</h3>
+                    <br />
+
+                    <div className="tab-content">
+                      <div
+                        className="tab-pane fade show active"
+                        id="pills-login"
+                        role="tabpanel"
+                        aria-labelledby="tab-login"
+                      >
+                        <form onSubmit={handelFormSubmit}>
+                          {/* Email input */}
+                          <div className="form-outline mb-4">
+                            <label className="form-label" htmlFor="email">
+                              Email Address
+                            </label>
+                            <input
+                              onChange={handelOnChangeInput}
+                              type="email"
+                              id="email"
+                              name="email"
+                              className="form-control"
+                            />
+                          </div>
+
+                          <div className="form-outline mb-4">
+                            <label
+                              className="form-label"
+                              htmlFor="loginPassword"
+                            >
+                              Password
+                            </label>
+                            <input
+                              onChange={handelOnChangeInput}
+                              type="password"
+                              id="password"
+                              name="password"
+                              className="form-control"
+                            />
+                          </div>
+
+                          {isLoading ? (
+                            <button
+                              className="btn btn-primary w-100"
+                              type="submit"
+                            >
+                              <span className="mr-2">Processing </span>
+                              <i className="fas fa-snipper fa-snip" />
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn-primary w-100"
+                              type="submit"
+                            >
+                              <span className="mr-2">Sign In </span>
+                              <i className="fas fa-sign-in-alt" />
+                            </button>
+                          )}
+                          
+                          <div className="text-center">
+                            <p className="mt-4">
+                              Don't have an account?
+                              <Link to="/register">Register</Link>
+                            </p>
+                            <p className="mt-0">
+                              <Link
+                                to="/password-reset/"
+                                className="text-danger"
+                              >
+                                Forgot Password?
+                              </Link>
+                            </p>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
     </>
   );
 }

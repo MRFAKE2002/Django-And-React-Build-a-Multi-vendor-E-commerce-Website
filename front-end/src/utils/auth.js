@@ -147,7 +147,7 @@ export const updateUserToken = async () => {
   const refreshToken = Cookies.get("refresh_token");
 
   // age 'token' vojud nadasht 'null' return mikone.
-  if (!accessToken || !refreshToken) {
+  if (!accessToken || !refreshToken || refreshToken === "undefined") {
     return;
   }
 
