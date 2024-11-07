@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 // auth functions
 import { updateUserToken } from "../utils/auth";
 
-function MainWrapper({children}) {
+function MainWrapper({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

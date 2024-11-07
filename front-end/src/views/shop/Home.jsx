@@ -4,7 +4,9 @@ import { useAuthStore } from "../../store/authStore";
 
 function Home() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-
+  const allUserData = useAuthStore((state) => state.allUserData);
+  console.log("is user logged in Home page?", isLoggedIn());
+  console.log("user data in zustand store?", allUserData);
   return (
     <>
       {isLoggedIn() ? (

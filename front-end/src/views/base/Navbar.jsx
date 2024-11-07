@@ -13,6 +13,11 @@ import { useAuthStore } from "../../store/authStore";
 import apiInstance from "../../utils/axios";
 
 function Navbar() {
+  // mikhaim 'isLoggedIn' ro az state begirim vaghti 'refresh' shod dakhel 'useEffect' biad check kone 'user login' hast ya na
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const allUserData = useAuthStore((state) => state.allUserData);
+  console.log("is user logged in navbar?", isLoggedIn());
+  console.log("user data in zustand store?", allUserData);
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -156,32 +161,38 @@ function Navbar() {
                 Search
               </button>
             </div>
-            {/* Login Link */}
-            <Link className="btn btn-primary me-2" to="/login">
-              Login
-            </Link>
-            {/* Register Link */}
-            <Link className="btn btn-primary me-2" to="/register">
-              Register
-            </Link>
 
             {/* These are the button rendered based on users logged in status */}
             {/* You could just un-comment it ;) */}
 
-            {/* {isLoggedIn()
-                    ?
-                    <>
-                        <Link className="btn btn-primary me-2" to={'/customer/account/'}>Account</Link>
-                        <Link className="btn btn-primary me-2" to="/logout">Logout</Link>
-                    </>
-                    :
-                    <>
-                        <Link className="btn btn-primary me-2" to="/login">Login</Link>
-                        <Link className="btn btn-primary me-2" to="/register">Register</Link>
-
-                    </>
-                } */}
-            {/* <Link className="btn btn-danger" to="/cart/"><i className='fas fa-shopping-cart'></i> <span id='cart-total-items'>{cartCount || 0}</span></Link> */}
+            {isLoggedIn() ? (
+              <>
+                {/* Logout Link */}
+                <Link
+                  className="btn btn-primary me-2"
+                  to={"/customer/account/"}
+                >
+                  Account
+                </Link>
+                <Link className="btn btn-primary me-2" to="/logout">
+                  Logout
+                </Link>
+              </>
+            ) : (
+              <>
+                {/* Login Link */}
+                <Link className="btn btn-primary me-2" to="/login">
+                  Login
+                </Link>
+                <Link className="btn btn-primary me-2" to="/register">
+                  Register
+                </Link>
+              </>
+            )}
+            <Link className="btn btn-danger" to="/cart/">
+              <i className="fas fa-shopping-cart"></i>{" "}
+              <span id="cart-total-items"></span>
+            </Link>
           </div>
         </div>
       </nav>

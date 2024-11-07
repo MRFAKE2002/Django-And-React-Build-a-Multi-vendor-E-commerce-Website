@@ -5,7 +5,7 @@ function Footer() {
   return (
     <footer
       className="bg-light text-center text-lg-start"
-      style={{ marginTop: 200 }}
+      style={{ marginTop: 100 }}
     >
       {/* Grid container */}
       <div className="container p-4">

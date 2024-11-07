@@ -5,7 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import Login from "./views/auth/Login";
 import Home from "./views/shop/Home";
 import Register from "./views/auth/Register";
-import Logout from "./views/auth/logout";
+import Logout from "./views/auth/Logout";
 import ForgotPasswordEmailVerify from "./views/auth/ForgotPasswordEmailVerify";
 import CreateNewPassword from "./views/auth/CreateNewPassword";
 

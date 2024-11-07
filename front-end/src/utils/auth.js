@@ -112,7 +112,7 @@ export const setTokenInCookie = (access_token, refresh_token) => {
       meghdar 'data user' ke az 'token' gereftim ro ke dakhel 'userData' gozashtim behesh befrestim va oun ham miad dakhel 'store' baramun meghdar 'data user' 
       ro dakhel 'allAuthData' mizar va age ma 'data user' ro khastim mitunim az 'function user' dakhel 'useAuthStore' estefade konim.
     */
-    console.log("userData:", userData);
+    console.log("User data that get from token:", userData);
     useAuthStore.getState().setUserData(userData);
   }
   useAuthStore.getState().setLoading(false);
@@ -186,6 +186,6 @@ export const isAccessTokenExpired = (accessToken) => {
     return decodedToken.exp < Date.now() / 1000;
   } catch (err) {
     // Returning true if the token is invalid or expired
-    return true;
+    return err;
   }
 };

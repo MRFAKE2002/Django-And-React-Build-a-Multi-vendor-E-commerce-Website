@@ -1,7 +1,11 @@
 // libraries
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
+// User authentication functions
 import { registerUser } from "../../utils/auth";
+
+// Zustand store
 import { useAuthStore } from "../../store/authStore";
 
 function Register() {
@@ -29,7 +33,7 @@ function Register() {
   /* 
     ma baraye in ke betunim befahmim 'user' az kodum safhe oumade bayad az 'useLocation' estefade konim:
 
-    dakhel 'location' ma az 'object state' estefade mikonim ta 'data' ekhtiari gharar bedim. 
+    state: dakhel 'location' ma az 'object state' estefade mikonim ta 'data' ekhtiari gharar bedim. 
     hala miaim migim dakhel 'state' yek 'object' dige be esm 'prevLocation' misazim va vaghti ke 'user' az har safhe miad 
     'login' kone mitunim data oun 'location' ro dakhelesh gharar bedim; hala oun data chia mitune bashe: 
 
@@ -177,44 +181,151 @@ function Register() {
 
   return (
     <>
-      <form onSubmit={handelFormSubmit}>
-        <input
-          id="fullname"
-          name="fullname"
-          value={userData.fullname}
-          type="text"
-          onChange={handelOnChangeInput}
-        />
-        <input
-          id="email"
-          name="email"
-          value={userData.email}
-          type="email"
-          onChange={handelOnChangeInput}
-        />
-        <input
-          id="phone"
-          name="phone"
-          value={userData.phone}
-          type="text"
-          onChange={handelOnChangeInput}
-        />
-        <input
-          id="password"
-          name="password"
-          value={userData.password}
-          type="password"
-          onChange={handelOnChangeInput}
-        />
-        <input
-          id="password2"
-          name="password2"
-          value={userData.password2}
-          type="password"
-          onChange={handelOnChangeInput}
-        />
-        <button type="submit">sing up</button>
-      </form>
+      <main className="" style={{ marginBottom: 100, marginTop: 50 }}>
+        <div className="container">
+          {/* Section: Register form */}
+          <section className="">
+            <div className="row d-flex justify-content-center">
+              <div className="col-xl-5 col-md-8">
+                <div className="card rounded-5">
+                  <div className="card-body p-4">
+                    <h3 className="text-center">Register Account</h3>
+                    <br />
+
+                    <div className="tab-content">
+                      <div
+                        className="tab-pane fade show active"
+                        id="pills-login"
+                        role="tabpanel"
+                        aria-labelledby="tab-login"
+                      >
+                        {/* Form */}
+                        <form onSubmit={handelFormSubmit}>
+                          {/* fullname */}
+                          <div className="form-outline mb-4">
+                            <label className="form-label" htmlFor="Full Name">
+                              Full Name
+                            </label>
+                            <input
+                              onChange={handelOnChangeInput}
+                              type="text"
+                              name="fullname"
+                              id="username"
+                              placeholder="Full Name"
+                              required
+                              className="form-control"
+                            />
+                          </div>
+                          {/* Email */}
+                          <div className="form-outline mb-4">
+                            <label className="form-label" htmlFor="loginName">
+                              Email
+                            </label>
+                            <input
+                              onChange={handelOnChangeInput}
+                              type="email"
+                              name="email"
+                              id="email"
+                              placeholder="Email Address"
+                              required
+                              className="form-control"
+                            />
+                          </div>
+                          {/* Phone */}
+                          <div className="form-outline mb-4">
+                            <label className="form-label" htmlFor="loginName">
+                              Mobile Number
+                            </label>
+                            <input
+                              onChange={handelOnChangeInput}
+                              type="text"
+                              name="phone"
+                              id="phone"
+                              placeholder="Mobile Number"
+                              required
+                              className="form-control"
+                            />
+                          </div>
+                          {/* Password */}
+                          <div className="form-outline mb-4">
+                            <label
+                              className="form-label"
+                              htmlFor="loginPassword"
+                            >
+                              Password
+                            </label>
+                            <input
+                              onChange={handelOnChangeInput}
+                              type="password"
+                              name="password"
+                              id="password"
+                              placeholder="Password"
+                              className="form-control"
+                            />
+                          </div>
+                          {/* Password Confirm */}
+                          <div className="form-outline mb-4">
+                            <label
+                              className="form-label"
+                              htmlFor="loginPassword"
+                            >
+                              Confirm Password
+                            </label>
+                            <input
+                              onChange={handelOnChangeInput}
+                              type="password"
+                              name="password2"
+                              id="confirm-password"
+                              placeholder="Confirm Password"
+                              required
+                              className="form-control"
+                            />
+                          </div>
+                          {/* Password Check */}
+
+                          <p className="fw-bold text-danger">
+                            {userData.password2 !== userData.password
+                              ? "Passwords do not match"
+                              : ""}
+                          </p>
+
+                          {/* Sign Up Button */}
+                          {isLoading ? (
+                            <button
+                              className="btn btn-primary w-100"
+                              type="submit"
+                              disabled={isLoading}
+                            >
+                              <span className="mr-2">Processing</span>
+                              <i className="fas fa-spinner fa-spin" />
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn-primary w-100"
+                              type="submit"
+                            >
+                              <span className="mr-2">Sign Up</span>
+                              <i className="fas fa-user-plus" />
+                            </button>
+                          )}
+
+                          {/* Login Link */}
+                          <div className="text-center">
+                            <p className="mt-4">
+                              Already have an account?
+                              <Link to="/login/">Login</Link>
+                            </p>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
     </>
   );
 }
