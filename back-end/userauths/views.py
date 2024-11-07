@@ -46,7 +46,7 @@ class PasswordResetEmailVerifyView(generics.RetrieveAPIView):
     dakhel in view ma mikhaim biaim 'email user' ro begirim azash biaim bebinim 'email' ke vared karde aslan
     'verify ya motabare' va hamchin 'user' vojud dare ya na; 
     age vojud dasht biad baraye oun 'user otp' besaze va badesh biad 'uidb64 va otp user' ro bede be link ke 
-    ma mikhaim 'user' bere va 'password' jadid dakhel besaze yani dakhel yek 'view' dige miaim 'password reset' 
+    ma mikhaim 'user' bere va 'password' jadid dakhel besaze yani dakhel yek 'view' dige miaim 'create new password' 
     ro misazim.
   """
   permission_classes = (AllowAny, )
@@ -78,7 +78,7 @@ class PasswordResetEmailVerifyView(generics.RetrieveAPIView):
 
 # ---------------------------------------------Create New Password View ------------------------------------------ #
 
-class ChangePasswordView(generics.CreateAPIView):
+class CreateNewPasswordView(generics.CreateAPIView):
   permission_classes = (AllowAny, )
   serializer_class = UserSerializer
   
