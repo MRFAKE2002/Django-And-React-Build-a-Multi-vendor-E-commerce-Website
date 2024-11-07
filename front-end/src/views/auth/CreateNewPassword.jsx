@@ -11,78 +11,132 @@ function CreateNewPassword() {
     'data' ro begirim va bebinim kodum 'user' mikhad 'password avaz kone' va oun 'password' ro barash set konim.
   */
 
-  const [searchParams] = useSearchParams()
+  const [searchParams] = useSearchParams();
 
-  const userOtp = searchParams.get("otp")
-  const userUidb64 = searchParams.get("uidb64")
+  const userOtp = searchParams.get("otp");
+  const userUidb64 = searchParams.get("uidb64");
 
   const [newPassword, setNewPassword] = useState({
     password: "",
     confirmPassword: "",
-  })
+  });
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const handelOnChangeInput = (event) => (
+  const handelOnChangeInput = (event) =>
     setNewPassword((previousData) => ({
       ...previousData,
-      [event.target.name]: event.target.value
-    }))
-  )
+      [event.target.name]: event.target.value,
+    }));
 
   const handelSubmitForm = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
     if (newPassword.password !== newPassword.confirmPassword) {
-      alert("Password does not match!")
+      alert("Password does not match!");
     } else {
       /* 
         inja ma miaim ba estefade az 'FormData' miaim yek 'object' misazim ke behesh 'name va value' midim va 
         in 'object' ro midim be 'back-end'
       */
-      const userFormData = new FormData()
+      const userFormData = new FormData();
 
-      userFormData.append("otp", userOtp)
-      userFormData.append("uidb64", userUidb64)
-      userFormData.append("password", newPassword.password)
+      userFormData.append("otp", userOtp);
+      userFormData.append("uidb64", userUidb64);
+      userFormData.append("password", newPassword.password);
 
       try {
         /* 
           inja miaim be 'API call' mikonim va 'data user' ro be 'url' ke dar 'back-end' gharar 'data' ro begire va 
           bebine kodum 'user request dade' va biad 'password' jadid barash 'set' kone.
         */
-        await axiosAPIInstance.post("password-change/", userFormData).then((response) => {
-          alert("Password changed successfully.")
-          navigate("/login")
-        })
+        await axiosAPIInstance
+          .post("password-change/", userFormData)
+          .then((response) => {
+            alert("Password changed successfully.");
+            navigate("/login");
+          });
       } catch (error) {
-        alert("An error occurred while trying to change the password!")
+        alert("An error occurred while trying to change the password!");
       }
-    }}
+    }
+  };
 
   return (
-    <div>
-      <h1>Create Password</h1>
-      <form onSubmit={handelSubmitForm}>
-        <input
-          type="password"
-          name="password"
-          id="password"
-          placeholder="Enter your new password"
-        />
-        <br />
-        <br />
-        <input
-          type="password"
-          name="confirmPassword"
-          id="confirmPassword"
-          placeholder="Confirm password"
-        />
-        <br />
-        <br />
-        <button type="submit">Save New Password</button>
-      </form>
-    </div>
+    <>
+      <main className="" style={{ marginBottom: 100, marginTop: 50 }}>
+        <div className="container">
+          <section className="">
+            <div className="row d-flex justify-content-center">
+              <div className="col-xl-5 col-md-8">
+                <div className="card rounded-5">
+                  <div className="card-body p-4">
+                    <h3 className="text-center">Create New Password</h3>
+                    <br />
+
+                    <div className="tab-content">
+                      <div
+                        className="tab-pane fade show active"
+                        id="pills-login"
+                        role="tabpanel"
+                        aria-labelledby="tab-login"
+                      >
+                        <form onSubmit={handelSubmitForm}>
+                          {/* Password input */}
+                          <div className="form-outline mb-4">
+                            <label className="form-label" htmlFor="Full Name">
+                              Enter New Password
+                            </label>
+                            <input
+                              onChange={handelOnChangeInput}
+                              type="password"
+                              id="password"
+                              required
+                              name="password"
+                              className="form-control"
+                            />
+                          </div>
+                          {/* Confirm Password */}
+                          <div className="form-outline mb-4">
+                            <label className="form-label" htmlFor="Full Name">
+                              Confirm New Password
+                            </label>
+                            <input
+                              onChange={handelOnChangeInput}
+                              type="password"
+                              id="email"
+                              required
+                              name="confirmPassword"
+                              className="form-control"
+                            />
+                            {/* Check Passwords */}
+                            <p className="fw-bold text-danger">
+                              {newPassword.confirmPassword !==
+                              newPassword.password
+                                ? "Passwords do not match"
+                                : ""}
+                            </p>
+                          </div>
+
+                          <div className="text-center">
+                            <button
+                              type="submit"
+                              className="btn btn-primary w-100"
+                            >
+                              Reset Password
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </>
   );
 }
 
