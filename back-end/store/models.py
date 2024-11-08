@@ -126,3 +126,18 @@ class Gallery(models.Model):
     def __str__(self):
         return self.product.name
 
+
+class Specification(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="specifications"
+    )
+    
+    title = models.CharField(max_length=100)
+
+    content = models.TextField()
+    
+    datetime_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
