@@ -155,19 +155,74 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # استفاده از os.path.join
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# custom configuration settings
+#! custom configuration settings
 
-# jazzmin settings
+#! jazzmin settings
 JAZZMIN_SETTINGS = {
+    # inja mitunim 'title' tab 'admin' ro moshakhas konim. 
     'site_title': 'Admin',
-    'site_header': 'store',
-    'site_brand': 'E-commerce',
-    'welcome_sign': "Welcome To Admin Panel",
-    'copyright': "Udemy Django And React Build a Multi-vendor E-commerce Website",
-    'show_sidebar': True, # default
-    'show_ui_builder': True
     
+    # inja 'name panel admin' ro mizarim.
+    'site_brand': 'E-commerce',
+    
+    'welcome_sign': "Welcome To Admin Panel",
+    
+    'copyright': "Udemy Django And React Build a Multi-vendor E-commerce Website",
+    
+    'show_sidebar': True, # default
+    
+    'show_ui_builder': True,
+    
+    # dar inja ma mitunim 'tartib har app va model har app' ro moshakhas konim.
+    "order_with_respect_to": [
+        "auth",
+        "auth.Group",
+        
+        "userauths",
+        "userauths.User",
+        "userauths.Profile",
+        
+        "token_blacklist",
+        "token_blacklist.OutStandingToken",
+        "token_blacklist.BlackListedToken",
+        
+        "vendor",
+        "vendor.Vendor",
+        
+        "store",
+        "store.Category",
+        "store.Product",
+        "store.Gallery",
+        "store.Specification",
+        "store.Size",
+        "store.Color",
+    ],
+    # inja ma mitunim baraye har kodum az 'model' biaim 'icon' bezarim.
+    "icons": {
+    "auth": "fas fa-user-shield",  # آیکون احراز هویت
+    "auth.Group": "fas fa-users-cog",  # آیکون گروه‌ها
+
+    "userauths": "fas fa-id-badge",  # آیکون ماژول احراز هویت کاربران
+    "userauths.User": "fas fa-user",  # آیکون کاربران
+    "userauths.Profile": "fas fa-address-card",  # آیکون پروفایل کاربر
+
+    "token_blacklist": "fas fa-ban",  # آیکون بلاک لیست توکن‌ها
+    "token_blacklist.OutStandingToken": "fas fa-key",  # آیکون توکن‌های برجسته
+    "token_blacklist.BlackListedToken": "fas fa-exclamation-triangle",  # آیکون توکن‌های بلاک شده
+
+    "vendor": "fas fa-store",  # آیکون ماژول فروشندگان
+    "vendor.Vendor": "fas fa-store-alt",  # آیکون فروشنده
+
+    "store": "fas fa-warehouse",  # آیکون فروشگاه
+    "store.Category": "fas fa-tags",  # آیکون دسته‌بندی‌ها
+    "store.Product": "fas fa-box-open",  # آیکون محصولات
+    "store.Gallery": "fas fa-images",  # آیکون گالری تصاویر محصولات
+    "store.Specification": "fas fa-list",  # آیکون مشخصات
+    "store.Size": "fas fa-ruler-combined",  # آیکون اندازه‌ها
+    "store.Color": "fas fa-palette",  # آیکون رنگ‌ها
 }
+}
+
 JAZZMIN_UI_TWEAKS = {
     "navbar_small_text": False,
     "footer_small_text": False,
@@ -204,7 +259,7 @@ JAZZMIN_UI_TWEAKS = {
 # inja ma bayad baraye in ke oumadim model user ro khodemun sakhtim pas bayad begim biad az oun estefade kone.
 AUTH_USER_MODEL = "userauths.User"
 
-# JWT configuration
+#! JWT configuration
 SIMPLE_JWT = {
     
     # تنظیمات اصلی توکن و مدت زمان اعتبار آنها
@@ -373,7 +428,7 @@ SIMPLE_JWT = {
 }
 
 
-# django-cors-headers configuration
+#! django-cors-headers configuration
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
