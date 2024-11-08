@@ -41,7 +41,7 @@ class SpecificationTabularInline(admin.TabularInline):
 class ColorTabularInline(admin.TabularInline):
     model = Color
 
-    fields = ("name", "price")
+    fields = ("name", "color_code")
 
     extra = 1
 
@@ -49,7 +49,7 @@ class ColorTabularInline(admin.TabularInline):
 class SizeTabularInline(admin.TabularInline):
     model = Size
 
-    fields = ("name", "color_code")
+    fields = ("name", "price")
 
     extra = 1
 
