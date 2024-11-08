@@ -30,7 +30,7 @@ class ProductAdmin(admin.ModelAdmin):
         "vendor",
         "price",
         "old_price",
-        "shipping_price",
+        "shipping_amount",
         "stock_quantity",
         "in_stock",
         "status",
