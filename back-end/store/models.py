@@ -141,3 +141,33 @@ class Specification(models.Model):
     def __str__(self):
         return self.title
 
+
+class Size(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="sizes"
+    )
+    
+    name = models.CharField(max_length=100)
+    
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    
+    datetime_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Color(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="colors"
+    )
+    
+    name = models.CharField(max_length=100)
+    
+    color_code = models.CharField(max_length=100)
+    
+    datetime_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
