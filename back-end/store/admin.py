@@ -26,9 +26,19 @@ class CategoryAdmin(admin.ModelAdmin):
 class GalleryTabularInline(admin.TabularInline):
     model = Gallery
     
-    fields = ("image", "gid","active")
+    fields = ("image", "gid", "active")
 
     extra = 1
+
+
+class SpecificationTabularInline(admin.TabularInline):
+    model = Specification
+    
+    fields = ("title", "content")
+
+    extra = 1
+
+
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -60,7 +70,7 @@ class ProductAdmin(admin.ModelAdmin):
     
     list_select_related = ["vendor", "category"]
 
-    inlines = [GalleryTabularInline]
+    inlines = [GalleryTabularInline, SpecificationTabularInline]
 
 
 class GalleryAdmin(admin.ModelAdmin):
@@ -72,4 +82,17 @@ class GalleryAdmin(admin.ModelAdmin):
     
     list_select_related = ["product"]
     
+    list_filter = ["active"]
+    
     list_per_page = 10
+
+
+class SpecificationAdmin(admin.ModelAdmin):
+    list_display = ["product", "title", "content"]
+    
+    search_fields = ["product"]
+    
+    list_select_related = ["product"]
+    
+    list_per_page = 10
+
