@@ -126,6 +126,12 @@ class Gallery(models.Model):
     def __str__(self):
         return self.product.name
 
+    class Meta:
+        db_table = ''
+        managed = True
+        verbose_name = 'Product Image'
+        verbose_name_plural = 'Product Images'
+
 
 class Specification(models.Model):
     product = models.ForeignKey(
