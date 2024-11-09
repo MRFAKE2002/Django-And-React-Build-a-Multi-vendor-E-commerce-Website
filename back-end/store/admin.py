@@ -2,7 +2,17 @@
 from django.contrib import admin
 
 # My apps
-from .models import Category, Product, Gallery, Specification, Size, Color, Cart
+from .models import (
+    Category,
+    Product,
+    Gallery,
+    Specification,
+    Size,
+    Color,
+    Cart,
+    Order,
+    OrderItem,
+)
 
 
 @admin.register(Category)
@@ -153,12 +163,110 @@ class SizeAdmin(admin.ModelAdmin):
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = ["cart_id", "user", "product", "size", "color", "quantity", "price", "sub_total", "shipping_amount", "service_fee", "tax_fee", "total", "country" ,"datetime_created"]
+    list_display = [
+        "cart_id",
+        "user",
+        "product",
+        "size",
+        "color",
+        "quantity",
+        "price",
+        "sub_total",
+        "shipping_amount",
+        "service_fee",
+        "tax_fee",
+        "total",
+        "country",
+        "datetime_created",
+    ]
 
-    search_fields = ["product", "name", "color", "size", "country"]
+    search_fields = ["product", "color", "size", "country"]
 
     list_editable = ["shipping_amount", "service_fee", "tax_fee"]
 
     list_select_related = ["product", "user"]
 
     list_per_page = 10
+
+    list_filter = ["datetime_created", "country"]
+
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = [
+        "oid",
+        "vendor",
+        "buyer",
+        "sub_total",
+        "shipping_amount",
+        "service_fee",
+        "tax_fee",
+        "total",
+        "initial_total",
+        "saved",
+        "full_name",
+        "email",
+        "mobile",
+        "address",
+        "city",
+        "state",
+        "country",
+        "payment_status",
+        "order_status",
+        "datetime_created",
+    ]
+
+    search_fields = [
+        "vendor",
+        "buyer",
+        "full_name",
+        "email",
+        "mobile",
+        "address",
+        "city",
+        "state",
+        "country",
+    ]
+
+    list_editable = ["payment_status", "order_status"]
+
+    list_select_related = ["buyer", "vendor"]
+
+    list_per_page = 10
+
+    list_filter = ["datetime_created", "country"]
+
+
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = [
+        "oid",
+        "order",
+        "vendor",
+        "product",
+        "size",
+        "color",
+        "quantity",
+        "price",
+        "sub_total",
+        "shipping_amount",
+        "service_fee",
+        "tax_fee",
+        "total",
+        "initial_total",
+        "saved",
+        "datetime_created",
+    ]
+
+    search_fields = [
+        "product",
+        "vendor",
+        "buyer",
+        "datetime_created",
+    ]
+
+    list_select_related = ["product", "vendor", "order"]
+
+    list_per_page = 10
+
+    list_filter = ["datetime_created"]
