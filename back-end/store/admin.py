@@ -195,7 +195,6 @@ class CartAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     list_display = [
         "oid",
-        "vendor",
         "buyer",
         "sub_total",
         "shipping_amount",
@@ -217,7 +216,6 @@ class OrderAdmin(admin.ModelAdmin):
     ]
 
     search_fields = [
-        "vendor",
         "buyer",
         "full_name",
         "email",
@@ -230,7 +228,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     list_editable = ["payment_status", "order_status"]
 
-    list_select_related = ["buyer", "vendor"]
+    list_select_related = ["buyer"]
 
     list_per_page = 10
 
