@@ -223,4 +223,179 @@ class Cart(models.Model):
     def __str__(self):
         return f"cart: {self.cart_id} - product: {self.product.name}"
 
+# Model for Cart Orders
+class Order(models.Model):
+    PAYMENT_STATUS = (
+        ("paid", "Paid"),
+        ("pending", "Pending"),
+        ("processing", "Processing"),
+        ("cancelled", "Cancelled"),
+        ("initiated", "Initiated"),
+        ("failed", "failed"),
+        ("refunding", "refunding"),
+        ("unpaid", "unpaid"),
+        ("expired", "expired"),
+    )
+
+    ORDER_STATUS = (
+        ("Pending", "Pending"),
+        ("Fulfilled", "Fulfilled"),
+        ("Partially Fulfilled", "Partially Fulfilled"),
+        ("Cancelled", "Cancelled"),
+    )
+
+    oid = ShortUUIDField(length=10, max_length=25, alphabet="abcdefghijklmnopqrstuvxyz")
+
+    # Vendors associated with the order
+    vendor = models.ManyToManyField(Vendor, blank=True, related_name="orders")
+
+    # Buyer of the order
+    buyer = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="orders"
+    )
+
+    # Total price of the order
+    sub_total = models.DecimalField(max_digits=12, decimal_places=2)
+
+    # Shipping cost
+    shipping_amount = models.DecimalField(max_digits=12, decimal_places=2)
+
+    # VAT (Value Added Tax) cost
+    tax_fee = models.DecimalField(max_digits=12, decimal_places=2)
+
+    # Service fee cost
+    service_fee = models.DecimalField(max_digits=12, decimal_places=2)
+
+    # Total cost of the order
+    total = models.DecimalField(max_digits=12, decimal_places=2)
+
+    # Order status attributes
+    payment_status = models.CharField(
+        max_length=100, choices=PAYMENT_STATUS, default="initiated"
+    )
+    
+    order_status = models.CharField(
+        max_length=100, choices=ORDER_STATUS, default="Pending"
+    )
+
+    # Discounts
+    initial_total = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        help_text="The original total before discounts",
+    )
+
+    saved = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Amount saved by customer",
+    )
+
+    # Personal Information
+    full_name = models.CharField(max_length=1000)
+
+    email = models.CharField(max_length=1000)
+
+    mobile = models.CharField(max_length=1000)
+
+    # Shipping Address
+    address = models.CharField(max_length=1000, null=True, blank=True)
+
+    city = models.CharField(max_length=1000, null=True, blank=True)
+
+    state = models.CharField(max_length=1000, null=True, blank=True)
+
+    country = models.CharField(max_length=1000, null=True, blank=True)
+
+    datetime_created = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ["-datetime_created"]
+        verbose_name_plural = "Orders"
+
+    def __str__(self):
+        return self.oid
+
+
+# Define a model for Cart Order Item
+class OrderItem(models.Model):
+    oid = ShortUUIDField(length=10, max_length=25, alphabet="abcdefghijklmnopqrstuvxyz")
+
+    # A foreign key relationship to the Order model with CASCADE deletion
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name="order_items"
+    )
+
+    # A foreign key relationship to the Vendor model with SET_NULL option
+    vendor = models.ForeignKey(
+        Vendor, on_delete=models.SET_NULL, null=True, related_name="order_items"
+    )
+
+    # A foreign key relationship to the Product model with CASCADE deletion
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="order_items"
+    )
+
+    # Fields for color and size with max length 100, allowing null and blank values
+    color = models.CharField(max_length=100, null=True, blank=True)
+
+    size = models.CharField(max_length=100, null=True, blank=True)
+
+    # Integer field to store the quantity (default is 0)
+    quantity = models.IntegerField(default=0)
+
+    # Decimal fields for price, total, shipping, VAT, service fee, grand total, and more
+    price = models.DecimalField(max_digits=12, decimal_places=2)
+
+    sub_total = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        help_text="Total of Product price * Product Quantity",
+    )
+
+    shipping_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        help_text="Estimated Shipping Fee = shipping_fee * total",
+    )
+
+    tax_fee = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        help_text="Estimated Vat based on delivery country = tax_rate * (total + shipping)",
+    )
+
+    service_fee = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        help_text="Estimated Service Fee = service_fee * total (paid by buyer to platform)",
+    )
+
+    total = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        help_text="Grand Total of all amount listed above",
+    )
+
+    initial_total = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        help_text="Grand Total of all amount listed above before discount",
+    )
+
+    saved = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Amount saved by customer",
+    )
+
+    datetime_created = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name_plural = "Order Items"
+        ordering = ["-datetime_created"]
 
