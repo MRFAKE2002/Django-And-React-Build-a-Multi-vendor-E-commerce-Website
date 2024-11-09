@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 # My apps
-from .models import Category, Product, Gallery, Specification, Size, Color
+from .models import Category, Product, Gallery, Specification, Size, Color, Cart
 
 
 @admin.register(Category)
@@ -147,5 +147,18 @@ class SizeAdmin(admin.ModelAdmin):
     list_editable = ["price"]
 
     list_select_related = ["product"]
+
+    list_per_page = 10
+
+
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ["cart_id", "user", "product", "size", "color", "quantity", "price", "sub_total", "shipping_amount", "service_fee", "tax_fee", "total", "country" ,"datetime_created"]
+
+    search_fields = ["product", "name", "color", "size", "country"]
+
+    list_editable = ["shipping_amount", "service_fee", "tax_fee"]
+
+    list_select_related = ["product", "user"]
 
     list_per_page = 10

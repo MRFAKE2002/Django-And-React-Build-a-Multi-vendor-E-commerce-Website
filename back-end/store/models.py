@@ -1,23 +1,25 @@
 # Django
 from django.db import models
 from django.utils.text import slugify
+from django.utils import timezone
 
 # Libraries
 from shortuuid.django_fields import ShortUUIDField
 
 # My apps
 from vendor.models import Vendor
+from userauths.models import User
 
 
 class Category(models.Model):
     title = models.CharField(max_length=150)
-    
+
     slug = models.SlugField(unique=True)
-    
+
     image = models.ImageField(
         upload_to="categories", blank=True, null=True, default="category.jpg"
     )
-    
+
     active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -112,36 +114,36 @@ class Product(models.Model):
 
 class Gallery(models.Model):
     gid = ShortUUIDField(unique=True, length=10, alphabet="abcdefgh12345")
-    
+
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="galleries"
     )
 
     image = models.ImageField(upload_to="products", default="product.jpg")
-    
+
     active = models.BooleanField(default=True)
-    
+
     datetime_created = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return self.product.name
 
     class Meta:
-        db_table = ''
+        db_table = ""
         managed = True
-        verbose_name = 'Product Image'
-        verbose_name_plural = 'Product Images'
+        verbose_name = "Product Image"
+        verbose_name_plural = "Product Images"
 
 
 class Specification(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="specifications"
     )
-    
+
     title = models.CharField(max_length=100)
 
     content = models.TextField()
-    
+
     datetime_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -149,14 +151,12 @@ class Specification(models.Model):
 
 
 class Size(models.Model):
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="sizes"
-    )
-    
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="sizes")
+
     name = models.CharField(max_length=100)
-    
+
     price = models.DecimalField(max_digits=8, decimal_places=2)
-    
+
     datetime_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -167,13 +167,60 @@ class Color(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="colors"
     )
-    
+
     name = models.CharField(max_length=100)
-    
+
     color_code = models.CharField(max_length=100)
-    
+
     datetime_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
+
+
+class Cart(models.Model):
+    cart_id = models.CharField(max_length=1000, null=True, blank=True)
+
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="carts"
+    )
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="carts")
+
+    size = models.CharField(max_length=100, null=True, blank=True)
+
+    color = models.CharField(max_length=100, null=True, blank=True)
+
+    quantity = models.PositiveIntegerField(default=0, null=True, blank=True)
+
+    price = models.DecimalField(decimal_places=2, max_digits=8, null=True, blank=True)
+
+    # inja ma meghdar 'quantity dar price' ro mizarim.
+    sub_total = models.DecimalField(
+        decimal_places=2,
+        max_digits=8,
+        null=True,
+        blank=True,
+        help_text="Total of Product price * Product Quantity",
+    )
+
+    shipping_amount = models.DecimalField(
+        decimal_places=2, max_digits=8, null=True, blank=True
+    )
+
+    service_fee = models.DecimalField(
+        decimal_places=2, max_digits=8, null=True, blank=True
+    )
+
+    tax_fee = models.DecimalField(decimal_places=2, max_digits=8, null=True, blank=True)
+
+    total = models.DecimalField(decimal_places=2, max_digits=8, null=True, blank=True)
+
+    country = models.CharField(max_length=100, null=True, blank=True)
+
+    datetime_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"cart: {self.cart_id} - product: {self.product.name}"
+
 
