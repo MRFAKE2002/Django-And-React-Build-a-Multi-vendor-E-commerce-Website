@@ -12,6 +12,9 @@ from .models import (
     Cart,
     Order,
     OrderItem,
+    WishList,
+    Notification,
+    Coupon,
 )
 
 
@@ -268,3 +271,75 @@ class OrderItemAdmin(admin.ModelAdmin):
     list_per_page = 10
 
     list_filter = ["datetime_created"]
+
+
+@admin.register(WishList)
+class WishListAdmin(admin.ModelAdmin):
+    list_display = [
+        "user",
+        "product",
+        "datetime_created",
+    ]
+
+    search_fields = [
+        "product",
+        "user",
+        "datetime_created",
+    ]
+
+    list_select_related = ["product", "user"]
+
+    list_per_page = 10
+
+    list_filter = ["datetime_created"]
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = [
+        "user",
+        "vendor",
+        "order",
+        "order_item",
+        "seen",
+        "datetime_created",
+    ]
+
+    search_fields = [
+        "user",
+        "vendor",
+        "datetime_created",
+    ]
+
+    list_select_related = ["user", "vendor", "order", "order_item"]
+
+    list_per_page = 10
+
+    list_filter = ["datetime_created"]
+
+
+@admin.register(Coupon)
+class CouponAdmin(admin.ModelAdmin):
+    list_display = [
+        "vendor",
+        "code",
+        "discount",
+        "active",
+        "datetime_created",
+    ]
+
+    search_fields = [
+        "vendor",
+        "code",
+        "discount",
+        "datetime_created",
+    ]
+
+    list_select_related = ["vendor"]
+
+    list_per_page = 10
+
+    list_filter = ["datetime_created"]
+
+    list_editable = ["active"]
+
