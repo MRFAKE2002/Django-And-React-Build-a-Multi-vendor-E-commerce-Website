@@ -114,7 +114,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "price",
             "old_price",
             "shipping_amount",
-            "stock_qty",
+            "stock_quantity",
             "in_stock",
             "status",
             "featured",
@@ -123,7 +123,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "vendor",
             "pid",
             "slug",
-            "date",
+            "datetime_created",
             "gallery",
             "specification",
             "size",
@@ -200,17 +200,17 @@ class CartSerializer(serializers.ModelSerializer):
         self.Meta.depth = 0 if request and request.method == "POST" else 3
 
 
-# Define a serializer for the Order model
-class OrderSerializer(serializers.ModelSerializer):
-    # Serialize related OrderItem models
-    order_item = OrderItemSerializer(many=True, read_only=True)
+# Define a serializer for the OrderItem model
+class OrderItemSerializer(serializers.ModelSerializer):
+    # Serialize the related Product model
+    # product = ProductSerializer()
 
     class Meta:
-        model = Order
+        model = OrderItem
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        super(OrderSerializer, self).__init__(*args, **kwargs)
+        super(OrderItemSerializer, self).__init__(*args, **kwargs)
         # request = self.context.get('request')
         # if request and request.method == 'POST':
         #     #! When creating a new product, set serialization depth to 0.
@@ -226,17 +226,17 @@ class OrderSerializer(serializers.ModelSerializer):
         self.Meta.depth = 0 if request and request.method == "POST" else 3
 
 
-# Define a serializer for the OrderItem model
-class OrderItemSerializer(serializers.ModelSerializer):
-    # Serialize the related Product model
-    # product = ProductSerializer()
+# Define a serializer for the Order model
+class OrderSerializer(serializers.ModelSerializer):
+    # Serialize related OrderItem models
+    order_item = OrderItemSerializer(many=True, read_only=True)
 
     class Meta:
-        model = OrderItem
+        model = Order
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        super(OrderItemSerializer, self).__init__(*args, **kwargs)
+        super(OrderSerializer, self).__init__(*args, **kwargs)
         # request = self.context.get('request')
         # if request and request.method == 'POST':
         #     #! When creating a new product, set serialization depth to 0.
