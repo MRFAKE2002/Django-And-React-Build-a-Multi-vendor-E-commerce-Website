@@ -110,13 +110,14 @@ class Product(models.Model):
 
     # Calculates the average rating of the product
     def product_rating(self):
-        product_rating = Review.objects.filter(product=self).aggregate(avg_rating=models.Avg('rating'))
+        product_rating = Review.objects.filter(product=self).values("rating").aggregate(avg_rating=models.Avg('rating'))
         return product_rating['avg_rating']
 
     def save(self, *args, **kwargs):
         if self.slug == "" or self.slug is None:
             self.slug = slugify(self.name)
-            
+        
+        # inja mige 'miangin ya average rating' ro ke male in 'product' az 'model Review' begir va dakhel 'field rating' bezar.
         self.rating = self.product_rating()
         
         super(Product, self).save(*args, **kwargs) 
@@ -481,3 +482,59 @@ class Review(models.Model):
 def update_product_rating(sender, instance, **kwargs):
     if instance.product:
         instance.product.save()
+
+
+class WishList(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="wish_lists", null=True, blank=True)
+    
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="wish_lists"
+    )
+    
+    datetime_created = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.product
+
+    class Meta:
+        verbose_name_plural = "Wish Lists"
+        ordering = ["-datetime_created"]
+
+
+
+class Notifications(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
+    
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name="notifications")
+    
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, related_name="notifications", null=True, blank=True)
+    
+    order_item = models.ForeignKey(OrderItem, on_delete=models.SET_NULL, related_name="notifications", null=True, blank=True)
+    
+    seen = models.BooleanField(default=False)
+    
+    datetime_created = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        # if self.order:
+        #     return self.order.oid
+        # else:
+        #     return f"Notification - {self.pk}"
+        return self.order.oid if self.order else f"Notification - {self.pk}"
+
+class Coupon(models.Model):
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name="coupons")
+    
+    user_by = models.ManyToManyField(User, blank=True, related_name="coupons")
+    
+    code = models.CharField(max_length=250)
+    
+    discount = models.IntegerField(default=1)
+    
+    active = models.BooleanField(default=False)
+    
+    datetime_created = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.code
+
