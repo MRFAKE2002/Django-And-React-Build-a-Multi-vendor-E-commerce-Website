@@ -20,7 +20,7 @@ export const registerUser = async (
 ) => {
   try {
     // Making a POST request to register a new user
-    const response = await axiosAPIInstance.post("register/", {
+    const response = await axiosAPIInstance.post("user/register/", {
       fullname,
       email,
       phone,
@@ -56,7 +56,7 @@ export const loginUser = async (email, password) => {
       ma miaim be in link 'http://localhost:8000/api/user/token/' darkhast 'POST' mizanim va bayad 'email va password'
       behesh bedim miad baramun 'refresh va access token' mide ke ma oun ro az 'data' migirim.
     */
-    const response = await axiosAPIInstance.post("login/token/", {
+    const response = await axiosAPIInstance.post("user/login/token/", {
       email,
       password,
     });
@@ -169,7 +169,7 @@ export const updateUserToken = async () => {
 export const getRefreshToken = async () => {
   // Retrieving refresh token from cookies and making a POST request to refresh the access token
   const refresh_token = Cookies.get("refresh_token");
-  const response = await axiosAPIInstance.post("token/refresh/", {
+  const response = await axiosAPIInstance.post("user/token/refresh/", {
     refresh: refresh_token,
   });
 

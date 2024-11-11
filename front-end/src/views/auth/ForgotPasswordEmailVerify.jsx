@@ -23,7 +23,7 @@ function ForgotPasswordEmailVerify() {
       // alan inja ma darim oun 'email' ro mifrestim be 'back-end' ta be 'user otp' bedim va befrestim
       // baraye 'change password'.
       await axiosAPIInstance
-        .get(`password-reset/${email}/`)
+        .get(`user/password-reset/${email}/`)
         .then((response) => {
           alert("An Email Has Been Sent To You.");
         });

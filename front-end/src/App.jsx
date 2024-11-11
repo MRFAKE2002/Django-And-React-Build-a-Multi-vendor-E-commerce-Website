@@ -2,12 +2,15 @@
 import { Route, Routes } from "react-router-dom";
 
 // views pages
-import Login from "./views/auth/Login";
 import Home from "./views/shop/Home";
+// auth
+import Login from "./views/auth/Login";
 import Register from "./views/auth/Register";
 import Logout from "./views/auth/Logout";
 import ForgotPasswordEmailVerify from "./views/auth/ForgotPasswordEmailVerify";
 import CreateNewPassword from "./views/auth/CreateNewPassword";
+// store
+import Product from "./views/store/Product";
 
 // Base components
 import Navbar from "./views/base/Navbar";
@@ -22,12 +25,18 @@ function App() {
       <Navbar />
       <MainWrapper>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Home />} />
+
+          {/* Auth Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/password-reset" element={<ForgotPasswordEmailVerify />} />
           <Route path="/create-new-password" element={<CreateNewPassword />} />
+
+          {/* Store Routes */}
+          <Route path="/" element={<Product />} />
+
         </Routes>
       </MainWrapper>
       <Footer />

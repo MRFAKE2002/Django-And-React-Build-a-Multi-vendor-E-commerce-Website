@@ -51,7 +51,7 @@ function CreateNewPassword() {
           bebine kodum 'user request dade' va biad 'password' jadid barash 'set' kone.
         */
         await axiosAPIInstance
-          .post("password-change/", userFormData)
+          .post("user/password-change/", userFormData)
           .then((response) => {
             alert("Password changed successfully.");
             navigate("/login");
