@@ -24,3 +24,15 @@ class CategoryListAPIView(generics.ListAPIView):
   permission_classes = [AllowAny]
 
 
+# dar inja ma miaim 'data' marbut be 'Product' khasi ro ke 'slug' az 'url' gereftim ro be surat 'detail' namayesh midim.
+class ProductDetailAPIView(generics.RetrieveAPIView):
+  serializer_class= ProductSerializer
+  permission_classes = [AllowAny]
+
+  def get_object(self):
+    # inja ma mikhaim 'data' oun 'product' khasi ro ke 'slug' az 'url' gereftim ba estefade az 'query' zadan 'return' mikonim.
+    
+    slug = self.kwargs["slug"]
+    
+    return Product.objects.get(slug=slug)
+
