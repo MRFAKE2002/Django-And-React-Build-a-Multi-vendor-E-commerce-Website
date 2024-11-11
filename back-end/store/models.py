@@ -49,16 +49,6 @@ class Product(models.Model):
 
     pid = ShortUUIDField(unique=True, length=10, alphabet="abcdefgh12345")
 
-    name = models.CharField(max_length=150)
-
-    slug = models.SlugField(unique=True)
-
-    vendor = models.ForeignKey(
-        Vendor, on_delete=models.CASCADE, related_name="products"
-    )
-
-    description = models.TextField()
-
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -67,9 +57,19 @@ class Product(models.Model):
         related_name="products",
     )
 
+    name = models.CharField(max_length=150)
+
+    slug = models.SlugField(unique=True)
+
+    vendor = models.ForeignKey(
+        Vendor, on_delete=models.CASCADE, related_name="products"
+    )
+
     image = models.ImageField(
         upload_to="products", blank=True, null=True, default="product.jpg"
     )
+
+    description = models.TextField()
 
     # in mishe gheimat product 'ba takhfif'
     price = models.DecimalField(max_digits=8, decimal_places=2)
@@ -94,7 +94,7 @@ class Product(models.Model):
 
     views = models.PositiveIntegerField(default=0)
 
-    rating = models.PositiveIntegerField(default=0)
+    rating = models.PositiveIntegerField(default=0, null=True, blank=True)
 
     datetime_created = models.DateTimeField(auto_now_add=True)
 
@@ -110,12 +110,15 @@ class Product(models.Model):
 
     # Calculates the average rating of the product
     def product_rating(self):
-        product_rating = (
-            Review.objects.filter(product=self)
-            .values("rating")
-            .aggregate(avg_rating=models.Avg("rating"))
+        product_rating = Review.objects.filter(product=self).aggregate(
+            avg_rating=models.Avg("rating")
         )
-        return product_rating["avg_rating"]
+        # بررسی می‌کنیم که اگر هیچ میانگینی وجود نداشت، مقدار پیش‌فرض 0 را برگردانیم
+        return (
+            product_rating["avg_rating"]
+            if product_rating["avg_rating"] is not None
+            else 0
+        )
 
     def rating_count(self):
         return Review.objects.filter(product=self).count()
@@ -124,6 +127,10 @@ class Product(models.Model):
         if self.slug == "" or self.slug is None:
             self.slug = slugify(self.name)
 
+        # ابتدا محصول را ذخیره می‌کنیم تا شناسه آن ایجاد شود
+        if not self.pk:  # اگر محصول جدید باشد و شناسه نداشته باشد
+            super(Product, self).save(*args, **kwargs)
+        
         # inja mige 'miangin ya average rating' ro ke male in 'product' az 'model Review' begir va dakhel 'field rating' bezar.
         self.rating = self.product_rating()
 

@@ -109,6 +109,8 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ["name"]}
 
     list_select_related = ["vendor", "category"]
+    
+    autocomplete_fields = ["category", "vendor"]
 
     inlines = [
         GalleryTabularInline,
