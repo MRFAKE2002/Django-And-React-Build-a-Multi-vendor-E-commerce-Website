@@ -502,7 +502,7 @@ class WishList(models.Model):
 
 
 
-class Notifications(models.Model):
+class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
     
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name="notifications")
