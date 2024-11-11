@@ -110,17 +110,24 @@ class Product(models.Model):
 
     # Calculates the average rating of the product
     def product_rating(self):
-        product_rating = Review.objects.filter(product=self).values("rating").aggregate(avg_rating=models.Avg('rating'))
-        return product_rating['avg_rating']
+        product_rating = (
+            Review.objects.filter(product=self)
+            .values("rating")
+            .aggregate(avg_rating=models.Avg("rating"))
+        )
+        return product_rating["avg_rating"]
+
+    def rating_count(self):
+        return Review.objects.filter(product=self).count()
 
     def save(self, *args, **kwargs):
         if self.slug == "" or self.slug is None:
             self.slug = slugify(self.name)
-        
+
         # inja mige 'miangin ya average rating' ro ke male in 'product' az 'model Review' begir va dakhel 'field rating' bezar.
         self.rating = self.product_rating()
-        
-        super(Product, self).save(*args, **kwargs) 
+
+        super(Product, self).save(*args, **kwargs)
 
 
 class Gallery(models.Model):
@@ -414,22 +421,24 @@ class OrderItem(models.Model):
 
 # Product Frequently Asked Question
 class ProductFAQ(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="user_FAQs", null=True, blank=True)
-    
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, related_name="user_FAQs", null=True, blank=True
+    )
+
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="product_FAQs"
     )
-    
+
     email = models.EmailField(null=True, blank=True)
-    
+
     question = models.CharField(max_length=100)
-    
+
     answer = models.TextField()
 
     active = models.BooleanField(default=True)
-    
+
     datetime_created = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return self.question
 
@@ -446,22 +455,28 @@ class Review(models.Model):
         (4, "4 star"),
         (5, "5 star"),
     ]
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="user_reviews", null=True, blank=True)
-    
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="user_reviews",
+        null=True,
+        blank=True,
+    )
+
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="product_reviews"
     )
-    
+
     review = models.TextField()
-    
+
     reply = models.TextField(null=True, blank=True)
-    
+
     rating = models.IntegerField(default=None, choices=RATING)
-    
+
     active = models.BooleanField(default=True)
-    
+
     datetime_created = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return self.product
 
@@ -472,12 +487,15 @@ class Review(models.Model):
     def profile(self):
         return Profile.objects.get(user=self.user)
 
+
 """ 
     ma inja miaim migim har vaghti ke 'object' dar 'model Review save' shod bia 'function save' 
     hamin 'product' ro ham seda bezan.
     ba seda zadan 'function save' dar 'product' miad 'miangin ya average rating' ke be in 'product' dade shode ro 
     az 'model Review' migire va dakhel 'field rating model product' gharar mide.
 """
+
+
 @receiver(post_save, sender=Review)
 def update_product_rating(sender, instance, **kwargs):
     if instance.product:
@@ -485,14 +503,20 @@ def update_product_rating(sender, instance, **kwargs):
 
 
 class WishList(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="wish_lists", null=True, blank=True)
-    
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="wish_lists",
+        null=True,
+        blank=True,
+    )
+
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="wish_lists"
     )
-    
+
     datetime_created = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return self.product
 
@@ -501,20 +525,35 @@ class WishList(models.Model):
         ordering = ["-datetime_created"]
 
 
-
 class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
-    
-    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name="notifications")
-    
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, related_name="notifications", null=True, blank=True)
-    
-    order_item = models.ForeignKey(OrderItem, on_delete=models.SET_NULL, related_name="notifications", null=True, blank=True)
-    
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="notifications"
+    )
+
+    vendor = models.ForeignKey(
+        Vendor, on_delete=models.CASCADE, related_name="notifications"
+    )
+
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.SET_NULL,
+        related_name="notifications",
+        null=True,
+        blank=True,
+    )
+
+    order_item = models.ForeignKey(
+        OrderItem,
+        on_delete=models.SET_NULL,
+        related_name="notifications",
+        null=True,
+        blank=True,
+    )
+
     seen = models.BooleanField(default=False)
-    
+
     datetime_created = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         # if self.order:
         #     return self.order.oid
@@ -522,19 +561,19 @@ class Notification(models.Model):
         #     return f"Notification - {self.pk}"
         return self.order.oid if self.order else f"Notification - {self.pk}"
 
+
 class Coupon(models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name="coupons")
-    
+
     user_by = models.ManyToManyField(User, blank=True, related_name="coupons")
-    
+
     code = models.CharField(max_length=250)
-    
+
     discount = models.IntegerField(default=1)
-    
+
     active = models.BooleanField(default=False)
-    
+
     datetime_created = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return self.code
-
