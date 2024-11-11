@@ -2,13 +2,15 @@
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 # Libraries
 from shortuuid.django_fields import ShortUUIDField
 
 # My apps
 from vendor.models import Vendor
-from userauths.models import User
+from userauths.models import User, Profile
 
 
 class Category(models.Model):
@@ -106,10 +108,18 @@ class Product(models.Model):
         verbose_name_plural = "products"
         ordering = ["datetime_created"]
 
+    # Calculates the average rating of the product
+    def product_rating(self):
+        product_rating = Review.objects.filter(product=self).aggregate(avg_rating=models.Avg('rating'))
+        return product_rating['avg_rating']
+
     def save(self, *args, **kwargs):
         if self.slug == "" or self.slug is None:
             self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
+            
+        self.rating = self.product_rating()
+        
+        super(Product, self).save(*args, **kwargs) 
 
 
 class Gallery(models.Model):
@@ -223,6 +233,7 @@ class Cart(models.Model):
     def __str__(self):
         return f"cart: {self.cart_id} - product: {self.product.name}"
 
+
 # Model for Cart Orders
 class Order(models.Model):
     PAYMENT_STATUS = (
@@ -273,7 +284,7 @@ class Order(models.Model):
     payment_status = models.CharField(
         max_length=100, choices=PAYMENT_STATUS, default="initiated"
     )
-    
+
     order_status = models.CharField(
         max_length=100, choices=ORDER_STATUS, default="Pending"
     )
@@ -399,3 +410,74 @@ class OrderItem(models.Model):
         verbose_name_plural = "Order Items"
         ordering = ["-datetime_created"]
 
+
+# Product Frequently Asked Question
+class ProductFAQ(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="user_FAQs", null=True, blank=True)
+    
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="product_FAQs"
+    )
+    
+    email = models.EmailField(null=True, blank=True)
+    
+    question = models.CharField(max_length=100)
+    
+    answer = models.TextField()
+
+    active = models.BooleanField(default=True)
+    
+    datetime_created = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.question
+
+    class Meta:
+        verbose_name_plural = "Product FAQs"
+        ordering = ["-datetime_created"]
+
+
+class Review(models.Model):
+    RATING = [
+        (1, "1 star"),
+        (2, "2 star"),
+        (3, "3 star"),
+        (4, "4 star"),
+        (5, "5 star"),
+    ]
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="user_reviews", null=True, blank=True)
+    
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="product_reviews"
+    )
+    
+    review = models.TextField()
+    
+    reply = models.TextField(null=True, blank=True)
+    
+    rating = models.IntegerField(default=None, choices=RATING)
+    
+    active = models.BooleanField(default=True)
+    
+    datetime_created = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.product
+
+    class Meta:
+        verbose_name_plural = "Product Reviews & Rating"
+        ordering = ["-datetime_created"]
+
+    def profile(self):
+        return Profile.objects.get(user=self.user)
+
+""" 
+    ma inja miaim migim har vaghti ke 'object' dar 'model Review save' shod bia 'function save' 
+    hamin 'product' ro ham seda bezan.
+    ba seda zadan 'function save' dar 'product' miad 'miangin ya average rating' ke be in 'product' dade shode ro 
+    az 'model Review' migire va dakhel 'field rating model product' gharar mide.
+"""
+@receiver(post_save, sender=Review)
+def update_product_rating(sender, instance, **kwargs):
+    if instance.product:
+        instance.product.save()
