@@ -6,12 +6,14 @@ from .models import (
     Category,
     Product,
     Gallery,
+    ProductFAQ,
     Specification,
     Size,
     Color,
     Cart,
     Order,
     OrderItem,
+    Review,
     WishList,
     Notification,
     Coupon,
@@ -83,6 +85,8 @@ class ProductAdmin(admin.ModelAdmin):
         "featured",
         "views",
         "rating",
+        "product_rating",
+        "rating_count",
         "datetime_created",
     ]
 
@@ -273,6 +277,65 @@ class OrderItemAdmin(admin.ModelAdmin):
     list_filter = ["datetime_created"]
 
 
+@admin.register(ProductFAQ)
+class ProductFAQAdmin(admin.ModelAdmin):
+    list_display = [
+        "user",
+        "product",
+        "email",
+        "question",
+        "answer",
+        "active",
+        "datetime_created",
+    ]
+
+    search_fields = [
+        "product",
+        "user",
+        "email",
+        "question",
+        "answer",
+        "datetime_created",
+    ]
+
+    list_select_related = ["product", "user"]
+
+    list_per_page = 10
+
+    list_filter = ["datetime_created", "active"]
+
+    list_editable = ["active"]
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = [
+        "user",
+        "product",
+        "review",
+        "reply",
+        "rating",
+        "active",
+        "datetime_created",
+    ]
+
+    search_fields = [
+        "product",
+        "user",
+        "review",
+        "reply",
+        "datetime_created",
+    ]
+
+    list_select_related = ["product", "user"]
+
+    list_per_page = 10
+
+    list_filter = ["datetime_created", "active", "rating"]
+
+    list_editable = ["active"]
+
+
 @admin.register(WishList)
 class WishListAdmin(admin.ModelAdmin):
     list_display = [
@@ -342,4 +405,3 @@ class CouponAdmin(admin.ModelAdmin):
     list_filter = ["datetime_created"]
 
     list_editable = ["active"]
-
