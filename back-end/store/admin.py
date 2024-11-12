@@ -22,7 +22,7 @@ from .models import (
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ["image", "title", "active"]
+    list_display = ["id", "image", "title", "active"]
 
     prepopulated_fields = {"slug": ["title"]}
 
@@ -71,7 +71,7 @@ class SizeTabularInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = ["id", 
         "image",
         "vendor",
         "name",
@@ -122,7 +122,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Gallery)
 class GalleryAdmin(admin.ModelAdmin):
-    list_display = ["image", "gid", "product", "active", "datetime_created"]
+    list_display = ["id", "image", "gid", "product", "active", "datetime_created"]
 
     list_editable = ["active", "gid"]
 
@@ -137,7 +137,7 @@ class GalleryAdmin(admin.ModelAdmin):
 
 @admin.register(Specification)
 class SpecificationAdmin(admin.ModelAdmin):
-    list_display = ["product", "title", "content", "datetime_created"]
+    list_display = ["id", "product", "title", "content", "datetime_created"]
 
     search_fields = ["product"]
 
@@ -148,7 +148,7 @@ class SpecificationAdmin(admin.ModelAdmin):
 
 @admin.register(Color)
 class ColorAdmin(admin.ModelAdmin):
-    list_display = ["product", "name", "color_code", "datetime_created"]
+    list_display = ["id", "product", "name", "color_code", "datetime_created"]
 
     search_fields = ["product", "name", "color_code"]
 
@@ -159,7 +159,7 @@ class ColorAdmin(admin.ModelAdmin):
 
 @admin.register(Size)
 class SizeAdmin(admin.ModelAdmin):
-    list_display = ["product", "name", "price", "datetime_created"]
+    list_display = ["id", "product", "name", "price", "datetime_created"]
 
     search_fields = ["product", "name"]
 
@@ -172,7 +172,7 @@ class SizeAdmin(admin.ModelAdmin):
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = ["id", 
         "cart_id",
         "user",
         "product",
@@ -202,7 +202,7 @@ class CartAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = ["id", 
         "oid",
         "buyer",
         "sub_total",
@@ -246,7 +246,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = ["id", 
         "oid",
         "order",
         "vendor",
@@ -281,7 +281,7 @@ class OrderItemAdmin(admin.ModelAdmin):
 
 @admin.register(ProductFAQ)
 class ProductFAQAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = ["id", 
         "user",
         "product",
         "email",
@@ -311,7 +311,7 @@ class ProductFAQAdmin(admin.ModelAdmin):
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = ["id", 
         "user",
         "product",
         "review",
@@ -340,7 +340,7 @@ class ReviewAdmin(admin.ModelAdmin):
 
 @admin.register(WishList)
 class WishListAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = ["id", 
         "user",
         "product",
         "datetime_created",
@@ -361,7 +361,7 @@ class WishListAdmin(admin.ModelAdmin):
 
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = ["id", 
         "user",
         "vendor",
         "order",
@@ -385,7 +385,7 @@ class NotificationAdmin(admin.ModelAdmin):
 
 @admin.register(Coupon)
 class CouponAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = ["id", 
         "vendor",
         "code",
         "discount",
