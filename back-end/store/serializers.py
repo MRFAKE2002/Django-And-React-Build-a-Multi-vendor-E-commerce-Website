@@ -89,19 +89,15 @@ class ColorSerializer(serializers.ModelSerializer):
 
 # Define a serializer for the Product model
 class ProductSerializer(serializers.ModelSerializer):
-    # Serialize related Category, Tag, and Brand models
-    # category = CategorySerializer(many=True, read_only=True)
-    # tags = TagSerializer(many=True, read_only=True)
-    gallery = GallerySerializer(many=True, read_only=True)
-    color = ColorSerializer(many=True, read_only=True)
-    size = SizeSerializer(many=True, read_only=True)
-    specification = SpecificationSerializer(many=True, read_only=True)
-    # rating = serializers.IntegerField(required=False)
-
-    # specification = SpecificationSerializer(many=True, required=False)
-    # color = ColorSerializer(many=True, required=False)
-    # size = SizeSerializer(many=True, required=False)
-    # gallery = GallerySerializer(many=True, required=False, read_only=True)
+    """
+        inja ma bayad havasemun bashe mikhaim oun field hayi ke dar yek model dige hastan va be ma foreignkey zadan 
+        va ma mikhaim ounaro be surat prefetch_related namayesh bedim bayad bebinim oun related_name ke 
+        moshakhas kardim chi bude ta eshtebahi ye name dige baraye namayesh oun field nazarim.
+    """
+    galleries = GallerySerializer(many=True, read_only=True)
+    colors = ColorSerializer(many=True, read_only=True)
+    sizes = SizeSerializer(many=True, read_only=True)
+    specifications = SpecificationSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
@@ -124,10 +120,10 @@ class ProductSerializer(serializers.ModelSerializer):
             "pid",
             "slug",
             "datetime_created",
-            "gallery",
-            "specification",
-            "size",
-            "color",
+            "galleries",
+            "specifications",
+            "sizes",
+            "colors",
             "product_rating",
             "rating_count",
         ]
