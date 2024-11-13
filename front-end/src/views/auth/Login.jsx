@@ -217,7 +217,7 @@ function Login() {
                               type="submit"
                             >
                               <span className="mr-2">Processing </span>
-                              <i className="fas fa-snipper fa-snip" />
+                              <i className="fas fa-spinner fa-snip" />
                             </button>
                           ) : (
                             <button

@@ -75,7 +75,8 @@ function ProductDetail() {
               {/* Product Details */}
               <div className="col-md-6 mb-4 mb-md-0">
                 <div>
-                  <h1 className="fw-bold mb-3">Sophisticated dress</h1>
+                  <h1 className="fw-bold mb-3">{productData.name}</h1>
+                  {/* Product Rating */}
                   <div className="d-flex text-primary just align-items-center">
                     <ul
                       className="mb-3 d-flex p-0"
@@ -120,6 +121,7 @@ function ProductDetail() {
                   </h5>
                   {/* Product Description */}
                   <p className="text-muted">{productData.description}</p>
+                  {/* Category & Specification */}
                   <div className="table-responsive">
                     <table className="table table-sm table-borderless mb-0">
                       <tbody>
@@ -145,6 +147,7 @@ function ProductDetail() {
                     </table>
                   </div>
                   <hr className="my-5" />
+                  {/* Quantity & Color & Size */}
                   <form action="">
                     <div className="row flex-column">
                       {/* Product Quantity */}
@@ -215,12 +218,14 @@ function ProductDetail() {
                         <hr />
                       </div>
                     </div>
+                    {/* Add To Cart */}
                     <button
                       type="button"
                       className="btn btn-primary btn-rounded me-2"
                     >
                       <i className="fas fa-cart-plus me-2" /> Add to cart
                     </button>
+                    {/* WishList */}
                     <button
                       href="#!"
                       type="button"
@@ -236,7 +241,9 @@ function ProductDetail() {
             </div>
           </section>
           <hr />
+          {/* Specifications & Vendor & Review & Questions Tabs */}
           <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            {/* Specification Tab Link */}
             <li className="nav-item" role="presentation">
               <button
                 className="nav-link active"
@@ -251,6 +258,7 @@ function ProductDetail() {
                 Specifications
               </button>
             </li>
+            {/* Vendor Tab Link */}
             <li className="nav-item" role="presentation">
               <button
                 className="nav-link"
@@ -265,6 +273,7 @@ function ProductDetail() {
                 Vendor
               </button>
             </li>
+            {/* Review Tab Link */}
             <li className="nav-item" role="presentation">
               <button
                 className="nav-link"
@@ -279,6 +288,7 @@ function ProductDetail() {
                 Review
               </button>
             </li>
+            {/* Question Tab Link */}
             <li className="nav-item" role="presentation">
               <button
                 className="nav-link"
@@ -295,6 +305,7 @@ function ProductDetail() {
             </li>
           </ul>
           <div className="tab-content" id="pills-tabContent">
+            {/* Specification Tab Content */}
             <div
               className="tab-pane fade show active"
               id="pills-home"
@@ -325,6 +336,7 @@ function ProductDetail() {
                 </table>
               </div>
             </div>
+            {/* Vendor Tab Content */}
             <div
               className="tab-pane fade"
               id="pills-profile"
@@ -355,6 +367,7 @@ function ProductDetail() {
                 </div>
               </div>
             </div>
+            {/* Review Tab Content */}
             <div
               className="tab-pane fade"
               id="pills-contact"
@@ -447,6 +460,7 @@ function ProductDetail() {
                 </div>
               </div>
             </div>
+            {/* Question Tab Content */}
             <div
               className="tab-pane fade"
               id="pills-question"
