@@ -11,6 +11,7 @@ import ForgotPasswordEmailVerify from "./views/auth/ForgotPasswordEmailVerify";
 import CreateNewPassword from "./views/auth/CreateNewPassword";
 // store
 import Product from "./views/store/Product";
+import ProductDetail from "./views/store/ProductDetail";
 
 // Base components
 import Navbar from "./views/base/Navbar";
@@ -36,7 +37,7 @@ function App() {
 
           {/* Store Routes */}
           <Route path="/" element={<Product />} />
-
+          <Route path="/detail/:slug/" element={<ProductDetail />} />
         </Routes>
       </MainWrapper>
       <Footer />

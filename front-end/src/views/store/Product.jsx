@@ -1,5 +1,6 @@
 // libraries
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 // API call functions
 import axiosAPIInstance from "../../utils/axios";
@@ -36,15 +37,17 @@ function Product() {
                       className="bg-image hover-zoom ripple"
                       data-mdb-ripple-color="light"
                     >
-                      <img
-                        src={product.image}
-                        className="w-100"
-                        style={{
-                          width: "100%",
-                          height: "auto",
-                          objectFit: "cover",
-                        }}
-                      />
+                      <Link to={`/detail/${product.slug}`}>
+                        <img
+                          src={product.image}
+                          className="w-100"
+                          style={{
+                            width: "100%",
+                            height: "auto",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </Link>
                       <a href="#!">
                         <div className="mask">
                           <div className="d-flex justify-content-start align-items-end h-100">
@@ -66,9 +69,9 @@ function Product() {
                       </a>
                     </div>
                     <div className="card-body">
-                      <a href="" className="text-reset">
+                      <Link to={`detail/${product.slug}/`} className="text-reset">
                         <h5 className="card-title mb-3">{product.name}</h5>
-                      </a>
+                      </Link>
                       <a href="" className="text-reset">
                         <p>{product?.category.title}</p>
                       </a>
@@ -169,7 +172,7 @@ function Product() {
               {/* Categories List */}
               <div className="row">
                 {categories.map((category, index) => (
-                  <div className="col-lg-2">
+                  <div className="col-lg-2" key={index}>
                     <img
                       src={category?.image}
                       style={{
