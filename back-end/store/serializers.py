@@ -32,13 +32,13 @@ class VendorSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(VendorSerializer, self).__init__(*args, **kwargs)
-        # request = self.context.get('request')
-        # if request and request.method == 'POST':
+        #? request = self.context.get('request')
+        #? if request and request.method == 'POST':
         #     #! When creating a new product, set serialization depth to 0.
-        #     self.Meta.depth = 0
-        # else:
+        #?     self.Meta.depth = 0
+        #? else:
         #     #! For other methods, set serialization depth to 3.
-        #     self.Meta.depth = 3
+        #?     self.Meta.depth = 3
 
         # Customize serialization depth based on the request method.
         request = self.context.get("request")
@@ -130,13 +130,13 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(ProductSerializer, self).__init__(*args, **kwargs)
-        # request = self.context.get('request')
-        # if request and request.method == 'POST':
+        #? request = self.context.get('request')
+        #? if request and request.method == 'POST':
         #     #! When creating a new product, set serialization depth to 0.
-        #     self.Meta.depth = 0
-        # else:
+        #?     self.Meta.depth = 0
+        #? else:
         #     #! For other methods, set serialization depth to 3.
-        #     self.Meta.depth = 3
+        #?     self.Meta.depth = 3
 
         # Customize serialization depth based on the request method.
         request = self.context.get("request")
@@ -155,13 +155,13 @@ class ProductFAQSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(ProductFAQSerializer, self).__init__(*args, **kwargs)
-        # request = self.context.get('request')
-        # if request and request.method == 'POST':
+        #? request = self.context.get('request')
+        #? if request and request.method == 'POST':
         #     #! When creating a new product, set serialization depth to 0.
-        #     self.Meta.depth = 0
-        # else:
+        #?     self.Meta.depth = 0
+        #? else:
         #     #! For other methods, set serialization depth to 3.
-        #     self.Meta.depth = 3
+        #?     self.Meta.depth = 3
 
         # Customize serialization depth based on the request method.
         request = self.context.get("request")
@@ -173,7 +173,7 @@ class ProductFAQSerializer(serializers.ModelSerializer):
 # Define a serializer for the OrderItem model
 class CartSerializer(serializers.ModelSerializer):
     # Serialize the related Product model
-    product = ProductSerializer()
+    # product = ProductSerializer()
 
     class Meta:
         model = Cart
@@ -181,13 +181,13 @@ class CartSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(CartSerializer, self).__init__(*args, **kwargs)
-        # request = self.context.get('request')
-        # if request and request.method == 'POST':
+        #? request = self.context.get('request')
+        #? if request and request.method == 'POST':
         #     #! When creating a new product, set serialization depth to 0.
-        #     self.Meta.depth = 0
-        # else:
+        #?     self.Meta.depth = 0
+        #? else:
         #     #! For other methods, set serialization depth to 3.
-        #     self.Meta.depth = 3
+        #?     self.Meta.depth = 3
 
         # Customize serialization depth based on the request method.
         request = self.context.get("request")
@@ -207,13 +207,13 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(OrderItemSerializer, self).__init__(*args, **kwargs)
-        # request = self.context.get('request')
-        # if request and request.method == 'POST':
+        #? request = self.context.get('request')
+        #? if request and request.method == 'POST':
         #     #! When creating a new product, set serialization depth to 0.
-        #     self.Meta.depth = 0
-        # else:
+        #?     self.Meta.depth = 0
+        #? else:
         #     #! For other methods, set serialization depth to 3.
-        #     self.Meta.depth = 3
+        #?     self.Meta.depth = 3
 
         # Customize serialization depth based on the request method.
         request = self.context.get("request")
@@ -233,13 +233,13 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(OrderSerializer, self).__init__(*args, **kwargs)
-        # request = self.context.get('request')
-        # if request and request.method == 'POST':
+        #? request = self.context.get('request')
+        #? if request and request.method == 'POST':
         #     #! When creating a new product, set serialization depth to 0.
-        #     self.Meta.depth = 0
-        # else:
+        #?     self.Meta.depth = 0
+        #? else:
         #     #! For other methods, set serialization depth to 3.
-        #     self.Meta.depth = 3
+        #?     self.Meta.depth = 3
 
         # Customize serialization depth based on the request method.
         request = self.context.get("request")
@@ -260,13 +260,13 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(ReviewSerializer, self).__init__(*args, **kwargs)
-        # request = self.context.get('request')
-        # if request and request.method == 'POST':
+        #? request = self.context.get('request')
+        #? if request and request.method == 'POST':
         #     #! When creating a new product, set serialization depth to 0.
-        #     self.Meta.depth = 0
-        # else:
+        #?     self.Meta.depth = 0
+        #? else:
         #     #! For other methods, set serialization depth to 3.
-        #     self.Meta.depth = 3
+        #?     self.Meta.depth = 3
 
         # Customize serialization depth based on the request method.
         request = self.context.get("request")
@@ -286,13 +286,13 @@ class WishListSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(WishListSerializer, self).__init__(*args, **kwargs)
-        # request = self.context.get('request')
-        # if request and request.method == 'POST':
+        #? request = self.context.get('request')
+        #? if request and request.method == 'POST':
         #     #! When creating a new product, set serialization depth to 0.
-        #     self.Meta.depth = 0
-        # else:
+        #?     self.Meta.depth = 0
+        #? else:
         #     #! For other methods, set serialization depth to 3.
-        #     self.Meta.depth = 3
+        #?     self.Meta.depth = 3
 
         # Customize serialization depth based on the request method.
         request = self.context.get("request")
@@ -310,13 +310,13 @@ class CouponSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(CouponSerializer, self).__init__(*args, **kwargs)
-        # request = self.context.get('request')
-        # if request and request.method == 'POST':
+        #? request = self.context.get('request')
+        #? if request and request.method == 'POST':
         #     #! When creating a new product, set serialization depth to 0.
-        #     self.Meta.depth = 0
-        # else:
+        #?     self.Meta.depth = 0
+        #? else:
         #     #! For other methods, set serialization depth to 3.
-        #     self.Meta.depth = 3
+        #?     self.Meta.depth = 3
 
         # Customize serialization depth based on the request method.
         request = self.context.get("request")
@@ -334,13 +334,13 @@ class NotificationSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(NotificationSerializer, self).__init__(*args, **kwargs)
-        # request = self.context.get('request')
-        # if request and request.method == 'POST':
+        #? request = self.context.get('request')
+        #? if request and request.method == 'POST':
         #     #! When creating a new product, set serialization depth to 0.
-        #     self.Meta.depth = 0
-        # else:
+        #?     self.Meta.depth = 0
+        #? else:
         #     #! For other methods, set serialization depth to 3.
-        #     self.Meta.depth = 3
+        #?     self.Meta.depth = 3
 
         # Customize serialization depth based on the request method.
         request = self.context.get("request")
