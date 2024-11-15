@@ -17,6 +17,7 @@ from .models import (
     WishList,
     Notification,
     Coupon,
+    Tax,
 )
 
 
@@ -405,5 +406,27 @@ class CouponAdmin(admin.ModelAdmin):
     list_per_page = 10
 
     list_filter = ["datetime_created"]
+
+    list_editable = ["active"]
+
+
+@admin.register(Tax)
+class TaxAdmin(admin.ModelAdmin):
+    list_display = ["id", 
+        "country",
+        "rate",
+        "active",
+        "datetime_created",
+    ]
+
+    search_fields = [
+        "country",
+        "rate",
+        "datetime_created",
+    ]
+
+    list_per_page = 10
+
+    list_filter = ["datetime_created", "active"]
 
     list_editable = ["active"]

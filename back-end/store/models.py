@@ -562,10 +562,10 @@ class Notification(models.Model):
     datetime_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        # if self.order:
-        #     return self.order.oid
-        # else:
-        #     return f"Notification - {self.pk}"
+        #? if self.order:
+        #?     return self.order.oid
+        #? else:
+        #?     return f"Notification - {self.pk}"
         return self.order.oid if self.order else f"Notification - {self.pk}"
 
 
@@ -584,3 +584,23 @@ class Coupon(models.Model):
 
     def __str__(self):
         return self.code
+
+
+class Tax(models.Model):
+    country = models.CharField(max_length=100)
+    
+    rate = models.IntegerField(default = 10, help_text = "Numbers are added here in percentage e.g 10%")
+
+    active = models.BooleanField(default=False)
+
+    datetime_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"country: {self.country} - rate: {self.rate}"
+
+    class Meta:
+        db_table = ''
+        managed = True
+        verbose_name = 'tax'
+        verbose_name_plural = 'taxes'
+        ordering = ["country"]
