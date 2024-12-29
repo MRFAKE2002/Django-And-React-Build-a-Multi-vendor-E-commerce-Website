@@ -1,15 +1,65 @@
 // libraries
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 // API call functions
 import axiosAPIInstance from "../../utils/axios";
-import { useParams } from "react-router-dom";
 
 function ProductDetail() {
   const [productData, setProductData] = useState({});
+  // console.log(productData);
+
+  /*
+    ma inja mikhaim meghdar 'Quantity Color Size' ro ke 'user' baraye 'product' moshakhas mikone va 
+    mikhad be 'cart' ezafe kone ro miaim inja dakhel 'state inputsValues' gharar midim.
+    hala age 'user' bezane 'add to cart' ma miaim in data ro be 'Back-end' midim ta 'cart' besaze.
+  */
+  const [inputsValues, setInputsValues] = useState({
+    color: "no color",
+    size: "no size",
+    quantity: 1,
+  });
+  // console.log(inputsValues);
 
   const params = useParams();
   // console.log(params.slug);
+
+  const handelQuantityInputValueChange = (event) => {
+    /*
+      inja chon ma baraye 'quantity' yek 'input' darim nemishe az 'arrow functions handelColorSizeButtonsValuesClick'
+      estefade kard va majburim yek 'arrow function' dige besazim baraye 'onChange input' marbut be 'quantity'.
+    */
+    setInputsValues((prevState) => ({
+      ...prevState,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  const handelColorSizeButtonsValuesClick = (event) => {
+    /*
+      inja dakhel in 'arrow function' ma mikhaim be 'button' har kodum az 'Color Size' biaim 'onClick' bedim va 
+      in 'arrow function' ro bedim begim biad oun 'className qcs_button' ke dakhel 'button' dadim ro peida kone va 
+      oun 'tag ya node' ke dakhelesh 'className qcs_name' dare ro be ma bede ke dar inja mishe oun 'tag input' ke 
+      daghighan kenar 'tag button' vojud dare.
+      bad az peida kardan oun 'tag input' miad 'state setInputsValues' ro seda mizane ta betunim ba estefade az 
+      'name va value' oun 'input' ke peida kardim meghdar 'Color Size' dakhel 'state inputsValues' ro 
+      moshakhas konim.
+    */
+
+    const colorInput = event.target
+      /*
+        dar inja 'closest(".qcs_button")' miad dar 'DOM' komak mikone ta avalin 'tag parent' ya hamun khod 'tag' ke 
+        ba estefade az 'selector' ke dar inja manzur '.qcs_button' ast peida mikone.
+      */
+      .closest(".qcs_button")
+      .parentNode.querySelector(".qcs_name");
+    // console.log(colorInput);
+
+    setInputsValues((prevState) => ({
+      ...prevState,
+      [colorInput.name]: colorInput.value,
+    }));
+  };
 
   useEffect(() => {
     axiosAPIInstance.get(`product/${params.slug}/`).then((response) => {
@@ -17,7 +67,6 @@ function ProductDetail() {
     });
   }, []);
 
-  console.log(productData);
   return (
     <>
       <main className="mb-4 mt-4">
@@ -148,7 +197,7 @@ function ProductDetail() {
                   </div>
                   <hr className="my-5" />
                   {/* Quantity & Color & Size */}
-                  <form action="">
+                  <div>
                     <div className="row flex-column">
                       {/* Product Quantity */}
                       <div className="col-md-6 mb-4">
@@ -158,65 +207,71 @@ function ProductDetail() {
                           </label>
                           <input
                             type="number"
+                            name="quantity"
                             id="typeNumber"
                             className="form-control quantity"
                             min={1}
-                            value={1}
+                            value={inputsValues.quantity}
+                            onChange={handelQuantityInputValueChange}
                           />
                         </div>
                       </div>
-
                       {/* Product Size */}
-                      <div className="col-md-6 mb-4">
-                        <div className="form-outline">
-                          <label className="form-label" htmlFor="typeNumber">
-                            <b>Size:</b> XS
-                          </label>
+                      {productData.sizes?.length > 0 && (
+                        <div className="col-md-6 mb-4">
+                          <div className="form-outline">
+                            <label className="form-label" htmlFor="typeNumber">
+                              <b>Size:</b> <span>{inputsValues.size}</span>
+                            </label>
+                          </div>
+                          <div className="d-flex">
+                            {productData.sizes?.map((size, index) => (
+                              <div className="me-2" key={index}>
+                                <input
+                                  type="hidden"
+                                  className="qcs_name"
+                                  name="size"
+                                  value={size.name}
+                                />
+                                <button
+                                  className="btn btn-secondary qcs_button"
+                                  onClick={handelColorSizeButtonsValuesClick}
+                                >
+                                  {size.name}
+                                </button>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                        <div className="d-flex">
-                          {productData.sizes?.map((size, index) => (
-                            <div className="me-2" key={index}>
-                              <input
-                                type="hidden"
-                                className="size_name"
-                                value={size.name}
-                              />
-                              <button className="btn btn-secondary size_button">
-                                {size.name}
-                              </button>
-                            </div>
-                          ))}
+                      )}
+                      {/* Product Color */}
+                      {productData.colors?.length > 0 && (
+                        <div className="col-md-6 mb-4">
+                          <div className="form-outline">
+                            <label className="form-label" htmlFor="typeNumber">
+                              <b>Color:</b> <span>{inputsValues.color}</span>
+                            </label>
+                          </div>
+                          <div className="d-flex">
+                            {productData.colors?.map((color, index) => (
+                              <div key={index}>
+                                <input
+                                  type="hidden"
+                                  className="qcs_name"
+                                  name="color"
+                                  value={color.name}
+                                />
+                                <button
+                                  className="btn p-3 me-2 qcs_button"
+                                  style={{ background: color.color_code }}
+                                  onClick={handelColorSizeButtonsValuesClick}
+                                ></button>
+                              </div>
+                            ))}
+                          </div>
+                          <hr />
                         </div>
-                      </div>
-                      {/* Product Colors */}
-                      <div className="col-md-6 mb-4">
-                        <div className="form-outline">
-                          <label className="form-label" htmlFor="typeNumber">
-                            <b>Color:</b> <span>Red</span>
-                          </label>
-                        </div>
-                        <div className="d-flex">
-                          {productData.colors?.map((color, index) => (
-                            <div key={index}>
-                              <input
-                                type="hidden"
-                                className="color_name"
-                                value={1}
-                              />
-                              <input
-                                type="hidden"
-                                className="color_image"
-                                value={1}
-                              />
-                              <button
-                                className="btn p-3 me-2 color_button"
-                                style={{ background: color.color_code }}
-                              ></button>
-                            </div>
-                          ))}
-                        </div>
-                        <hr />
-                      </div>
+                      )}
                     </div>
                     {/* Add To Cart */}
                     <button
@@ -235,7 +290,7 @@ function ProductDetail() {
                     >
                       <i className="fas fa-heart" />
                     </button>
-                  </form>
+                  </div>
                 </div>
               </div>
             </div>
@@ -304,6 +359,7 @@ function ProductDetail() {
               </button>
             </li>
           </ul>
+          {/* Specifications & Vendor & Review & Questions Tabs Contents */}
           <div className="tab-content" id="pills-tabContent">
             {/* Specification Tab Content */}
             <div
@@ -361,7 +417,9 @@ function ProductDetail() {
                   <div className="col-md-8">
                     <div className="card-body">
                       <h5 className="card-title">{productData.vendor?.name}</h5>
-                      <p className="card-text">{productData.vendor?.description}</p>
+                      <p className="card-text">
+                        {productData.vendor?.description}
+                      </p>
                     </div>
                   </div>
                 </div>

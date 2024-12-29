@@ -2,14 +2,14 @@
 
 This is Udemy – Django And React Build a Multi-vendor E-commerce Website ###-###
 
-Step by Step Guide - Ecommerce Website using
+Step by Step Guide - E-commerce Website using
 React and Django
 SECTION ###- STORE FRONT
 
-### Create new django project
+## Create new django project
 
 ● Install latest python version or ###5
-● Create New Folder called Django React Ecommerce
+● Create New Folder called Django React E-commerce
 ● In the folder, create two new folders called, backend and frontend
 ● CD into backend and create a virtual environment - python -m venv venv
 ● Activate the virtual environment - venv\Scripts\activate or
@@ -50,16 +50,23 @@ startapp app_name
 
 ● Install Node
 ● Create new react app using vite.js (for better performance and load time)
+
 ### `yarn create vite . --template react`
+
 ● Install primary react packages/dependencies (Check package.json)
+
 ### `yarn add axios dayjs jwt-decode js-cookie react-router-dom zustand`
+
 ● Spin up the dev server - Tada!!
+
 ### `yarn dev`
 
 ### Create Django Custom User Model and Profile
 
 ● Create Custom user and profile models in core.models
+
 ### `pip install shortuuid`
+
 ● Register Model in Admin and Add filters, Displays, etc.
 ● Run Migration Commands
 ● Test Model in Django Admin Panel
