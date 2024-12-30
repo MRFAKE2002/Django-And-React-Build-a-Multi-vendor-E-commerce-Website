@@ -58,7 +58,6 @@ class CartListCreateAPIView(generics.ListCreateAPIView):
     price = payload['price']
     shipping_amount = payload['shipping_amount']
     country = payload['country']
-    country = payload['country']
     color = payload['color']
     size = payload['size']
     cart_id = payload['cart_id']

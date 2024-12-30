@@ -5,6 +5,9 @@ import { useParams } from "react-router-dom";
 // API call functions
 import axiosAPIInstance from "../../utils/axios";
 
+// plugin functions
+import GetCurrentAddress from "../plugin/UserCountry";
+
 function ProductDetail() {
   const [productData, setProductData] = useState({});
   // console.log(productData);
@@ -20,6 +23,12 @@ function ProductDetail() {
     quantity: 1,
   });
   // console.log(inputsValues);
+
+  /*
+    alan inja mikhaim 'address user' ro ba estefade az 'function GetCurrentAddress' begirim va dar in 'state' gharar bedim.
+  */
+  const currentAddress = GetCurrentAddress()
+  // console.log('address:', currentAddress);
 
   const params = useParams();
   // console.log(params.slug);
@@ -60,6 +69,16 @@ function ProductDetail() {
       [colorInput.name]: colorInput.value,
     }));
   };
+
+  const handelAddToCart = () => {
+    console.log('product id:', productData.id);
+    console.log('product price:', productData.price);
+    console.log('product shipping amount:', productData.shipping_amount);
+    console.log('quantity:', inputsValues.quantity);
+    console.log('size:', inputsValues.size);
+    console.log('color:', inputsValues.color);
+    console.log('country:', currentAddress.country);
+  }
 
   useEffect(() => {
     axiosAPIInstance.get(`product/${params.slug}/`).then((response) => {
@@ -277,6 +296,7 @@ function ProductDetail() {
                     <button
                       type="button"
                       className="btn btn-primary btn-rounded me-2"
+                      onClick={handelAddToCart}
                     >
                       <i className="fas fa-cart-plus me-2" /> Add to cart
                     </button>
