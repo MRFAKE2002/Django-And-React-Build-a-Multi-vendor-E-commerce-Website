@@ -7,6 +7,7 @@ import axiosAPIInstance from "../../utils/axios";
 
 // plugin functions
 import GetCurrentAddress from "../plugin/UserCountry";
+import CartID from "../plugin/CartID";
 
 function ProductDetail() {
   const [productData, setProductData] = useState({});
@@ -32,6 +33,10 @@ function ProductDetail() {
 
   const params = useParams();
   // console.log(params.slug);
+  
+  // ma inja ba estefade az in 'plugin' mitunim vase 'cart' biaim 'id' besazim va dar 'localStorage' zakhire konim.
+  const cart_id = CartID()
+  // console.log(cart_id);
 
   const handelQuantityInputValueChange = (event) => {
     /*
@@ -78,6 +83,7 @@ function ProductDetail() {
     console.log('size:', inputsValues.size);
     console.log('color:', inputsValues.color);
     console.log('country:', currentAddress.country);
+    console.log('cart id:', cart_id);
   }
 
   useEffect(() => {
