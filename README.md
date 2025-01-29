@@ -1,6 +1,6 @@
 # Introduction
 
-This is Udemy – Django And React Build a Multi-vendor E-commerce Website ###-###
+This is  – Django And React Build a Multi-vendor E-commerce Website ###-###
 
 Step by Step Guide - E-commerce Website using
 React and Django
