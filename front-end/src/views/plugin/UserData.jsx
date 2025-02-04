@@ -3,22 +3,42 @@ import React from "react";
 // in 'library' baraye modiriat 'cookie browser' mesl 'get set delete'  estefade mishe.
 import Cookies from "js-cookie";
 // in 'library' baraye 'tajziye ya decode' kardan 'JWT token' ke shamel 'data ramz gozari shode' ast estefade mishe.
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 function UserData() {
   // Retrieve the access token and refresh token from browser cookies and if there isn't it returns undefined.
-  let access_token = Cookies.get("access_token");
-  let refresh_token = Cookies.get("refresh_token");
+  let accessToken = Cookies.get("access_token");
+  let refreshToken = Cookies.get("refresh_token");
 
-  if (access_token && refresh_token) {
+  if (accessToken && refreshToken && refreshToken != 'undefined') {
+    
     // Both access and refresh tokens exist
     // Decode the refresh token to extract user information
-    const token = refresh_token;
+    const token = refreshToken;
+
     // inja 'data user' ro az 'token' migire va 'decode' mikone va 'object data' return mikone.
     const decoded = jwtDecode(token);
 
     // Extract the user's unique identifier (user_id) from the decoded token
     const user_id = decoded.user_id;
+
+    /*
+      console.log(decoded);
+      {
+        '
+        email: "roozbehbadalis@gmail.com"
+        exp: 1738182920
+        fullname: "roozbehbadalis"
+        iat: 1738096520
+        jti: "3352a2bbff8249199608413e694d1eac"
+        phone: null
+        token_type: "refresh"
+        user_id: 1
+        username: "roozbeh"
+        vender_id: 0
+        '
+      }
+    */
 
     // Return the decoded user data, which may include user information
     return decoded;
@@ -37,7 +57,6 @@ function UserData() {
 }
 
 export default UserData;
-
 
 /*
   cookie 4 method dare:
