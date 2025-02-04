@@ -52,15 +52,15 @@ class CartListCreateAPIView(generics.ListCreateAPIView):
     # inja oun data ro az 'Front' migirim.
     payload = request.data
 
+    cart_id = payload['cart_id']
     product_id = payload['product_id']
     user_id = payload['user_id']
+    price = payload['product_price']
+    shipping_amount = payload['product_shipping_amount']
     quantity = payload['quantity']
-    price = payload['price']
-    shipping_amount = payload['shipping_amount']
-    country = payload['country']
-    color = payload['color']
     size = payload['size']
-    cart_id = payload['cart_id']
+    color = payload['color']
+    country = payload['country']
 
     product = Product.objects.get(id=product_id)
 

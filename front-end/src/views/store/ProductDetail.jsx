@@ -8,8 +8,11 @@ import axiosAPIInstance from "../../utils/axios";
 // plugin functions
 import GetCurrentAddress from "../plugin/UserCountry";
 import CartID from "../plugin/CartID";
+import UserData from "../plugin/UserData";
 
 function ProductDetail() {
+  //! Custom States
+
   const [productData, setProductData] = useState({});
   // console.log(productData);
 
@@ -28,15 +31,21 @@ function ProductDetail() {
   /*
     alan inja mikhaim 'address user' ro ba estefade az 'function GetCurrentAddress' begirim va dar in 'state' gharar bedim.
   */
-  const currentAddress = GetCurrentAddress()
+  const currentAddress = GetCurrentAddress();
   // console.log('address:', currentAddress);
 
   const params = useParams();
   // console.log(params.slug);
-  
+
   // ma inja ba estefade az in 'plugin' mitunim vase 'cart' biaim 'id' besazim va dar 'localStorage' zakhire konim.
-  const cart_id = CartID()
-  // console.log(cart_id);
+  const cartID = CartID();
+  // console.log(cartID);
+  
+  // inja ma miaim oun 'refresh_token' age dakhel 'cookie' bud 'decode' mikone va 'data' male 'user' ro mide.
+  const userData = UserData();
+  // console.log(userData);
+
+  //! Custom Functions
 
   const handelQuantityInputValueChange = (event) => {
     /*
@@ -75,22 +84,46 @@ function ProductDetail() {
     }));
   };
 
-  const handelAddToCart = () => {
-    console.log('product id:', productData.id);
-    console.log('product price:', productData.price);
-    console.log('product shipping amount:', productData.shipping_amount);
-    console.log('quantity:', inputsValues.quantity);
-    console.log('size:', inputsValues.size);
-    console.log('color:', inputsValues.color);
-    console.log('country:', currentAddress.country);
-    console.log('cart id:', cart_id);
-  }
+  const handelAddToCart = async () => {
+
+    // console.log('cart id:', cartID);
+    // console.log('product id:', productData.id);
+    // console.log("user id", userData?.user_id);
+    // console.log('product price:', productData.price);
+    // console.log('product shipping amount:', productData.shipping_amount);
+    // console.log('quantity:', inputsValues.quantity);
+    // console.log('size:', inputsValues.size);
+    // console.log('color:', inputsValues.color);
+    // console.log('country:', currentAddress.country);
+
+    try {
+      // hala mikhaim 'data' lazem baraye 'add to cart' ro ba 'FormData' be 'backend' befrestim.
+      const formData = new FormData();
+
+      formData.append("cart_id", cartID);
+      formData.append("product_id", productData.id);
+      formData.append("user_id", userData?.user_id);
+      formData.append("product_price", productData.price);
+      formData.append("product_shipping_amount", productData.shipping_amount);
+      formData.append("quantity", inputsValues.quantity);
+      formData.append("size", inputsValues.size);
+      formData.append("color", inputsValues.color);
+      formData.append("country", currentAddress.country);
+
+      const response = await axiosAPIInstance.post("cart/", formData);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     axiosAPIInstance.get(`product/${params.slug}/`).then((response) => {
       setProductData(response.data);
     });
   }, []);
+
+  //! JSX
 
   return (
     <>
