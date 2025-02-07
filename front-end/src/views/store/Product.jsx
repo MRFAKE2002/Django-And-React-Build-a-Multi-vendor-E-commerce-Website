@@ -5,6 +5,11 @@ import { Link } from "react-router-dom";
 // API call functions
 import axiosAPIInstance from "../../utils/axios";
 
+// Plugin functions
+import GetCurrentAddress from "../plugin/UserCountry";
+import CartID from "../plugin/CartID";
+import UserData from "../plugin/UserData";
+
 function Product() {
   //! Custom States
 
@@ -18,11 +23,25 @@ function Product() {
   */
   const [productValues, setProductValues] = useState({});
 
+  /*
+    alan inja mikhaim 'address user' ro ba estefade az 'function GetCurrentAddress' begirim va dar in 'state' gharar bedim.
+  */
+  const currentAddress = GetCurrentAddress();
+  // console.log('address:', currentAddress);
+
+  // ma inja ba estefade az in 'plugin' mitunim vase 'cart' biaim 'id' besazim va dar 'localStorage' zakhire konim.
+  const cartID = CartID();
+  // console.log(cartID);
+
+  // inja ma miaim oun 'refresh_token' age dakhel 'cookie' bud 'decode' mikone va 'data' male 'user' ro mide.
+  const userData = UserData();
+  // console.log(userData);
+
   //! Custom Functions
 
   //? const handleProductValuesButtonClick = (event) => {
   //?   /*
-  //!     'logic in code' baraye zamani ke bekhaim az yek 'product' betune chand ta 'size va color' entekhab bokone
+  //?     'logic in code' baraye zamani ke bekhaim az yek 'product' betune chand ta 'size va color' entekhab bokone
   //?     dar in function ma mikhaim 'data' male 'product' ro ke 'user' mikhad be 'cart' befreste, begirim va dakhel yek 'state'
   //?     gharar bedim. hala miaim az 'button' oun 'productID va oun name va value' ro migirim ta dakhel 'state' bezarim.
   //?     inja dalil estefade az 'currentTarget' bejaye 'target' ine ke momkene dakhel 'button' yek 'tag' dige mesl 'span'
@@ -133,6 +152,38 @@ function Product() {
     }
   */
 
+  const handelAddToCart = async (product_id, price, shipping_amount) => {
+    // console.log('cart id:', cartID);
+    // console.log('product id:', product_id);
+    // console.log("user id", userData?.user_id);
+    // console.log('product price:', price);
+    // console.log('product shipping amount:', shipping_amount);
+    // console.log("quantity", productValues[product_id].quantity);
+    // console.log("size", productValues[product_id].size);
+    // console.log("color", productValues[product_id].color);
+    // console.log('country:', currentAddress.country);
+
+    try {
+      // hala mikhaim 'data' lazem baraye 'add to cart' ro ba 'FormData' be 'backend' befrestim.
+      const formData = new FormData();
+
+      formData.append("cart_id", cartID);
+      formData.append("product_id", product_id);
+      formData.append("user_id", userData?.user_id);
+      formData.append("product_price", price);
+      formData.append("product_shipping_amount", shipping_amount);
+      formData.append("quantity", productValues[product_id].quantity);
+      formData.append("size", productValues[product_id].size);
+      formData.append("color", productValues[product_id].color);
+      formData.append("country", currentAddress.country);
+
+      const response = await axiosAPIInstance.post("cart/", formData);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     axiosAPIInstance.get("products/").then((response) => {
       // ma inja miaim 'data product' ro be surat 'object' kamel dakhel 'list state products' mizarim.
@@ -227,7 +278,7 @@ function Product() {
                         >
                           <div className="d-flex flex-column">
                             <li className="p-1">
-                              <b>Size</b>: XL
+                              <b>Product Quantity</b>: {product.stock_quantity}
                             </li>
                             <div className="p-1 mt-0 pt-0 d-block">
                               <li key={index}>
@@ -237,7 +288,9 @@ function Product() {
                                   name="quantity"
                                   min="1"
                                   max={product.stock_quantity}
-                                  value={productValues[product.id]?.quantity || 1}
+                                  value={
+                                    productValues[product.id]?.quantity || 0
+                                  }
                                   className="form-control block"
                                   onChange={handleProductQuantityOnChange}
                                 />
@@ -292,6 +345,7 @@ function Product() {
                             <button
                               type="button"
                               className="btn btn-primary me-1 mb-1"
+                              onClick={() => (handelAddToCart(product.id, product.price, product.shipping_amount))}
                             >
                               <i className="fas fa-shopping-cart" />
                             </button>
