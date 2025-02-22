@@ -1,6 +1,7 @@
 // libraries
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2"
 
 // API call functions
 import axiosAPIInstance from "../../utils/axios";
@@ -9,6 +10,16 @@ import axiosAPIInstance from "../../utils/axios";
 import GetCurrentAddress from "../plugin/UserCountry";
 import CartID from "../plugin/CartID";
 import UserData from "../plugin/UserData";
+
+
+// sakht tanzimat sweetalert2
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true
+})
 
 function ProductDetail() {
   //! Custom States
@@ -112,8 +123,16 @@ function ProductDetail() {
 
       const response = await axiosAPIInstance.post("cart/", formData);
       console.log(response.data);
+      Swal.fire({
+        icon: "success",
+        title: response.data.message
+      })
     } catch (error) {
       console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: response.data.message
+      })
     }
   };
 
@@ -261,7 +280,7 @@ function ProductDetail() {
                       <div className="col-md-6 mb-4">
                         <div className="form-outline">
                           <label className="form-label" htmlFor="typeNumber">
-                            <b>Quantity</b>
+                            <b>{`Quantity ( Amount: ${productData.stock_quantity} )`}</b>
                           </label>
                           <input
                             type="number"
@@ -269,6 +288,7 @@ function ProductDetail() {
                             id="typeNumber"
                             className="form-control quantity"
                             min={1}
+                            max={productData.stock_quantity}
                             value={inputsValues.quantity}
                             onChange={handelQuantityInputValueChange}
                           />
