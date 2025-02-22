@@ -3,6 +3,17 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loginUser } from "../../utils/auth";
 import { useAuthStore } from "../../store/authStore";
+import Swal from "sweetalert2"
+
+
+// sakht tanzimat sweetalert2
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true
+})
 
 function Login() {
   // sakht yek 'state' baraye 'email va password user' ke mikhaim az 'input' begirim va be 'function login' dar 'auth.js' befrestim va 'token user' dar 'cookie' zakhire shavad.
@@ -131,18 +142,25 @@ function Login() {
     // inja user miad 'login' mikone va 'email va password' behesh midim.
     const { error } = await loginUser(userData.email, userData.password);
     if (error) {
-      alert(error);
+      Swal.fire({
+        icon: "error",
+        title: error
+      })
     } else {
       // bad az 'login user' miaim dakhel 'state' ro khali mikonim mesl ghabl.
       setUserData({ email: "", password: "" });
       // dige bad az 'login user' miaim isLoading ro 'false' mikonim.
       setIsLoading(false);
+      Toast.fire({
+        icon: "success",
+        title: "Login Successfully"
+      })
     }
     console.log(userData);
     console.log("Is user logged in?", isLoggedIn());
     console.log("Is loading ?", isLoading);
     console.log("isLoggedIn:", useAuthStore.getState().allUserData);
-    // age darkhast 'login user error' nadasht bashe va 'user login' beshe miad redirect mikone safhe home.
+    // age darkhast 'login user error' nadasht bashe va 'user login' beshe miad 'redirect' mikone safhe home.
     navigate(location.state?.preLocation || "/");
   };
 

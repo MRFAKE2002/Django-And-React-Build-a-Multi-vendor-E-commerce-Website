@@ -1,12 +1,22 @@
 // libraries
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 // User authentication functions
 import { registerUser } from "../../utils/auth";
 
 // Zustand store
 import { useAuthStore } from "../../store/authStore";
+
+// sakht tanzimat sweetalert2
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+});
 
 function Register() {
   // sakht yek 'state' baraye 'email va password user' ke mikhaim az 'input' begirim va be 'function login' dar 'auth.js' befrestim va 'token user' dar 'cookie' zakhire shavad.
@@ -144,7 +154,10 @@ function Register() {
       userData.password2
     );
     if (error) {
-      alert(error);
+      Swal.fire({
+        icon: "error",
+        title: error,
+      });
     } else {
       // bad az 'login user' miaim dakhel 'state' ro khali mikonim mesl ghabl.
       setUserData({
@@ -156,6 +169,10 @@ function Register() {
       });
       // dige bad az 'login user' miaim isLoading ro 'false' mikonim.
       setIsLoading(false);
+      Toast.fire({
+        icon: "success",
+        title: "SignUp Successfully"
+      })
     }
     console.log("Is user logged in?", isLoggedIn());
     console.log("Is loading ?", isLoading);

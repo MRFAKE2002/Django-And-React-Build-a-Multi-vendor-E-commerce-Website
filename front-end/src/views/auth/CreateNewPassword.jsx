@@ -2,6 +2,16 @@
 import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axiosAPIInstance from "../../utils/axios";
+import Swal from "sweetalert2";
+
+// sakht tanzimat sweetalert2
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+});
 
 function CreateNewPassword() {
   /*
@@ -53,11 +63,17 @@ function CreateNewPassword() {
         await axiosAPIInstance
           .post("user/password-change/", userFormData)
           .then((response) => {
-            alert("Password changed successfully.");
+            Toast.fire({
+              icon: "success",
+              title: response.data.message,
+            });
             navigate("/login");
           });
       } catch (error) {
-        alert("An error occurred while trying to change the password!");
+        Swal.fire({
+          icon: "error",
+          title: error,
+        });
       }
     }
   };

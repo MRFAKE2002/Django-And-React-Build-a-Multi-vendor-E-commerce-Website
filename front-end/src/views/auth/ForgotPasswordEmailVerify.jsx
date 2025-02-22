@@ -1,8 +1,18 @@
 // libraries
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 
 // API call Instance
 import axiosAPIInstance from "../../utils/axios";
+
+// sakht tanzimat sweetalert2
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+});
 
 function ForgotPasswordEmailVerify() {
   /*
@@ -25,10 +35,16 @@ function ForgotPasswordEmailVerify() {
       await axiosAPIInstance
         .get(`user/password-reset/${email}/`)
         .then((response) => {
-          alert("An Email Has Been Sent To You.");
+          Swal.fire({
+            icon: "success",
+            title: response.data.message,
+          });
         });
     } catch (error) {
-      alert("Email Does Not Exist!");
+      Toast.fire({
+        icon: "success",
+        title: error,
+      });
     }
   };
   return (
