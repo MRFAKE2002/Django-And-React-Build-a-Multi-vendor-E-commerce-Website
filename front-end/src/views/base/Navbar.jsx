@@ -15,9 +15,16 @@ import apiInstance from "../../utils/axios";
 function Navbar() {
   // mikhaim 'isLoggedIn' ro az state begirim vaghti 'refresh' shod dakhel 'useEffect' biad check kone 'user login' hast ya na
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const allUserData = useAuthStore((state) => state.allUserData);
+  const getUserDetails = useAuthStore((state) => state.getUserDetails);
+
+  // const [isLoggedIn, getUserDetails] = useAuthStore((state) => [
+  //   state.isLoggedIn,
+  //   state.getUserDetails,
+  // ]);
+
   console.log("is user logged in navbar?", isLoggedIn());
-  console.log("user data in zustand store?", allUserData);
+  console.log("user data in zustand store?", getUserDetails());
+
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -190,7 +197,7 @@ function Navbar() {
               </>
             )}
             <Link className="btn btn-danger" to="/cart/">
-              <i className="fas fa-shopping-cart"></i>{" "}
+              <i className="fas fa-shopping-cart"></i>
               <span id="cart-total-items"></span>
             </Link>
           </div>
