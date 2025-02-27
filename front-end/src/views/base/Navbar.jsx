@@ -170,7 +170,6 @@ function Navbar() {
             </div>
 
             {/* These are the button rendered based on users logged in status */}
-            {/* You could just un-comment it ;) */}
 
             {isLoggedIn() ? (
               <>

@@ -120,3 +120,21 @@ class CartListCreateAPIView(generics.ListCreateAPIView):
 
       return Response({"message": "Cart Updated Successfully"}, status = status.HTTP_201_CREATED)
 
+
+class CartListAPIView(generics.ListAPIView):
+  serializer_class = CartSerializer
+  permission_classes = [AllowAny]
+  
+  def get_queryset(self):
+    cart_id = self.kwargs['cart_id']
+    
+    # inja chon momkene 'user_id' nabashe baraye hamin 'get' mizanim ke 'error' nade.
+    user_id = self.kwargs.get('user_id')
+    
+    if user_id is not None:
+      queryset = Cart.objects.select_related('user').filter(user_id=user_id, cart_id=cart_id)
+    else:
+      queryset = Cart.objects.filter(cart_id=cart_id)
+
+    return queryset
+
