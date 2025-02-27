@@ -1,7 +1,55 @@
-import React from "react";
+// Libraries
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+// API functions
+import axiosAPIInstance from "../../utils/axios";
+
+// Plugin functions
+import CartID from "../plugin/CartID";
+import UserData from "../plugin/UserData";
+
 function Cart() {
+  //! Custom States
+
+  const [cart, setCart] = useState([]);
+  // console.log(`cart data`, cart );
+
+  const cartID = CartID();
+  const userData = UserData();
+
+  //! Custom Functions
+
+  // inja miaim 'function' misazim migim 'cartID va userID' ro begirim va 'data' male 'cart' ro az 'API' begirim.
+  const fetchCartData = (cartID, userID) => {
+    const url = userID
+      ? `cart-list/${cartID}/${userID}/`
+      : `cart-list/${cartID}/`;
+
+    axiosAPIInstance
+      .get(url)
+      .then((response) => {
+        setCart(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  // hala miaim oun 'function' ro ke sakhtim seda mizanim.
+  if (cartID !== null || userData !== undefined) {
+    if (userData !== undefined) {
+      useEffect(() => {
+        fetchCartData(cartID, userData?.user_id);
+      }, []);
+    } else {
+      useEffect(() => {
+        fetchCartData(cartID, null);
+      }, []);
+    }
+  }
+
+  //! JSX
 
   return (
     <>
@@ -16,125 +64,126 @@ function Cart() {
                   <div className="col-lg-8 mb-4 mb-md-0">
                     {/* Section: Product list */}
                     <section className="mb-5">
-                      {/* {cart.map((c, index) => ( */}
-                      <div className="row border-bottom mb-4">
-                        <div className="col-md-2 mb-4 mb-md-0">
-                          <div
-                            className="bg-image ripple rounded-5 mb-4 overflow-hidden d-block"
-                            data-ripple-color="light"
-                          >
-                            <Link
-                            // to={`/detail/${c?.product?.slug}`}
+                      {cart.map((cart, index) => (
+                        <div className="row border-bottom mb-4" key={index}>
+                          <div className="col-md-2 mb-4 mb-md-0">
+                            <div
+                              className="bg-image ripple rounded-5 mb-4 overflow-hidden d-block"
+                              data-ripple-color="light"
                             >
-                              <img
-                                // src={c?.product?.image}
-                                className="w-100"
-                                alt=""
-                                style={{
-                                  height: "100px",
-                                  objectFit: "cover",
-                                  borderRadius: "10px",
-                                }}
-                              />
-                            </Link>
-                            <a href="#!">
-                              <div className="hover-overlay">
-                                <div
-                                  className="mask"
+                              <Link to={`/detail/${cart?.product?.slug}`}>
+                                <img
+                                  src={cart?.product?.image}
+                                  className="w-100"
+                                  alt=""
                                   style={{
-                                    backgroundColor: "hsla(0, 0%, 98.4%, 0.2)",
+                                    height: "100px",
+                                    objectFit: "cover",
+                                    borderRadius: "10px",
                                   }}
                                 />
-                              </div>
-                            </a>
-                          </div>
-                        </div>
-                        <div className="col-md-8 mb-4 mb-md-0">
-                          <Link
-                            // to={`/detail/${c.product.slug}`}
-                            className="fw-bold text-dark mb-4"
-                          >
-                            {/* {c?.product?.title.slice(0, 20)}... */}
-                          </Link>
-                          {/* {c.size != "No Size" && ( */}
-                          <p className="mb-0">
-                            <span className="text-muted me-2">Size:</span>
-                            {/* <span>{c.size}</span> */}
-                          </p>
-                          {/* )} */}
-                          {/* {c.color != "No Color" && ( */}
-                          <p className="mb-0">
-                            <span className="text-muted me-2">Color:</span>
-                            {/* <span>{c.color}</span> */}
-                          </p>
-                          {/* )} */}
-                          <p className="mb-0">
-                            <span className="text-muted me-2">Price:</span>
-                            {/* <span>${c.product.price}</span> */}
-                          </p>
-                          <p className="mb-0">
-                            <span className="text-muted me-2">Stock Qty:</span>
-                            {/* <span>{c.product.stock_qty}</span> */}
-                          </p>
-                          <p className="mb-0">
-                            <span className="text-muted me-2">Vendor:</span>
-                            {/* <span>{c.product.vendor.name}</span> */}
-                          </p>
-                          <p className="mt-3">
-                            <button
-                              // onClick={() => handleDeleteClick(cart_id, c.id)}
-                              className="btn btn-danger "
-                            >
-                              <small>
-                                <i className="fas fa-trash me-2" />
-                                Remove
-                              </small>
-                            </button>
-                          </p>
-                        </div>
-                        <div className="col-md-2 mb-4 mb-md-0">
-                          <div className="d-flex justify-content-center align-items-center">
-                            <div className="form-outline">
-                              <input
-                                type="number"
-                                // id={`qtyInput-${c.product.id}`}
-                                className="form-control"
-                                // onChange={(e) =>
-                                //   handleQtyChange(e, c.product.id)
-                                // }
-                                // value={
-                                //   productQuantities[c.product.id] || c.qty
-                                // }
-                                min={1}
-                              />
+                              </Link>
+                              <a href="#!">
+                                <div className="hover-overlay">
+                                  <div
+                                    className="mask"
+                                    style={{
+                                      backgroundColor:
+                                        "hsla(0, 0%, 98.4%, 0.2)",
+                                    }}
+                                  />
+                                </div>
+                              </a>
                             </div>
-                            <button
-                              // onClick={() =>
-                              //   UpdateCart(
-                              //     cart_id,
-                              //     c.id,
-                              //     c.product.id,
-                              //     c.product.price,
-                              //     c.product.shipping_amount,
-                              //     c.color,
-                              //     c.size
-                              //   )
-                              // }
-                              className="ms-2 btn btn-primary"
-                            >
-                              <i className="fas fa-rotate-right"></i>
-                            </button>
                           </div>
-                          <h5 className="mb-2 mt-3 text-center">
-                            <span className="align-middle">
-                              {/* ${c.sub_total} */}
-                            </span>
-                          </h5>
+                          <div className="col-md-8 mb-4 mb-md-0">
+                            <Link
+                              to={`/detail/${cart.product.slug}`}
+                              className="fw-bold text-dark mb-4"
+                            >
+                              {/* {cart?.product?.title.slice(0, 20)}... */}
+                            </Link>
+                            {cart.size != "No Size" && (
+                              <p className="mb-0">
+                                <span className="text-muted me-2">Size:</span>
+                                <span>{cart.size}</span>
+                              </p>
+                            )}
+                            {cart.color != "No Color" && (
+                              <p className="mb-0">
+                                <span className="text-muted me-2">Color:</span>
+                                <span>{cart.color}</span>
+                              </p>
+                            )}
+                            <p className="mb-0">
+                              <span className="text-muted me-2">Price:</span>
+                              <span>${cart.product.price}</span>
+                            </p>
+                            <p className="mb-0">
+                              <span className="text-muted me-2">
+                                Stock Quantity:
+                              </span>
+                              <span>{cart.product.stock_quantity}</span>
+                            </p>
+                            <p className="mb-0">
+                              <span className="text-muted me-2">Vendor:</span>
+                              {/* <span>{c.product.vendor.name}</span> */}
+                            </p>
+                            <p className="mt-3">
+                              <button
+                                // onClick={() => handleDeleteClick(cart_id, c.id)}
+                                className="btn btn-danger "
+                              >
+                                <small>
+                                  <i className="fas fa-trash me-2" />
+                                  Remove
+                                </small>
+                              </button>
+                            </p>
+                          </div>
+                          <div className="col-md-2 mb-4 mb-md-0">
+                            <div className="d-flex justify-content-center align-items-center">
+                              <div className="form-outline">
+                                <input
+                                  type="number"
+                                  id={`quantityInput-${cart.product.id}`}
+                                  className="form-control"
+                                  // onChange={(e) =>
+                                  //   handleQtyChange(e, c.product.id)
+                                  // }
+                                  // value={
+                                  //   productQuantities[c.product.id] || c.qty
+                                  // }
+                                  min={1}
+                                />
+                              </div>
+                              <button
+                                // onClick={() =>
+                                //   UpdateCart(
+                                //     cart_id,
+                                //     c.id,
+                                //     c.product.id,
+                                //     c.product.price,
+                                //     c.product.shipping_amount,
+                                //     c.color,
+                                //     c.size
+                                //   )
+                                // }
+                                className="ms-2 btn btn-primary"
+                              >
+                                <i className="fas fa-rotate-right"></i>
+                              </button>
+                            </div>
+                            <h5 className="mb-2 mt-3 text-center">
+                              <span className="align-middle">
+                                {/* ${c.sub_total} */}
+                              </span>
+                            </h5>
+                          </div>
                         </div>
-                      </div>
-                      {/* ))} */}
+                      ))}
 
-                      {/* {cart.length < 1 && ( */}
+                      {cart.length < 1 && (
                       <>
                         <h5>Your Cart Is Empty</h5>
                         <Link to="/">
@@ -142,7 +191,7 @@ function Cart() {
                           Shopping
                         </Link>
                       </>
-                      {/* )} */}
+                      )}
                     </section>
                     <div>
                       <h5 className="mb-4 mt-4">Personal Information</h5>
