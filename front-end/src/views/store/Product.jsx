@@ -1,7 +1,7 @@
 // libraries
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Swal from "sweetalert2"
+import Swal from "sweetalert2";
 
 // API call functions
 import axiosAPIInstance from "../../utils/axios";
@@ -11,16 +11,14 @@ import GetCurrentAddress from "../plugin/UserCountry";
 import CartID from "../plugin/CartID";
 import UserData from "../plugin/UserData";
 
-
 // sakht tanzimat sweetalert2
 const Toast = Swal.mixin({
   toast: true,
   position: "top",
   showConfirmButton: false,
   timer: 2000,
-  timerProgressBar: true
-})
-
+  timerProgressBar: true,
+});
 
 function Product() {
   //! Custom States
@@ -164,7 +162,7 @@ function Product() {
     }
   */
 
-  const handelAddToCart = async (product_id, price, shipping_amount) => {
+  const handleAddToCart = async (product_id, price, shipping_amount) => {
     // console.log('cart id:', cartID);
     // console.log('product id:', product_id);
     // console.log("user id", userData?.user_id);
@@ -193,14 +191,14 @@ function Product() {
       console.log(response.data);
       Toast.fire({
         icon: "success",
-        title: response.data.message
-      })
+        title: response.data.message,
+      });
     } catch (error) {
       console.log(error);
       Toast.fire({
         icon: "error",
-        title: response.data.message
-      })
+        title: response.data.message,
+      });
     }
   };
 
@@ -320,7 +318,8 @@ function Product() {
                           {product.sizes?.length > 0 && (
                             <div className="d-flex flex-column">
                               <li className="p-1">
-                                <b>Size</b>: {productValues[product.id]?.size || "No Size" }
+                                <b>Size</b>:{" "}
+                                {productValues[product.id]?.size || "No Size"}
                               </li>
                               <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
                                 {product.sizes?.map((size, index) => (
@@ -341,7 +340,8 @@ function Product() {
                           {product.colors?.length > 0 && (
                             <div className="d-flex flex-column mt-3">
                               <li className="p-1">
-                                <b>COlor</b>: {productValues[product.id]?.color || "No Color" }
+                                <b>COlor</b>:{" "}
+                                {productValues[product.id]?.color || "No Color"}
                               </li>
                               <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
                                 {product.colors?.map((color, index) => (
@@ -365,7 +365,13 @@ function Product() {
                             <button
                               type="button"
                               className="btn btn-primary me-1 mb-1"
-                              onClick={() => (handelAddToCart(product.id, product.price, product.shipping_amount))}
+                              onClick={() =>
+                                handleAddToCart(
+                                  product.id,
+                                  product.price,
+                                  product.shipping_amount
+                                )
+                              }
                             >
                               <i className="fas fa-shopping-cart" />
                             </button>

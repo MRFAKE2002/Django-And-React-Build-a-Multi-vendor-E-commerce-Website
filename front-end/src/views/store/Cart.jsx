@@ -1,6 +1,7 @@
 // Libraries
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 // API functions
 import axiosAPIInstance from "../../utils/axios";
@@ -8,18 +9,34 @@ import axiosAPIInstance from "../../utils/axios";
 // Plugin functions
 import CartID from "../plugin/CartID";
 import UserData from "../plugin/UserData";
+import GetCurrentAddress from "../plugin/UserCountry";
+
+// sakht tanzimat sweetalert2
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+});
 
 function Cart() {
   //! Custom States
 
   const [cartData, setCartData] = useState([]);
-  console.log(`cart data`, cartData);
+  // console.log(`cart data`, cartData);
 
   const [cartDetail, setCartDetail] = useState([]);
-  console.log(`cart data`, cartDetail);
+  // console.log(`cart data`, cartDetail);
+
+  const [productQuantity, setProductQuantity] = useState("");
+  // console.log(`product quantity`, productQuantity);
 
   const cartID = CartID();
+
   const userData = UserData();
+
+  const currentAddress = GetCurrentAddress();
 
   //! Custom Functions
 
@@ -67,6 +84,65 @@ function Cart() {
       }, []);
     }
   }
+
+  const handleQuantityChange = (event, productID) => {
+    const quantityInput = event.target.value;
+
+    setProductQuantity((prevQuantity) => ({
+      ...prevQuantity,
+      [productID]: quantityInput,
+    }));
+  };
+
+  const handleUpdateCartOnClick = async (
+    product_id,
+    price,
+    shipping_amount,
+    color,
+    size
+  ) => {
+    const quantityInput = productQuantity[product_id];
+
+    try {
+      // hala mikhaim 'data' lazem baraye 'add to cart' ro ba 'FormData' be 'backend' befrestim.
+      const formData = new FormData();
+
+      formData.append("cart_id", cartID);
+      formData.append("product_id", product_id);
+      formData.append("user_id", userData?.user_id);
+      formData.append("product_price", price);
+      formData.append("product_shipping_amount", shipping_amount);
+      formData.append("quantity", quantityInput);
+      formData.append("size", size);
+      formData.append("color", color);
+      formData.append("country", currentAddress.country);
+
+      const response = await axiosAPIInstance.post("cart/", formData);
+      // console.log(response.data);
+      Toast.fire({
+        icon: "success",
+        title: response.data.message,
+      });
+      fetchCartData(cartID, userData?.user_id);
+      fetchCartDetail(cartID, userData?.user_id);
+    } catch (error) {
+      console.log(error);
+      Toast.fire({
+        icon: "error",
+        title: response.data.message,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const initialQuantities = {};
+
+    cartData.forEach((cart) => {
+      initialQuantities[cart?.product.id] = cart.quantity;
+    });
+
+    setProductQuantity(initialQuantities);
+  }, [cartData]);
 
   //! JSX
 
@@ -167,27 +243,26 @@ function Cart() {
                                   type="number"
                                   id={`quantityInput-${cart.product.id}`}
                                   className="form-control"
-                                  // onChange={(e) =>
-                                  //   handleQtyChange(e, cart.product.id)
-                                  // }
-                                  // value={
-                                  //   productQuantities[cart.product.id] || cart.qty
-                                  // }
+                                  onChange={(e) =>
+                                    handleQuantityChange(e, cart.product.id)
+                                  }
+                                  value={
+                                    productQuantity[cart.product.id] || cart.qty
+                                  }
                                   min={1}
+                                  max={cart.product.stock_quantity}
                                 />
                               </div>
                               <button
-                                // onClick={() =>
-                                //   UpdateCart(
-                                //     cart_id,
-                                //     c.id,
-                                //     c.product.id,
-                                //     c.product.price,
-                                //     c.product.shipping_amount,
-                                //     c.color,
-                                //     c.size
-                                //   )
-                                // }
+                                onClick={() =>
+                                  handleUpdateCartOnClick(
+                                    cart.product.id,
+                                    cart.product.price,
+                                    cart.product.shipping_amount,
+                                    cart.color,
+                                    cart.size
+                                  )
+                                }
                                 className="ms-2 btn btn-primary"
                               >
                                 <i className="fas fa-rotate-right"></i>

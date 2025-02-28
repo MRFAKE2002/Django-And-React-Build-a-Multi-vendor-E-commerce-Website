@@ -35,7 +35,7 @@ function CartID() {
     generateRandomString();
   } else {
     // Log the existing 'randomString' found in localStorage
-    console.log(`Random string in localStorage: ${existingRandomString}`);
+    // console.log(`Random string in localStorage: ${existingRandomString}`);
   }
 
   // Return the existing 'randomString' or 'undefined' if it doesn't exist

@@ -33,13 +33,13 @@ function CreateNewPassword() {
 
   const navigate = useNavigate();
 
-  const handelOnChangeInput = (event) =>
+  const handleOnChangeInput = (event) =>
     setNewPassword((previousData) => ({
       ...previousData,
       [event.target.name]: event.target.value,
     }));
 
-  const handelSubmitForm = async (event) => {
+  const handleSubmitForm = async (event) => {
     event.preventDefault();
 
     if (newPassword.password !== newPassword.confirmPassword) {
@@ -97,14 +97,14 @@ function CreateNewPassword() {
                         role="tabpanel"
                         aria-labelledby="tab-login"
                       >
-                        <form onSubmit={handelSubmitForm}>
+                        <form onSubmit={handleSubmitForm}>
                           {/* Password input */}
                           <div className="form-outline mb-4">
                             <label className="form-label" htmlFor="Full Name">
                               Enter New Password
                             </label>
                             <input
-                              onChange={handelOnChangeInput}
+                              onChange={handleOnChangeInput}
                               type="password"
                               id="password"
                               required
@@ -118,7 +118,7 @@ function CreateNewPassword() {
                               Confirm New Password
                             </label>
                             <input
-                              onChange={handelOnChangeInput}
+                              onChange={handleOnChangeInput}
                               type="password"
                               id="email"
                               required

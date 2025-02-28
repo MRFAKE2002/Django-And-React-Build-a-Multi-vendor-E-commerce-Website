@@ -3,8 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loginUser } from "../../utils/auth";
 import { useAuthStore } from "../../store/authStore";
-import Swal from "sweetalert2"
-
+import Swal from "sweetalert2";
 
 // sakht tanzimat sweetalert2
 const Toast = Swal.mixin({
@@ -12,8 +11,8 @@ const Toast = Swal.mixin({
   position: "top",
   showConfirmButton: false,
   timer: 2000,
-  timerProgressBar: true
-})
+  timerProgressBar: true,
+});
 
 function Login() {
   // sakht yek 'state' baraye 'email va password user' ke mikhaim az 'input' begirim va be 'function login' dar 'auth.js' befrestim va 'token user' dar 'cookie' zakhire shavad.
@@ -58,7 +57,7 @@ function Login() {
   */
   const location = useLocation();
 
-  const handelOnChangeInput = (event) => {
+  const handleOnChangeInput = (event) => {
     /*
       ma mitunim be jaye in ke vase har input yek 'onChange' motafavete besazim mitunim yek 'onChange' benevisim vali dakhelesh bayed 
       moshakhas konim ke 'value' marbut be kodum 'input' hast ke ba estefade az 'switch, case' in kar ro mikonim va baraye har input 
@@ -132,7 +131,7 @@ function Login() {
     bad az gozashtan 'token' dakhel 'cookie' miad 'data user' ro ke dar 'token' hast migire va 
     dakhel 'allUserData' dar 'store zustand' gharar mide.
   */
-  const handelFormSubmit = async (event) => {
+  const handleFormSubmit = async (event) => {
     // chon 'default form reload' kardan safhe ast pas mikhaim in 'default' anjam nashe.
     event.preventDefault();
 
@@ -144,8 +143,8 @@ function Login() {
     if (error) {
       Swal.fire({
         icon: "error",
-        title: error
-      })
+        title: error,
+      });
     } else {
       // bad az 'login user' miaim dakhel 'state' ro khali mikonim mesl ghabl.
       setUserData({ email: "", password: "" });
@@ -153,8 +152,8 @@ function Login() {
       setIsLoading(false);
       Toast.fire({
         icon: "success",
-        title: "Login Successfully"
-      })
+        title: "Login Successfully",
+      });
     }
     console.log(userData);
     console.log("Is user logged in?", isLoggedIn());
@@ -197,14 +196,14 @@ function Login() {
                         role="tabpanel"
                         aria-labelledby="tab-login"
                       >
-                        <form onSubmit={handelFormSubmit}>
+                        <form onSubmit={handleFormSubmit}>
                           {/* Email input */}
                           <div className="form-outline mb-4">
                             <label className="form-label" htmlFor="email">
                               Email Address
                             </label>
                             <input
-                              onChange={handelOnChangeInput}
+                              onChange={handleOnChangeInput}
                               type="email"
                               id="email"
                               name="email"
@@ -220,7 +219,7 @@ function Login() {
                               Password
                             </label>
                             <input
-                              onChange={handelOnChangeInput}
+                              onChange={handleOnChangeInput}
                               type="password"
                               id="password"
                               name="password"
@@ -245,7 +244,7 @@ function Login() {
                               <i className="fas fa-sign-in-alt" />
                             </button>
                           )}
-                          
+
                           <div className="text-center">
                             <p className="mt-4">
                               Don't have an account?

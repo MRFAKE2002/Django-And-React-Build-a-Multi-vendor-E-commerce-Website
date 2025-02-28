@@ -64,7 +64,7 @@ function Register() {
   */
   const location = useLocation();
 
-  const handelOnChangeInput = (event) => {
+  const handleOnChangeInput = (event) => {
     /*
       ma mitunim be jaye in ke vase har input yek 'onChange' motafavete besazim mitunim yek 'onChange' benevisim vali dakhelesh bayed 
       moshakhas konim ke 'value' marbut be kodum 'input' hast ke ba estefade az 'switch, case' in kar ro mikonim va baraye har input 
@@ -138,7 +138,7 @@ function Register() {
     bad az gozashtan 'token' dakhel 'cookie' miad 'data user' ro ke dar 'token' hast migire va 
     dakhel 'allUserData' dar 'store zustand' gharar mide.
   */
-  const handelFormSubmit = async (event) => {
+  const handleFormSubmit = async (event) => {
     // chon 'default form reload' kardan safhe ast pas mikhaim in 'default' anjam nashe.
     event.preventDefault();
 
@@ -171,8 +171,8 @@ function Register() {
       setIsLoading(false);
       Toast.fire({
         icon: "success",
-        title: "SignUp Successfully"
-      })
+        title: "SignUp Successfully",
+      });
     }
     console.log("Is user logged in?", isLoggedIn());
     console.log("Is loading ?", isLoading);
@@ -217,14 +217,14 @@ function Register() {
                         aria-labelledby="tab-login"
                       >
                         {/* Form */}
-                        <form onSubmit={handelFormSubmit}>
+                        <form onSubmit={handleFormSubmit}>
                           {/* fullname */}
                           <div className="form-outline mb-4">
                             <label className="form-label" htmlFor="Full Name">
                               Full Name
                             </label>
                             <input
-                              onChange={handelOnChangeInput}
+                              onChange={handleOnChangeInput}
                               type="text"
                               name="fullname"
                               id="username"
@@ -239,7 +239,7 @@ function Register() {
                               Email
                             </label>
                             <input
-                              onChange={handelOnChangeInput}
+                              onChange={handleOnChangeInput}
                               type="email"
                               name="email"
                               id="email"
@@ -254,7 +254,7 @@ function Register() {
                               Mobile Number
                             </label>
                             <input
-                              onChange={handelOnChangeInput}
+                              onChange={handleOnChangeInput}
                               type="text"
                               name="phone"
                               id="phone"
@@ -272,7 +272,7 @@ function Register() {
                               Password
                             </label>
                             <input
-                              onChange={handelOnChangeInput}
+                              onChange={handleOnChangeInput}
                               type="password"
                               name="password"
                               id="password"
@@ -289,7 +289,7 @@ function Register() {
                               Confirm Password
                             </label>
                             <input
-                              onChange={handelOnChangeInput}
+                              onChange={handleOnChangeInput}
                               type="password"
                               name="password2"
                               id="confirm-password"

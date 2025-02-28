@@ -24,11 +24,11 @@ function ForgotPasswordEmailVerify() {
   */
   const [email, setEmail] = useState("");
 
-  const handelOnChange = (event) => {
+  const handleOnChange = (event) => {
     setEmail(event.target.value);
   };
 
-  const handelOnclick = async (event) => {
+  const handleOnclick = async (event) => {
     try {
       // alan inja ma darim oun 'email' ro mifrestim be 'back-end' ta be 'user otp' bedim va befrestim
       // baraye 'change password'.
@@ -74,7 +74,7 @@ function ForgotPasswordEmailVerify() {
                               Email Address
                             </label>
                             <input
-                              onChange={handelOnChange}
+                              onChange={handleOnChange}
                               type="text"
                               id="email"
                               name="email"
@@ -85,7 +85,7 @@ function ForgotPasswordEmailVerify() {
                           <div className="text-center">
                             <button
                               className="btn btn-primary w-100"
-                              onClick={handelOnclick}
+                              onClick={handleOnclick}
                             >
                               Reset Password
                             </button>

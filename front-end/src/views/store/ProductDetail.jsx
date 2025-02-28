@@ -1,7 +1,7 @@
 // libraries
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Swal from "sweetalert2"
+import Swal from "sweetalert2";
 
 // API call functions
 import axiosAPIInstance from "../../utils/axios";
@@ -11,15 +11,14 @@ import GetCurrentAddress from "../plugin/UserCountry";
 import CartID from "../plugin/CartID";
 import UserData from "../plugin/UserData";
 
-
 // sakht tanzimat sweetalert2
 const Toast = Swal.mixin({
   toast: true,
   position: "top",
   showConfirmButton: false,
   timer: 2000,
-  timerProgressBar: true
-})
+  timerProgressBar: true,
+});
 
 function ProductDetail() {
   //! Custom States
@@ -51,16 +50,16 @@ function ProductDetail() {
   // ma inja ba estefade az in 'plugin' mitunim vase 'cart' biaim 'id' besazim va dar 'localStorage' zakhire konim.
   const cartID = CartID();
   // console.log(cartID);
-  
+
   // inja ma miaim oun 'refresh_token' age dakhel 'cookie' bud 'decode' mikone va 'data' male 'user' ro mide.
   const userData = UserData();
   // console.log(userData);
 
   //! Custom Functions
 
-  const handelQuantityInputValueChange = (event) => {
+  const handleQuantityInputValueChange = (event) => {
     /*
-      inja chon ma baraye 'quantity' yek 'input' darim nemishe az 'arrow functions handelColorSizeButtonsValuesClick'
+      inja chon ma baraye 'quantity' yek 'input' darim nemishe az 'arrow functions handleColorSizeButtonsValuesClick'
       estefade kard va majburim yek 'arrow function' dige besazim baraye 'onChange input' marbut be 'quantity'.
     */
     setInputsValues((prevState) => ({
@@ -69,7 +68,7 @@ function ProductDetail() {
     }));
   };
 
-  const handelColorSizeButtonsValuesClick = (event) => {
+  const handleColorSizeButtonsValuesClick = (event) => {
     /*
       inja dakhel in 'arrow function' ma mikhaim be 'button' har kodum az 'Color Size' biaim 'onClick' bedim va 
       in 'arrow function' ro bedim begim biad oun 'className qcs_button' ke dakhel 'button' dadim ro peida kone va 
@@ -95,8 +94,7 @@ function ProductDetail() {
     }));
   };
 
-  const handelAddToCart = async () => {
-
+  const handleAddToCart = async () => {
     // console.log('cart id:', cartID);
     // console.log('product id:', productData.id);
     // console.log("user id", userData?.user_id);
@@ -125,14 +123,14 @@ function ProductDetail() {
       console.log(response.data);
       Swal.fire({
         icon: "success",
-        title: response.data.message
-      })
+        title: response.data.message,
+      });
     } catch (error) {
       console.log(error);
       Swal.fire({
         icon: "error",
-        title: response.data.message
-      })
+        title: response.data.message,
+      });
     }
   };
 
@@ -290,7 +288,7 @@ function ProductDetail() {
                             min={1}
                             max={productData.stock_quantity}
                             value={inputsValues.quantity}
-                            onChange={handelQuantityInputValueChange}
+                            onChange={handleQuantityInputValueChange}
                           />
                         </div>
                       </div>
@@ -313,7 +311,7 @@ function ProductDetail() {
                                 />
                                 <button
                                   className="btn btn-secondary qcs_button"
-                                  onClick={handelColorSizeButtonsValuesClick}
+                                  onClick={handleColorSizeButtonsValuesClick}
                                 >
                                   {size.name}
                                 </button>
@@ -342,7 +340,7 @@ function ProductDetail() {
                                 <button
                                   className="btn p-3 me-2 qcs_button"
                                   style={{ background: color.color_code }}
-                                  onClick={handelColorSizeButtonsValuesClick}
+                                  onClick={handleColorSizeButtonsValuesClick}
                                 ></button>
                               </div>
                             ))}
@@ -355,7 +353,7 @@ function ProductDetail() {
                     <button
                       type="button"
                       className="btn btn-primary btn-rounded me-2"
-                      onClick={handelAddToCart}
+                      onClick={handleAddToCart}
                     >
                       <i className="fas fa-cart-plus me-2" /> Add to cart
                     </button>
