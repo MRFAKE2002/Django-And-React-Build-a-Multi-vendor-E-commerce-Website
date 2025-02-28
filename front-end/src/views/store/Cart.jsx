@@ -12,8 +12,11 @@ import UserData from "../plugin/UserData";
 function Cart() {
   //! Custom States
 
-  const [cart, setCart] = useState([]);
-  // console.log(`cart data`, cart );
+  const [cartData, setCartData] = useState([]);
+  console.log(`cart data`, cartData);
+
+  const [cartDetail, setCartDetail] = useState([]);
+  console.log(`cart data`, cartDetail);
 
   const cartID = CartID();
   const userData = UserData();
@@ -29,7 +32,21 @@ function Cart() {
     axiosAPIInstance
       .get(url)
       .then((response) => {
-        setCart(response.data);
+        setCartData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const fetchCartDetail = (cartID, userID) => {
+    const url = userID
+      ? `cart-detail/${cartID}/${userID}/`
+      : `cart-detail/${cartID}/`;
+
+    axiosAPIInstance
+      .get(url)
+      .then((response) => {
+        setCartDetail(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -41,10 +58,12 @@ function Cart() {
     if (userData !== undefined) {
       useEffect(() => {
         fetchCartData(cartID, userData?.user_id);
+        fetchCartDetail(cartID, userData?.user_id);
       }, []);
     } else {
       useEffect(() => {
         fetchCartData(cartID, null);
+        fetchCartDetail(cartID, null);
       }, []);
     }
   }
@@ -64,7 +83,7 @@ function Cart() {
                   <div className="col-lg-8 mb-4 mb-md-0">
                     {/* Section: Product list */}
                     <section className="mb-5">
-                      {cart.map((cart, index) => (
+                      {cartData?.map((cart, index) => (
                         <div className="row border-bottom mb-4" key={index}>
                           <div className="col-md-2 mb-4 mb-md-0">
                             <div
@@ -101,7 +120,7 @@ function Cart() {
                               to={`/detail/${cart.product.slug}`}
                               className="fw-bold text-dark mb-4"
                             >
-                              {/* {cart?.product?.title.slice(0, 20)}... */}
+                              {cart?.product?.name.slice(0, 20)}...
                             </Link>
                             {cart.size != "No Size" && (
                               <p className="mb-0">
@@ -149,10 +168,10 @@ function Cart() {
                                   id={`quantityInput-${cart.product.id}`}
                                   className="form-control"
                                   // onChange={(e) =>
-                                  //   handleQtyChange(e, c.product.id)
+                                  //   handleQtyChange(e, cart.product.id)
                                   // }
                                   // value={
-                                  //   productQuantities[c.product.id] || c.qty
+                                  //   productQuantities[cart.product.id] || cart.qty
                                   // }
                                   min={1}
                                 />
@@ -175,22 +194,25 @@ function Cart() {
                               </button>
                             </div>
                             <h5 className="mb-2 mt-3 text-center">
+                              <p className="align-middle small text-muted">
+                                SubTotal
+                              </p>
                               <span className="align-middle">
-                                {/* ${c.sub_total} */}
+                                ${cart.sub_total}
                               </span>
                             </h5>
                           </div>
                         </div>
                       ))}
 
-                      {cart.length < 1 && (
-                      <>
-                        <h5>Your Cart Is Empty</h5>
-                        <Link to="/">
-                          <i className="fas fa-shopping-cart"></i> Continue
-                          Shopping
-                        </Link>
-                      </>
+                      {cartData.length < 1 && (
+                        <>
+                          <h5>Your Cart Is Empty</h5>
+                          <Link to="/">
+                            <i className="fas fa-shopping-cart"></i> Continue
+                            Shopping
+                          </Link>
+                        </>
                       )}
                     </section>
                     <div>
@@ -338,33 +360,33 @@ function Cart() {
                       <h5 className="mb-3">Cart Summary</h5>
                       <div className="d-flex justify-content-between mb-3">
                         <span>Subtotal </span>
-                        {/* <span>${cartTotal.sub_total?.toFixed(2)}</span> */}
+                        <span>${cartDetail.sub_total?.toFixed(2)}</span>
                       </div>
                       <div className="d-flex justify-content-between">
                         <span>Shipping </span>
-                        {/* <span>${cartTotal.shipping?.toFixed(2)}</span> */}
+                        <span>${cartDetail.shipping?.toFixed(2)}</span>
                       </div>
                       <div className="d-flex justify-content-between">
                         <span>Tax </span>
-                        {/* <span>${cartTotal.tax?.toFixed(2)}</span> */}
+                        <span>${cartDetail.tax?.toFixed(2)}</span>
                       </div>
                       <div className="d-flex justify-content-between">
                         <span>Service Fee </span>
-                        {/* <span>${cartTotal.service_fee?.toFixed(2)}</span> */}
+                        <span>${cartDetail.service_fee?.toFixed(2)}</span>
                       </div>
                       <hr className="my-4" />
                       <div className="d-flex justify-content-between fw-bold mb-5">
                         <span>Total </span>
-                        {/* <span>${cartTotal.total?.toFixed(2)}</span> */}
+                        <span>${cartDetail.total?.toFixed(2)}</span>
                       </div>
-                      {/* {cart.length > 0 && ( */}
-                      <button
-                        // onClick={createCartOrder}
-                        className="btn btn-primary btn-rounded w-100"
-                      >
-                        Got to checkout
-                      </button>
-                      {/* )} */}
+                      {cartData.length > 0 && (
+                        <button
+                          // onClick={createCartOrder}
+                          className="btn btn-primary btn-rounded w-100"
+                        >
+                          Got to checkout
+                        </button>
+                      )}
                     </section>
                   </div>
                 </div>
