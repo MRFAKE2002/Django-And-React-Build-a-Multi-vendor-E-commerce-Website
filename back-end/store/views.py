@@ -170,7 +170,7 @@ class CartDetailAPIView(generics.RetrieveAPIView):
         if user_id is not None:
             # If 'user_id' is provided, filter the queryset by both 'cart_id' and 'user_id'
             user = User.objects.get(id=user_id)
-            queryset = Cart.objects.filter(cart_id=cart_id, user=user)
+            queryset = Cart.objects.select_related("user").filter(cart_id=cart_id, user=user)
         else:
             # If 'user_id' is not provided, filter the queryset by 'cart_id' only
             queryset = Cart.objects.filter(cart_id=cart_id)
@@ -233,3 +233,20 @@ class CartDetailAPIView(generics.RetrieveAPIView):
         # Implement your total calculation logic here for a single cart item
         # Example: Sum of sub_total, shipping, tax, and service_fee
         return cart_item.total
+
+
+class CartDeleteAPIView(generics.DestroyAPIView):
+    serializer_class = CartSerializer
+    lookup_field = "cart_id"
+
+    def get_queryset(self):
+        cart_id = self.kwargs["cart_id"]
+        item_id = self.kwargs["item_id"]
+        user_id = self.kwargs.get("user_id")
+
+        if user_id is not None:
+            cart = Cart.objects.select_related("user").filter(id=item_id, cart_id=cart_id, user_id=user_id)
+        else:
+            cart = Cart.objects.filter(id=item_id, cart_id=cart_id)
+
+        return cart
