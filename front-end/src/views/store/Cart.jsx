@@ -52,9 +52,14 @@ function Cart() {
         setCartData(response.data);
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
+        Swal.fire({
+          icon: "error",
+          title: response.data.message,
+        });
       });
   };
+
   const fetchCartDetail = (cartID, userID) => {
     const url = userID
       ? `cart-detail/${cartID}/${userID}/`
@@ -66,7 +71,11 @@ function Cart() {
         setCartDetail(response.data);
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
+        Swal.fire({
+          icon: "error",
+          title: response.data.message,
+        });
       });
   };
 
@@ -126,13 +135,40 @@ function Cart() {
       fetchCartData(cartID, userData?.user_id);
       fetchCartDetail(cartID, userData?.user_id);
     } catch (error) {
-      console.log(error);
-      Toast.fire({
+      // console.log(error);
+      Swal.fire({
         icon: "error",
         title: response.data.message,
       });
     }
   };
+
+  const handleDeleteCartItemClick = async (itemID) => {
+    const url = UserData?.user_id
+      ? `cart-delete/${cartID}/${itemID}/${UserData?.user_id}/`
+      : `cart-delete/${cartID}/${itemID}/`;
+
+    try {
+      await axiosAPIInstance.delete(url);
+
+      Toast.fire({
+        icon: "success",
+        title: "Item Removed From Cart Successfully",
+      });
+
+      fetchCartData(cartID, userData?.user_id);
+      fetchCartDetail(cartID, userData?.user_id);
+    
+    } catch (error) {
+      // console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: response.data.message,
+      });
+    }
+  };
+
+  //! useEffect
 
   useEffect(() => {
     const initialQuantities = {};
@@ -226,7 +262,9 @@ function Cart() {
                             </p>
                             <p className="mt-3">
                               <button
-                                // onClick={() => handleDeleteClick(cart_id, c.id)}
+                                onClick={() =>
+                                  handleDeleteCartItemClick(cart.id)
+                                }
                                 className="btn btn-danger "
                               >
                                 <small>
@@ -243,8 +281,8 @@ function Cart() {
                                   type="number"
                                   id={`quantityInput-${cart.product.id}`}
                                   className="form-control"
-                                  onChange={(e) =>
-                                    handleQuantityChange(e, cart.product.id)
+                                  onChange={(event) =>
+                                    handleQuantityChange(event, cart.product.id)
                                   }
                                   value={
                                     productQuantity[cart.product.id] || cart.qty
