@@ -7,8 +7,13 @@ from rest_framework.response import Response
 from decimal import Decimal
 
 # My apps
-from .models import Category, Product, Cart, Tax
-from .serializers import CategorySerializer, ProductSerializer, CartSerializer
+from .models import Category, Order, OrderItem, Product, Cart, Tax
+from .serializers import (
+    CategorySerializer,
+    OrderSerializer,
+    ProductSerializer,
+    CartSerializer,
+)
 from userauths.models import User
 
 
@@ -170,7 +175,9 @@ class CartDetailAPIView(generics.RetrieveAPIView):
         if user_id is not None:
             # If 'user_id' is provided, filter the queryset by both 'cart_id' and 'user_id'
             user = User.objects.get(id=user_id)
-            queryset = Cart.objects.select_related("user").filter(cart_id=cart_id, user=user)
+            queryset = Cart.objects.select_related("user").filter(
+                cart_id=cart_id, user=user
+            )
         else:
             # If 'user_id' is not provided, filter the queryset by 'cart_id' only
             queryset = Cart.objects.filter(cart_id=cart_id)
@@ -245,8 +252,93 @@ class CartDeleteAPIView(generics.DestroyAPIView):
         user_id = self.kwargs.get("user_id")
 
         if user_id is not None:
-            cart = Cart.objects.select_related("user").filter(id=item_id, cart_id=cart_id, user_id=user_id)
+            cart = Cart.objects.select_related("user").filter(
+                id=item_id, cart_id=cart_id, user_id=user_id
+            )
         else:
             cart = Cart.objects.filter(id=item_id, cart_id=cart_id)
 
         return cart
+
+
+class CreateOrderAPIView(generics.CreateAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [AllowAny]
+    queryset = Order.objects.all()
+
+    def create(self, request):
+        payload = request.data
+
+        cart_id = payload["cart_id"]
+        user_id = payload["user_id"]
+        full_name = payload["full_name"]
+        email = payload["email"]
+        mobile = payload["mobile"]
+        address = payload["address"]
+        city = payload["city"]
+        state = payload["state"]
+        country = payload["country"]
+
+        if user_id == 0:
+            user = None
+        else:
+            user = User.objects.get(id=user_id)
+
+        cart_items = Cart.objects.select_related("product").filter(cart_id=cart_id)
+
+        total_shipping_amount = Decimal(0.00)
+        total_tax_fee = Decimal(0.00)
+        total_service_fee = Decimal(0.00)
+        total_sub_total = Decimal(0.00)
+        total_initial_total = Decimal(0.00)
+        total_total = Decimal(0.00)
+
+        new_order = Order.objects.create(
+            full_name=full_name,
+            email=email,
+            mobile=mobile,
+            address=address,
+            city=city,
+            state=state,
+            country=country,
+        )
+
+        for cart in cart_items:
+            OrderItem.objects.create(
+                order=new_order,
+                product=cart.product,
+                vendor=cart.product.vendor,
+                quantity=cart.quantity,
+                color=cart.color,
+                size=cart.size,
+                price=cart.price,
+                sub_total=cart.sub_total,
+                shipping_amount=cart.shipping_amount,
+                service_fee=cart.service_fee,
+                tax_fee=cart.tax_fee,
+                total=cart.total,
+                initial_total=cart.total,
+            )
+
+            total_shipping_amount += Decimal(cart.shipping_amount)
+            total_tax_fee += Decimal(cart.tax_fee)
+            total_service_fee += Decimal(cart.service_fee)
+            total_sub_total += Decimal(cart.sub_total)
+            total_initial_total += Decimal(cart.total)
+            total_total += Decimal(cart.total)
+
+            new_order.vendor.add(cart.product.vendor)
+
+            new_order.sub_total = total_sub_total
+            new_order.shipping_amount = total_shipping_amount
+            new_order.tax_fee = total_tax_fee
+            new_order.service_fee = total_service_fee
+            new_order.initial_total = total_initial_total
+            new_order.total = total_total
+
+            new_order.save()
+
+        return Response(
+            {"message": "Order created successfully", "order_oid": new_order.oid},
+            status=status.HTTP_201_CREATED,
+        )
