@@ -1,6 +1,6 @@
 // Libraries
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 // API functions
@@ -36,11 +36,16 @@ function Cart() {
     useState({});
   console.log(orderPersonalInformationForm);
 
+
+  //! Custom Hooks
+
   const cartID = CartID();
 
   const userData = UserData();
 
   const currentAddress = GetCurrentAddress();
+
+  const navigator = useNavigate()
 
   //! Custom Functions
 
@@ -207,7 +212,8 @@ function Cart() {
       formData.append("user_id", userData ? userData?.user_id : 0);
 
       const response = await axiosAPIInstance.post("create-order/", formData);
-      console.log(response);
+      // console.log(response);
+      navigator(`/checkout/${response.data.order_oid}`)
     }
   };
 
