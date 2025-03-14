@@ -15,6 +15,7 @@ import CreateNewPassword from "./views/auth/CreateNewPassword";
 import Product from "./views/store/Product";
 import ProductDetail from "./views/store/ProductDetail";
 import Cart from "./views/store/Cart";
+import Checkout from "./views/store/checkout";
 
 // Base components
 import Navbar from "./views/base/Navbar";
@@ -45,6 +46,7 @@ function App() {
           <Route path="/" element={<Product />} />
           <Route path="/detail/:slug/" element={<ProductDetail />} />
           <Route path="/cart/" element={<Cart />} />
+          <Route path="/checkout/:order_oid/" element={<Checkout />} />
         </Routes>
       </MainWrapper>
       <Footer />
