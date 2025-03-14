@@ -193,22 +193,22 @@ function Cart() {
         title: "Missing Fields!",
         text: "All fields are required before checkout!",
       });
+    } else {
+      const formData = new FormData();
+
+      formData.append("full_name", orderPersonalInformationForm?.fullName);
+      formData.append("email", orderPersonalInformationForm?.email);
+      formData.append("mobile", orderPersonalInformationForm?.mobile);
+      formData.append("address", orderPersonalInformationForm?.address);
+      formData.append("city", orderPersonalInformationForm?.city);
+      formData.append("country", orderPersonalInformationForm?.country);
+      formData.append("state", orderPersonalInformationForm?.state);
+      formData.append("cart_id", cartID);
+      formData.append("user_id", userData ? userData?.user_id : 0);
+
+      const response = await axiosAPIInstance.post("create-order/", formData);
+      console.log(response);
     }
-
-    const formData = new FormData();
-
-    formData.append("full_name", orderPersonalInformationForm?.fullName);
-    formData.append("email", orderPersonalInformationForm?.email);
-    formData.append("mobile", orderPersonalInformationForm?.mobile);
-    formData.append("address", orderPersonalInformationForm?.address);
-    formData.append("city", orderPersonalInformationForm?.city);
-    formData.append("country", orderPersonalInformationForm?.country);
-    formData.append("state", orderPersonalInformationForm?.state);
-    formData.append("cart_id", cartID);
-    formData.append("user_id", userData ? userData?.user_id : 0);
-
-    const response = await axiosAPIInstance.post("create-order/", formData);
-    console.log(response);
   };
 
   //! useEffect
