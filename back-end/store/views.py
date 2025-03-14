@@ -294,7 +294,7 @@ class CreateOrderAPIView(generics.CreateAPIView):
         total_total = Decimal(0.00)
 
         new_order = Order.objects.create(
-            buyer= user,
+            buyer=user,
             payment_status="processing",
             full_name=full_name,
             email=email,
@@ -329,7 +329,6 @@ class CreateOrderAPIView(generics.CreateAPIView):
             total_initial_total += Decimal(cart.total or 0.00)
             total_total += Decimal(cart.total or 0.00)
 
-
             new_order.vendor.add(cart.product.vendor)
 
         new_order.sub_total = total_sub_total
@@ -345,3 +344,12 @@ class CreateOrderAPIView(generics.CreateAPIView):
             {"message": "Order created successfully", "order_oid": new_order.oid},
             status=status.HTTP_201_CREATED,
         )
+
+
+class OrderCheckoutAPIView(generics.RetrieveAPIView):
+    serializer_class = OrderSerializer
+    lookup_field = "order_oid"
+
+    def get_object(self, request, *args, **kwargs):
+        order_oid = self.kwargs["order_oid"]
+        return Order.objects.get(oid=order_oid)
