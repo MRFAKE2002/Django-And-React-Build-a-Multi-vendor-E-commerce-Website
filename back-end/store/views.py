@@ -146,14 +146,37 @@ class CartListAPIView(generics.ListAPIView):
         # inja chon momkene 'user_id' nabashe baraye hamin 'get' mizanim ke 'error' nade.
         user_id = self.kwargs.get("user_id")
 
-        if user_id is not None:
-            queryset = Cart.objects.select_related("user").filter(
-                user_id=user_id, cart_id=cart_id
-            )
-        else:
-            queryset = Cart.objects.filter(cart_id=cart_id)
+        """
+            ma inja baraye inke bebinim age 'user' bashe bia 'Cart' ro ba dadan 'user' peida kon 
+            agar ham 'user' nabud ke faghat az 'cart_id' estefade kon.
+            
+            hala baraye neveshtan in '3 model' mokhtalef darim :
+            
+            1- inja ke oumadim ye 'if else' sade zadim.
+            2- inja mitunim oun shive 'if else' ro be surat 'Ternary Expression ya shart 3 khat' benevisim.
+            3- inja ham miaim migim momkene 'user_id' meghdar 'None' nabashe vali dakhel 'DataBase' hamchin 'user' nabashe
+            hala miaim az '** unpacking' estefade mikonim.
+            
+        """
 
-        return queryset
+        # ? if user_id is not None:
+        # ?     queryset = Cart.objects.select_related("user").filter(
+        # ?         user_id=user_id, cart_id=cart_id
+        # ?     )
+        # ? else:
+        # ?     queryset = Cart.objects.filter(cart_id=cart_id)
+
+        # ? return queryset
+
+        # ? return (
+        # ?     Cart.objects.select_related("user").filter(user_id=user_id, cart_id=cart_id)
+        # ?     if user_id is not None
+        # ?     else Cart.objects.filter(cart_id=cart_id)
+        # ? )
+
+        return Cart.objects.select_related("user").filter(
+            cart_id=cart_id, **({"user_id": user_id} if user_id is not None else {})
+        )
 
 
 class CartDetailAPIView(generics.RetrieveAPIView):
@@ -168,21 +191,34 @@ class CartDetailAPIView(generics.RetrieveAPIView):
     def get_queryset(self):
         # Get 'cart_id' and 'user_id' from the URL kwargs
         cart_id = self.kwargs["cart_id"]
-        user_id = self.kwargs.get(
-            "user_id"
-        )  # Use get() to handle cases where 'user_id' is not present
 
-        if user_id is not None:
-            # If 'user_id' is provided, filter the queryset by both 'cart_id' and 'user_id'
-            user = User.objects.get(id=user_id)
-            queryset = Cart.objects.select_related("user").filter(
-                cart_id=cart_id, user=user
-            )
-        else:
+        # Use get() to handle cases where 'user_id' is not present
+        user_id = self.kwargs.get("user_id")
+
+        # ? if user_id is not None:
+        # ?     # If 'user_id' is provided, filter the queryset by both 'cart_id' and 'user_id'
+        # ?     user = User.objects.get(id=user_id)
+        # ?     queryset = Cart.objects.select_related("user").filter(
+        # ?         cart_id=cart_id, user=user
+        # ?     )
+        # ? else:
+        # ?     # If 'user_id' is not provided, filter the queryset by 'cart_id' only
+        # ?     queryset = Cart.objects.filter(cart_id=cart_id)
+
+        # ? return queryset
+
+        if user_id is None:
             # If 'user_id' is not provided, filter the queryset by 'cart_id' only
-            queryset = Cart.objects.filter(cart_id=cart_id)
+            return Cart.objects.filter(cart_id=cart_id)
 
-        return queryset
+        # If 'user_id' is provided, filter the queryset by both 'cart_id' and 'user_id'
+        user = User.objects.filter(id=user_id).first()
+
+        return (
+            Cart.objects.select_related("user").filter(cart_id=cart_id, user=user)
+            if user
+            else Cart.objects.none()
+        )
 
     def get(self, request, *args, **kwargs):
         # Get the queryset of cart items based on 'cart_id' and 'user_id' (if provided)
@@ -251,14 +287,22 @@ class CartDeleteAPIView(generics.DestroyAPIView):
         item_id = self.kwargs["item_id"]
         user_id = self.kwargs.get("user_id")
 
-        if user_id is not None:
-            cart = Cart.objects.select_related("user").filter(
+        # ? if user_id is not None:
+        # ?     cart = Cart.objects.select_related("user").filter(
+        # ?         id=item_id, cart_id=cart_id, user_id=user_id
+        # ?     )
+        # ? else:
+        # ?     cart = Cart.objects.filter(id=item_id, cart_id=cart_id)
+
+        # ? return cart
+
+        return (
+            Cart.objects.select_related("user").filter(
                 id=item_id, cart_id=cart_id, user_id=user_id
             )
-        else:
-            cart = Cart.objects.filter(id=item_id, cart_id=cart_id)
-
-        return cart
+            if user_id is not None
+            else Cart.objects.filter(id=item_id, cart_id=cart_id)
+        )
 
 
 class CreateOrderAPIView(generics.CreateAPIView):
@@ -279,10 +323,11 @@ class CreateOrderAPIView(generics.CreateAPIView):
         state = payload["state"]
         country = payload["country"]
 
-        if user_id == 0:
-            user = None
-        else:
-            user = User.objects.filter(id=user_id).first()
+        # ? if user_id == 0:
+        # ?     user = None
+        # ? else:
+        # ?     user = User.objects.filter(id=user_id).first()
+        user = None if user_id == 0 else User.objects.filter(id=user_id).first()
 
         cart_items = Cart.objects.select_related("product").filter(cart_id=cart_id)
 
