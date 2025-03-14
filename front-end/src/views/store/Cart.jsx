@@ -32,6 +32,10 @@ function Cart() {
   const [productQuantity, setProductQuantity] = useState("");
   // console.log(`product quantity`, productQuantity);
 
+  const [orderPersonalInformationForm, setOrderPersonalInformationForm] =
+    useState({});
+  console.log(orderPersonalInformationForm);
+
   const cartID = CartID();
 
   const userData = UserData();
@@ -158,7 +162,6 @@ function Cart() {
 
       fetchCartData(cartID, userData?.user_id);
       fetchCartDetail(cartID, userData?.user_id);
-    
     } catch (error) {
       // console.log(error);
       Swal.fire({
@@ -166,6 +169,46 @@ function Cart() {
         title: response.data.message,
       });
     }
+  };
+
+  const handleOrderPersonalInformationFormOnChange = (event) => {
+    setOrderPersonalInformationForm((prevInformation) => ({
+      ...prevInformation,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  const handleCreateOrder = async () => {
+    if (
+      !orderPersonalInformationForm?.fullName ||
+      !orderPersonalInformationForm?.mobile ||
+      !orderPersonalInformationForm?.email ||
+      !orderPersonalInformationForm?.address ||
+      !orderPersonalInformationForm?.city ||
+      !orderPersonalInformationForm?.state ||
+      !orderPersonalInformationForm?.country
+    ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Fields!",
+        text: "All fields are required before checkout!",
+      });
+    }
+
+    const formData = new FormData();
+
+    formData.append("full_name", orderPersonalInformationForm?.fullName);
+    formData.append("email", orderPersonalInformationForm?.email);
+    formData.append("mobile", orderPersonalInformationForm?.mobile);
+    formData.append("address", orderPersonalInformationForm?.address);
+    formData.append("city", orderPersonalInformationForm?.city);
+    formData.append("country", orderPersonalInformationForm?.country);
+    formData.append("state", orderPersonalInformationForm?.state);
+    formData.append("cart_id", cartID);
+    formData.append("user_id", userData ? userData?.user_id : 0);
+
+    const response = await axiosAPIInstance.post("create-order/", formData);
+    console.log(response);
   };
 
   //! useEffect
@@ -258,7 +301,7 @@ function Cart() {
                             </p>
                             <p className="mb-0">
                               <span className="text-muted me-2">Vendor:</span>
-                              {/* <span>{c.product.vendor.name}</span> */}
+                              <span>{cart.product.vendor.name}</span>
                             </p>
                             <p className="mt-3">
                               <button
@@ -285,7 +328,8 @@ function Cart() {
                                     handleQuantityChange(event, cart.product.id)
                                   }
                                   value={
-                                    productQuantity[cart.product.id] || cart.qty
+                                    productQuantity[cart.product.id] ||
+                                    cart.quantity
                                   }
                                   min={1}
                                   max={cart.product.stock_quantity}
@@ -317,156 +361,187 @@ function Cart() {
                           </div>
                         </div>
                       ))}
-
-                      {cartData.length < 1 && (
-                        <>
-                          <h5>Your Cart Is Empty</h5>
-                          <Link to="/">
-                            <i className="fas fa-shopping-cart"></i> Continue
-                            Shopping
-                          </Link>
-                        </>
-                      )}
                     </section>
-                    <div>
-                      <h5 className="mb-4 mt-4">Personal Information</h5>
-                      {/* 2 column grid layout with text inputs for the first and last names */}
-                      <div className="row mb-4">
-                        <div className="col">
-                          <div className="form-outline">
-                            <label className="form-label" htmlFor="full_name">
-                              <i className="fas fa-user"></i> Full Name
-                            </label>
-                            <input
-                              type="text"
-                              id=""
-                              name="fullName"
-                              className="form-control"
-                              // onChange={handleChange}
-                              // value={fullName}
-                            />
+                    {cartData.length < 1 ? (
+                      <>
+                        <h5>Your Cart Is Empty</h5>
+                        <Link to="/">
+                          <i className="fas fa-shopping-cart"></i> Continue
+                          Shopping
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        {/* Personal Information */}
+                        <div>
+                          <h5 className="mb-4 mt-4">Personal Information</h5>
+                          {/* 2 column grid layout with text inputs for the first and last names */}
+                          <div className="row mb-4">
+                            <div className="col">
+                              <div className="form-outline">
+                                <label
+                                  className="form-label"
+                                  htmlFor="full_name"
+                                >
+                                  <i className="fas fa-user"></i> Full Name
+                                </label>
+                                <input
+                                  type="text"
+                                  id=""
+                                  name="fullName"
+                                  onChange={
+                                    handleOrderPersonalInformationFormOnChange
+                                  }
+                                  value={
+                                    orderPersonalInformationForm?.fullName ?? ""
+                                  }
+                                  className="form-control"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="row mb-4">
+                            <div className="col">
+                              <div className="form-outline">
+                                <label
+                                  className="form-label"
+                                  htmlFor="form6Example1"
+                                >
+                                  <i className="fas fa-envelope"></i> Email
+                                </label>
+                                <input
+                                  type="text"
+                                  id="form6Example1"
+                                  className="form-control"
+                                  name="email"
+                                  onChange={
+                                    handleOrderPersonalInformationFormOnChange
+                                  }
+                                  value={
+                                    orderPersonalInformationForm?.email ?? ""
+                                  }
+                                />
+                              </div>
+                            </div>
+                            <div className="col">
+                              <div className="form-outline">
+                                <label
+                                  className="form-label"
+                                  htmlFor="form6Example1"
+                                >
+                                  <i className="fas fa-phone"></i> Mobile
+                                </label>
+                                <input
+                                  type="text"
+                                  id="form6Example1"
+                                  className="form-control"
+                                  name="mobile"
+                                  onChange={
+                                    handleOrderPersonalInformationFormOnChange
+                                  }
+                                  value={
+                                    orderPersonalInformationForm?.mobile ?? ""
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <h5 className="mb-1 mt-4">Shipping address</h5>
+                          <div className="row mb-4">
+                            <div className="col-lg-6 mt-3">
+                              <div className="form-outline">
+                                <label
+                                  className="form-label"
+                                  htmlFor="form6Example1"
+                                >
+                                  Address
+                                </label>
+                                <input
+                                  type="text"
+                                  id="form6Example1"
+                                  className="form-control"
+                                  name="address"
+                                  onChange={
+                                    handleOrderPersonalInformationFormOnChange
+                                  }
+                                  value={
+                                    orderPersonalInformationForm?.address ?? ""
+                                  }
+                                />
+                              </div>
+                            </div>
+                            <div className="col-lg-6 mt-3">
+                              <div className="form-outline">
+                                <label
+                                  className="form-label"
+                                  htmlFor="form6Example1"
+                                >
+                                  City
+                                </label>
+                                <input
+                                  type="text"
+                                  id="form6Example1"
+                                  className="form-control"
+                                  name="city"
+                                  onChange={
+                                    handleOrderPersonalInformationFormOnChange
+                                  }
+                                  value={
+                                    orderPersonalInformationForm?.city ?? ""
+                                  }
+                                />
+                              </div>
+                            </div>
+                            <div className="col-lg-6 mt-3">
+                              <div className="form-outline">
+                                <label
+                                  className="form-label"
+                                  htmlFor="form6Example1"
+                                >
+                                  State
+                                </label>
+                                <input
+                                  type="text"
+                                  id="form6Example1"
+                                  className="form-control"
+                                  name="state"
+                                  onChange={
+                                    handleOrderPersonalInformationFormOnChange
+                                  }
+                                  value={
+                                    orderPersonalInformationForm?.state ?? ""
+                                  }
+                                />
+                              </div>
+                            </div>
+                            <div className="col-lg-6 mt-3">
+                              <div className="form-outline">
+                                <label
+                                  className="form-label"
+                                  htmlFor="form6Example1"
+                                >
+                                  Country
+                                </label>
+                                <input
+                                  type="text"
+                                  id="form6Example1"
+                                  className="form-control"
+                                  name="country"
+                                  onChange={
+                                    handleOrderPersonalInformationFormOnChange
+                                  }
+                                  value={
+                                    orderPersonalInformationForm?.country ?? ""
+                                  }
+                                />
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-
-                      <div className="row mb-4">
-                        <div className="col">
-                          <div className="form-outline">
-                            <label
-                              className="form-label"
-                              htmlFor="form6Example1"
-                            >
-                              <i className="fas fa-envelope"></i> Email
-                            </label>
-                            <input
-                              type="text"
-                              id="form6Example1"
-                              className="form-control"
-                              name="email"
-                              // onChange={handleChange}
-                              // value={email}
-                            />
-                          </div>
-                        </div>
-                        <div className="col">
-                          <div className="form-outline">
-                            <label
-                              className="form-label"
-                              htmlFor="form6Example1"
-                            >
-                              <i className="fas fa-phone"></i> Mobile
-                            </label>
-                            <input
-                              type="text"
-                              id="form6Example1"
-                              className="form-control"
-                              name="mobile"
-                              // onChange={handleChange}
-                              // value={mobile}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <h5 className="mb-1 mt-4">Shipping address</h5>
-
-                      <div className="row mb-4">
-                        <div className="col-lg-6 mt-3">
-                          <div className="form-outline">
-                            <label
-                              className="form-label"
-                              htmlFor="form6Example1"
-                            >
-                              Address
-                            </label>
-                            <input
-                              type="text"
-                              id="form6Example1"
-                              className="form-control"
-                              name="address"
-                              // onChange={handleChange}
-                              // value={address}
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-6 mt-3">
-                          <div className="form-outline">
-                            <label
-                              className="form-label"
-                              htmlFor="form6Example1"
-                            >
-                              City
-                            </label>
-                            <input
-                              type="text"
-                              id="form6Example1"
-                              className="form-control"
-                              name="city"
-                              // onChange={handleChange}
-                              // value={city}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="col-lg-6 mt-3">
-                          <div className="form-outline">
-                            <label
-                              className="form-label"
-                              htmlFor="form6Example1"
-                            >
-                              State
-                            </label>
-                            <input
-                              type="text"
-                              id="form6Example1"
-                              className="form-control"
-                              name="state"
-                              // onChange={handleChange}
-                              // value={state}
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-6 mt-3">
-                          <div className="form-outline">
-                            <label
-                              className="form-label"
-                              htmlFor="form6Example1"
-                            >
-                              Country
-                            </label>
-                            <input
-                              type="text"
-                              id="form6Example1"
-                              className="form-control"
-                              name="country"
-                              // onChange={handleChange}
-                              // value={country}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                      </>
+                    )}
                   </div>
+                  {/* Cart Details */}
                   <div className="col-lg-4 mb-4 mb-md-0">
                     {/* Section: Summary */}
                     <section className="shadow-4 p-4 rounded-5 mb-4">
@@ -494,7 +569,7 @@ function Cart() {
                       </div>
                       {cartData.length > 0 && (
                         <button
-                          // onClick={createCartOrder}
+                          onClick={handleCreateOrder}
                           className="btn btn-primary btn-rounded w-100"
                         >
                           Got to checkout
