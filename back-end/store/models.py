@@ -1,4 +1,5 @@
 # Django
+from decimal import Decimal
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
@@ -281,19 +282,19 @@ class Order(models.Model):
     )
 
     # Total price of the order
-    sub_total = models.DecimalField(max_digits=12, decimal_places=2)
+    sub_total = models.DecimalField(default=Decimal(0.00),max_digits=12, decimal_places=2)
 
     # Shipping cost
-    shipping_amount = models.DecimalField(max_digits=12, decimal_places=2)
+    shipping_amount = models.DecimalField(default=Decimal(0.00),max_digits=12, decimal_places=2)
 
     # VAT (Value Added Tax) cost
-    tax_fee = models.DecimalField(max_digits=12, decimal_places=2)
+    tax_fee = models.DecimalField(default=Decimal(0.00),max_digits=12, decimal_places=2)
 
     # Service fee cost
-    service_fee = models.DecimalField(max_digits=12, decimal_places=2)
+    service_fee = models.DecimalField(default=Decimal(0.00),max_digits=12, decimal_places=2)
 
     # Total cost of the order
-    total = models.DecimalField(max_digits=12, decimal_places=2)
+    total = models.DecimalField(default=Decimal(0.00),max_digits=12, decimal_places=2)
 
     # Order status attributes
     payment_status = models.CharField(
@@ -306,12 +307,14 @@ class Order(models.Model):
 
     # Discounts
     initial_total = models.DecimalField(
+        default=Decimal(0.00),
         max_digits=12,
         decimal_places=2,
         help_text="The original total before discounts",
     )
 
     saved = models.DecimalField(
+        default=Decimal(0.00),
         max_digits=12,
         decimal_places=2,
         null=True,
