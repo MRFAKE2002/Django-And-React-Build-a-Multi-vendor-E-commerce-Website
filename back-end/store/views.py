@@ -395,6 +395,6 @@ class OrderCheckoutAPIView(generics.RetrieveAPIView):
     serializer_class = OrderSerializer
     lookup_field = "order_oid"
 
-    def get_object(self, request, *args, **kwargs):
+    def get_object(self):
         order_oid = self.kwargs["order_oid"]
-        return Order.objects.get(oid=order_oid)
+        return Order.objects.prefetch_related("order_items").select_related("buyer").get(oid=order_oid)
