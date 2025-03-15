@@ -21,6 +21,7 @@ const useAuthStore = create((set, get) => ({
   getUserDetails: () => ({
     user_id: get().allUserData?.user_id || null,
     usernames: get().allUserData?.username || null,
+    vendor_id: get().allUserData?.vendor_id || null,
   }),
 
   // in 'function' baraye 'update' meghdar 'allUserData' az 'set' estefade mikonad. zamani ke bekhaim data user update beshe az in function estefade mikonim.
@@ -30,7 +31,6 @@ const useAuthStore = create((set, get) => ({
 
   isLoggedIn: () => get().allUserData !== null,
 }));
-console.log("isLoggedIn:", useAuthStore.getState().allUserData);
 
 // in khat mige age mohit 'develope' bud az 'mountStoreDevtool' estefade kon; ke be ma vaziat 'store' ro neshun mide
 if (import.meta.env.DEV) {

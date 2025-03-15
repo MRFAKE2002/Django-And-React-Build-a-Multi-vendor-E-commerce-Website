@@ -1,3 +1,6 @@
+// libraries
+import Swal from "sweetalert2";
+
 // baraye modiriat ehraz hoviat 'user login register' estefade mishe.
 import { useAuthStore } from "../store/authStore";
 
@@ -9,6 +12,16 @@ import { jwtDecode } from "jwt-decode";
 
 // Importing the Cookies library to handle browser cookies
 import Cookies from "js-cookie";
+
+// sakht tanzimat sweetalert2
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+});
+
 
 // Function to handle user registration
 export const registerUser = async (
@@ -32,10 +45,10 @@ export const registerUser = async (
     await loginUser(email, password);
 
     // Displaying a success toast notification
-    // Toast.fire({
-    //     icon: 'success',
-    //     title: 'Signed Up Successfully'
-    // });
+    Toast.fire({
+        icon: 'success',
+        title: 'Signed Up Successfully'
+    });
 
     // Returning data and error information
     return { data:response.data, error: null };
@@ -71,10 +84,10 @@ export const loginUser = async (email, password) => {
       setTokenInCookie(response.data.access, response.data.refresh);
 
       // Displaying a success toast notification
-      // Toast.fire({
-      //     icon: 'success',
-      //     title: 'Signed in successfully'
-      // });
+      Toast.fire({
+          icon: 'success',
+          title: 'Signed in successfully'
+      });
     }
 
     // Returning data and error information
@@ -84,7 +97,7 @@ export const loginUser = async (email, password) => {
     console.log("error:", error); // مشاهده خطا
     return {
       data: null,
-      error: error.response?.data?.detail || "Something went wrong",
+      error: error,
     };
   }
 };
@@ -112,7 +125,7 @@ export const setTokenInCookie = (access_token, refresh_token) => {
       meghdar 'data user' ke az 'token' gereftim ro ke dakhel 'userData' gozashtim behesh befrestim va oun ham miad dakhel 'store' baramun meghdar 'data user' 
       ro dakhel 'allAuthData' mizar va age ma 'data user' ro khastim mitunim az 'function user' dakhel 'useAuthStore' estefade konim.
     */
-    console.log("User data that get from token:", userData);
+    console.log("User data that get from token in setTokenInCookie function:", userData);
     useAuthStore.getState().setUserData(userData);
   }
   useAuthStore.getState().setLoading(false);

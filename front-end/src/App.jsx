@@ -27,8 +27,8 @@ import MainWrapper from "./layout/MainWrapper";
 function App() {
   return (
     <>
-      <Navbar />
       <MainWrapper>
+        <Navbar />
         <Routes>
           <Route path="/dashboard" element={<Home />} />
 
@@ -48,8 +48,8 @@ function App() {
           <Route path="/cart/" element={<Cart />} />
           <Route path="/checkout/:order_oid/" element={<Checkout />} />
         </Routes>
+        <Footer />
       </MainWrapper>
-      <Footer />
     </>
   );
 }

@@ -141,6 +141,7 @@ function Login() {
     // inja user miad 'login' mikone va 'email va password' behesh midim.
     const { error } = await loginUser(userData.email, userData.password);
     if (error) {
+      console.log("error when user want to login...", error);
       Swal.fire({
         icon: "error",
         title: error,
