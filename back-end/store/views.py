@@ -411,7 +411,7 @@ class CreateCouponAPIView(generics.CreateAPIView):
         print("coupon_code =======", coupon_code)
 
         order = Order.objects.get(oid=order_oid)
-        coupon = Coupon.objects.filter(code__iexact=coupon_code, active=True).first()
+        coupon = Coupon.objects.filter(code__exact=coupon_code, active=True).first()
         
         if coupon:
             order_items = OrderItem.objects.filter(order=order, vendor=coupon.vendor)

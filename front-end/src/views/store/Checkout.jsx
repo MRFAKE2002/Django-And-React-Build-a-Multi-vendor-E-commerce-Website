@@ -1,27 +1,78 @@
 // Libraries
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 // API functions
 import axiosAPIInstance from "../../utils/axios";
-import { useParams } from "react-router-dom";
+
+// sakht tanzimat sweetalert2
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+});
 
 function Checkout() {
+  //! Custom State
   const [order, setOrder] = useState([]);
+  // console.log("Order state: ... ", order);
 
-  const param = useParams()
-  // console.log(param.order_oid);
+  const [couponCode, setCouponCode] = useState("");
+  // console.log("Coupon code: ...", couponCode);
 
+  const [loading, setLoading] = useState(false);
+
+  //! Custom Hooks
+
+  const param = useParams();
+  // console.log("params ...", param?.order_oid);
+
+  //! Custom Functions
+
+  const fetchOrderData = () => {
+    axiosAPIInstance.get(`checkout/${param.order_oid}/`).then((response) => {
+      // console.log(response?.data);
+      setOrder(response?.data);
+    });
+  };
+
+  const handleCouponChange = (event) => {
+    setCouponCode(event.target?.value);
+  };
+
+  const handleApplyCoupon = async () => {
+    // console.log(order?.oid);
+    // console.log(couponCode);
+
+    const formData = new FormData();
+    formData.append("order_oid", order?.oid);
+    formData.append("coupon_code", couponCode);
+
+    setLoading(true);
+    try {
+      const response = await axiosAPIInstance.post("coupon/", formData);
+      setLoading(false);
+      Toast.fire({
+        icon: response?.data.icon,
+        title: response?.data.message,
+      });
+      fetchOrderData();
+    } catch (error) {
+      setLoading(false);
+      // console.log(error);
+      Swal.fire({
+        icon: error?.response.data.icon,
+        title: error?.response.data.message,
+      });
+    }
+  };
 
   useEffect(() => {
-    axiosAPIInstance.get(`checkout/${param.order_oid}/`).then((response) => {
-      console.log(response.data);
-      console.log(response.data.order_items);
-    })
-    
-  }, [])
-  
-
-
+    fetchOrderData();
+  }, []);
 
   return (
     <div>
@@ -53,7 +104,7 @@ function Checkout() {
                               type="text"
                               readOnly
                               className="form-control"
-                              value={order.full_name}
+                              value={order?.full_name}
                             />
                           </div>
                         </div>
@@ -70,7 +121,7 @@ function Checkout() {
                               type="text"
                               readOnly
                               className="form-control"
-                              value={order.email}
+                              value={order?.email}
                             />
                           </div>
                         </div>
@@ -87,7 +138,7 @@ function Checkout() {
                               type="text"
                               readOnly
                               className="form-control"
-                              value={order.mobile}
+                              value={order?.mobile}
                             />
                           </div>
                         </div>
@@ -103,7 +154,7 @@ function Checkout() {
                               type="text"
                               readOnly
                               className="form-control"
-                              value={order.address}
+                              value={order?.address}
                             />
                           </div>
                         </div>
@@ -119,7 +170,7 @@ function Checkout() {
                               type="text"
                               readOnly
                               className="form-control"
-                              value={order.city}
+                              value={order?.city}
                             />
                           </div>
                         </div>
@@ -135,7 +186,7 @@ function Checkout() {
                               type="text"
                               readOnly
                               className="form-control"
-                              value={order.state}
+                              value={order?.state}
                             />
                           </div>
                         </div>
@@ -151,7 +202,7 @@ function Checkout() {
                               type="text"
                               readOnly
                               className="form-control"
-                              value={order.country}
+                              value={order?.country}
                             />
                           </div>
                         </div>
@@ -183,67 +234,76 @@ function Checkout() {
                     <h5 className="mb-3">Cart Summary</h5>
                     <div className="d-flex justify-content-between mb-3">
                       <span>Subtotal </span>
-                      <span>${order.sub_total}</span>
+                      <span>${order?.sub_total}</span>
                     </div>
                     <div className="d-flex justify-content-between">
                       <span>Shipping </span>
-                      <span>${order.shipping_amount}</span>
+                      <span>${order?.shipping_amount}</span>
                     </div>
                     <div className="d-flex justify-content-between">
                       <span>Tax </span>
-                      <span>${order.tax_fee}</span>
+                      <span>${order?.tax_fee}</span>
                     </div>
                     <div className="d-flex justify-content-between">
                       <span>Service Fee </span>
-                      <span>${order.service_fee}</span>
+                      <span>${order?.service_fee}</span>
                     </div>
+
+                    {order.saved !== "0.00" && (
+                      <>
+                        <div className="d-flex justify-content-between fw-bold my-2">
+                          <span>Initial Total </span>
+                          <span>${order?.initial_total}</span>
+                        </div>
+                        <div className="d-flex justify-content-between text-danger">
+                          <span>Discount </span>
+                          <span>-${order?.saved}</span>
+                        </div>
+                      </>
+                    )}
                     <hr className="my-4" />
                     <div className="d-flex justify-content-between fw-bold mb-5">
                       <span>Total </span>
-                      <span>${order.total}</span>
+                      <span>${order?.total}</span>
                     </div>
-
                     <div className="shadow p-3 d-flex mt-4 mb-4">
-                      {/* {loading === true && ( */}
-                      <>
-                        <input
-                          readOnly
-                          // value={couponCode}
-                          name="couponCode"
-                          type="text"
-                          className="form-control"
-                          style={{ border: "dashed 1px gray" }}
-                          placeholder="Enter Coupon Code"
-                          id=""
-                        />
-                        <button disabled className="btn btn-success ms-1">
-                          <i className="fas fa-spinner fa-spin"></i>
-                        </button>
-                      </>
-                      {/* )} */}
-
-                      {/* {loading === false && ( */}
-                      <>
-                        <input
-                          // onChange={handleChange}
-                          // value={couponCode}
-                          name="couponCode"
-                          type="text"
-                          className="form-control"
-                          style={{ border: "dashed 1px gray" }}
-                          placeholder="Enter Coupon Code"
-                          id=""
-                        />
-                        <button
-                          // onClick={appleCoupon}
-                          className="btn btn-success ms-1"
-                        >
-                          <i className="fas fa-check-circle"></i>
-                        </button>
-                      </>
-                      {/* )} */}
+                      {loading ? (
+                        <>
+                          <input
+                            readOnly
+                            value={couponCode}
+                            name="couponCode"
+                            type="text"
+                            className="form-control"
+                            style={{ border: "dashed 1px gray" }}
+                            placeholder="Enter Coupon Code"
+                            id=""
+                          />
+                          <button disabled className="btn btn-success ms-1">
+                            <i className="fas fa-spinner fa-spin"></i>
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <input
+                            onChange={handleCouponChange}
+                            value={couponCode}
+                            name="couponCode"
+                            type="text"
+                            className="form-control"
+                            style={{ border: "dashed 1px gray" }}
+                            placeholder="Enter Coupon Code"
+                            id=""
+                          />
+                          <button
+                            onClick={handleApplyCoupon}
+                            className="btn btn-success ms-1"
+                          >
+                            <i className="fas fa-check-circle"></i>
+                          </button>
+                        </>
+                      )}
                     </div>
-
                     {/* {paymentLoading === true && ( */}
                     <form
                       // action={`${API_BASE_URL}stripe-checkout/${param?.order_oid}/`}
@@ -259,7 +319,6 @@ function Checkout() {
                       </button>
                     </form>
                     {/* )} */}
-
                     {/* {paymentLoading === false && ( */}
                     <form
                       // action={`${API_BASE_URL}stripe-checkout/${param?.order_oid}/`}
@@ -275,7 +334,6 @@ function Checkout() {
                       </button>
                     </form>
                     {/* )} */}
-
                     {/* <PayPalScriptProvider options={initialOptions}>
                       <PayPalButtons
                         className="mt-3"
@@ -307,7 +365,6 @@ function Checkout() {
                         }}
                       />
                     </PayPalScriptProvider> */}
-
                     {/* <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Flutterwave)</button>
                     <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paystack)</button>
                     <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paypal)</button> */}
