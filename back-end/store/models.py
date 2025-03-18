@@ -330,7 +330,7 @@ class Order(models.Model):
         help_text="Amount saved by customer",
     )
 
-    stripe_session_id = models.CharField(max_length = 200, null=True, blank=True)
+    stripe_session_id = models.CharField(max_length = 1000, null=True, blank=True)
 
     # Personal Information
     full_name = models.CharField(max_length=1000)
