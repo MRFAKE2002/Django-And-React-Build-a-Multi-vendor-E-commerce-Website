@@ -131,7 +131,7 @@ class Product(models.Model):
         # ابتدا محصول را ذخیره می‌کنیم تا شناسه آن ایجاد شود
         if not self.pk:  # اگر محصول جدید باشد و شناسه نداشته باشد
             super(Product, self).save(*args, **kwargs)
-        
+
         # inja mige 'miangin ya average rating' ro ke male in 'product' az 'model Review' begir va dakhel 'field rating' bezar.
         self.rating = self.product_rating()
 
@@ -282,19 +282,27 @@ class Order(models.Model):
     )
 
     # Total price of the order
-    sub_total = models.DecimalField(default=Decimal(0.00),max_digits=12, decimal_places=2)
+    sub_total = models.DecimalField(
+        default=Decimal(0.00), max_digits=12, decimal_places=2
+    )
 
     # Shipping cost
-    shipping_amount = models.DecimalField(default=Decimal(0.00),max_digits=12, decimal_places=2)
+    shipping_amount = models.DecimalField(
+        default=Decimal(0.00), max_digits=12, decimal_places=2
+    )
 
     # VAT (Value Added Tax) cost
-    tax_fee = models.DecimalField(default=Decimal(0.00),max_digits=12, decimal_places=2)
+    tax_fee = models.DecimalField(
+        default=Decimal(0.00), max_digits=12, decimal_places=2
+    )
 
     # Service fee cost
-    service_fee = models.DecimalField(default=Decimal(0.00),max_digits=12, decimal_places=2)
+    service_fee = models.DecimalField(
+        default=Decimal(0.00), max_digits=12, decimal_places=2
+    )
 
     # Total cost of the order
-    total = models.DecimalField(default=Decimal(0.00),max_digits=12, decimal_places=2)
+    total = models.DecimalField(default=Decimal(0.00), max_digits=12, decimal_places=2)
 
     # Order status attributes
     payment_status = models.CharField(
@@ -413,6 +421,8 @@ class OrderItem(models.Model):
         decimal_places=2,
         help_text="Grand Total of all amount listed above before discount",
     )
+
+    coupon = models.ManyToManyField("store.Coupon", blank=True)
 
     saved = models.DecimalField(
         max_digits=12,
@@ -565,10 +575,10 @@ class Notification(models.Model):
     datetime_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        #? if self.order:
-        #?     return self.order.oid
-        #? else:
-        #?     return f"Notification - {self.pk}"
+        # ? if self.order:
+        # ?     return self.order.oid
+        # ? else:
+        # ?     return f"Notification - {self.pk}"
         return self.order.oid if self.order else f"Notification - {self.pk}"
 
 
@@ -591,8 +601,10 @@ class Coupon(models.Model):
 
 class Tax(models.Model):
     country = models.CharField(max_length=100)
-    
-    rate = models.IntegerField(default = 10, help_text = "Numbers are added here in percentage e.g 10%")
+
+    rate = models.IntegerField(
+        default=10, help_text="Numbers are added here in percentage e.g 10%"
+    )
 
     active = models.BooleanField(default=False)
 
@@ -602,8 +614,8 @@ class Tax(models.Model):
         return f"country: {self.country} - rate: {self.rate}"
 
     class Meta:
-        db_table = ''
+        db_table = ""
         managed = True
-        verbose_name = 'tax'
-        verbose_name_plural = 'taxes'
+        verbose_name = "tax"
+        verbose_name_plural = "taxes"
         ordering = ["country"]
