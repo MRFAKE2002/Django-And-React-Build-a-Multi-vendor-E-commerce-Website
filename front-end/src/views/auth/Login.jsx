@@ -144,7 +144,7 @@ function Login() {
       console.log("error when user want to login...", error);
       Swal.fire({
         icon: "error",
-        title: error,
+        title: error.response.data.detail,
       });
     } else {
       // bad az 'login user' miaim dakhel 'state' ro khali mikonim mesl ghabl.
@@ -155,13 +155,13 @@ function Login() {
         icon: "success",
         title: "Login Successfully",
       });
+      navigate(location.state?.preLocation || "/");
     }
     console.log(userData);
     console.log("Is user logged in?", isLoggedIn());
     console.log("Is loading ?", isLoading);
     console.log("isLoggedIn:", useAuthStore.getState().allUserData);
     // age darkhast 'login user error' nadasht bashe va 'user login' beshe miad 'redirect' mikone safhe home.
-    navigate(location.state?.preLocation || "/");
   };
 
   /* 

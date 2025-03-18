@@ -15,12 +15,12 @@ import apiInstance from "../../utils/axios";
 function Navbar() {
   
   // mikhaim 'isLoggedIn' ro az state begirim vaghti 'refresh' shod dakhel 'useEffect' biad check kone 'user login' hast ya na
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  // const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const getUserDetails = useAuthStore((state) => state.getUserDetails);
 
-  
-  
-  console.log("is user logged in navbar?", isLoggedIn());
+  const isLoggedIn = useAuthStore((state) => state.allUserData !== null);
+
+  // console.log("is user logged in navbar?", isLoggedIn());
   console.log("user data in zustand store?", getUserDetails());
 
   return (
@@ -169,7 +169,7 @@ function Navbar() {
 
             {/* These are the button rendered based on users logged in status */}
 
-            {isLoggedIn()? (
+            {isLoggedIn? (
               <>
                 {/* Logout Link */}
                 <Link

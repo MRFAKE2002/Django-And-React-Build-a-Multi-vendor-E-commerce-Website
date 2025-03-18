@@ -15,7 +15,7 @@ import CreateNewPassword from "./views/auth/CreateNewPassword";
 import Product from "./views/store/Product";
 import ProductDetail from "./views/store/ProductDetail";
 import Cart from "./views/store/Cart";
-import Checkout from "./views/store/checkout";
+import Checkout from "./views/store/Checkout";
 
 // Base components
 import Navbar from "./views/base/Navbar";
