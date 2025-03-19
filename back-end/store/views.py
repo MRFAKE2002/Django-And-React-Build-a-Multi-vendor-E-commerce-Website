@@ -19,6 +19,9 @@ from .serializers import (
 )
 from userauths.models import User
 
+# Stripe
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 # dar inja ma miaim 'data' marbut be 'Product' ro be surat 'list' namayesh midim.
 class ProductListAPIView(generics.ListAPIView):

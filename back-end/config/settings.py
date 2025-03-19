@@ -14,6 +14,13 @@ from datetime import timedelta
 import os
 from pathlib import Path
 
+#! Environs
+from environs import Env
+
+env = Env()
+env.read_env()
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,6 +35,9 @@ SECRET_KEY = 'django-insecure-^arnpfgk&z89nmq+b*j^m!cd6_1kb_=)u@&vc)v&z0p6ni7iar
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+#! Site URL
+SITE_URL = env("SITE_URL")
 
 
 # Application definition
@@ -433,3 +443,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
+
+
+#! Stripe Environs
+STRIPE_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY")
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
