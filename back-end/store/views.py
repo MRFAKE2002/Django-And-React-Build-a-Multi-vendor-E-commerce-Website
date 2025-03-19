@@ -1,10 +1,13 @@
 # Django
+from django.conf import settings
+from django.shortcuts import redirect
 
 # Libraries
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from decimal import Decimal
+import stripe
 
 # My apps
 from .models import Category, Coupon, Order, OrderItem, Product, Cart, Tax
@@ -397,7 +400,12 @@ class OrderCheckoutAPIView(generics.RetrieveAPIView):
 
     def get_object(self):
         order_oid = self.kwargs["order_oid"]
-        return Order.objects.prefetch_related("order_items").select_related("buyer").get(oid=order_oid)
+        return (
+            Order.objects.prefetch_related("order_items")
+            .select_related("buyer")
+            .get(oid=order_oid)
+        )
+
 
 class CreateCouponAPIView(generics.CreateAPIView):
     serializer_class = OrderSerializer
@@ -405,14 +413,14 @@ class CreateCouponAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         payload = request.data
 
-        order_oid = payload['order_oid']
-        coupon_code = payload['coupon_code']
+        order_oid = payload["order_oid"]
+        coupon_code = payload["coupon_code"]
         print("order_oid =======", order_oid)
         print("coupon_code =======", coupon_code)
 
         order = Order.objects.get(oid=order_oid)
         coupon = Coupon.objects.filter(code__exact=coupon_code, active=True).first()
-        
+
         if coupon:
             order_items = OrderItem.objects.filter(order=order, vendor=coupon.vendor)
             if order_items:
@@ -420,23 +428,85 @@ class CreateCouponAPIView(generics.CreateAPIView):
                     print("order_items =====", i.product.name)
                     if coupon not in i.coupon.all():
                         discount = i.total * coupon.discount / 100
-                        
+
                         i.total -= discount
                         i.sub_total -= discount
                         i.coupon.add(coupon)
-                        i.saved = (i.saved or Decimal('0')) + discount
+                        i.saved = (i.saved or Decimal("0")) + discount
                         # i.applied_coupon = True
 
                         # اگر مقدار None باشد، به جای آن مقدار 0 تنظیم می‌شود
                         order.total -= discount
                         order.sub_total -= discount
-                        order.saved = (order.saved or Decimal('0')) + discount
+                        order.saved = (order.saved or Decimal("0")) + discount
 
                         i.save()
                         order.save()
-                        return Response( {"message": "Coupon Activated", "icon":"success"},status=status.HTTP_200_OK)
+                        return Response(
+                            {"message": "Coupon Activated", "icon": "success"},
+                            status=status.HTTP_200_OK,
+                        )
                     else:
-                        return Response( {"message": "Coupon Already Activated", "icon":"warning"}, status=status.HTTP_200_OK)
-            return Response( {"message": "Order Item Does Not Exists", "icon":"error"}, status=status.HTTP_200_OK)
+                        return Response(
+                            {"message": "Coupon Already Activated", "icon": "warning"},
+                            status=status.HTTP_200_OK,
+                        )
+            return Response(
+                {"message": "Order Item Does Not Exists", "icon": "error"},
+                status=status.HTTP_200_OK,
+            )
         else:
-            return Response( {"message": "Coupon Does Not Exists", "icon":"error"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"message": "Coupon Does Not Exists", "icon": "error"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+
+class StripeCheckoutAPIView(generics.CreateAPIView):
+    serializer_class = OrderSerializer
+
+    def create(self, request, *args, **kwargs):
+        order_oid = self.kwargs["order_oid"]
+        order = Order.objects.filter(oid=order_oid).first()
+
+        if not order:
+            return Response(
+                {"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                customer_email=order.email,
+                payment_method_types=["card"],
+                line_items=[
+                    {
+                        "price_data": {
+                            "currency": "usd",
+                            "product_data": {
+                                "name": order.full_name,
+                            },
+                            "unit_amount": int(order.total * 100),
+                        },
+                        "quantity": 1,
+                    }
+                ],
+                mode="payment",
+                # success_url = f"{settings.SITE_URL}/payment-success/{{order.oid}}/?session_id={{CHECKOUT_SESSION_ID}}",
+                # cancel_url = f"{settings.SITE_URL}/payment-success/{{order.oid}}/?session_id={{CHECKOUT_SESSION_ID}}",
+                success_url=settings.SITE_URL
+                + "/payment-success/"
+                + order.oid
+                + "?session_id={CHECKOUT_SESSION_ID}",
+                cancel_url=settings.SITE_URL + "/?session_id={CHECKOUT_SESSION_ID}",
+            )
+            order.stripe_session_id = checkout_session.id
+            order.save()
+
+            return redirect(checkout_session.url)
+        except stripe.error.StripeError as e:
+            return Response(
+                {
+                    "error": f"Something went wrong when creating stripe checkout session: {str(e)}"
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
