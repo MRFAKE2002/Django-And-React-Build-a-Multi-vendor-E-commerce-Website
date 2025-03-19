@@ -6,6 +6,9 @@ import Swal from "sweetalert2";
 // API functions
 import axiosAPIInstance from "../../utils/axios";
 
+// Server url
+import { API_BASE_URL } from "../../utils/constants";
+
 // sakht tanzimat sweetalert2
 const Toast = Swal.mixin({
   toast: true,
@@ -23,7 +26,9 @@ function Checkout() {
   const [couponCode, setCouponCode] = useState("");
   // console.log("Coupon code: ...", couponCode);
 
-  const [loading, setLoading] = useState(false);
+  const [couponLoading, setCouponLoading] = useState(false);
+
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   //! Custom Hooks
 
@@ -51,17 +56,17 @@ function Checkout() {
     formData.append("order_oid", order?.oid);
     formData.append("coupon_code", couponCode);
 
-    setLoading(true);
+    setCouponLoading(true);
     try {
       const response = await axiosAPIInstance.post("coupon/", formData);
-      setLoading(false);
+      setCouponLoading(false);
       Toast.fire({
         icon: response?.data.icon,
         title: response?.data.message,
       });
       fetchOrderData();
     } catch (error) {
-      setLoading(false);
+      setCouponLoading(false);
       // console.log(error);
       Swal.fire({
         icon: error?.response.data.icon,
@@ -70,6 +75,12 @@ function Checkout() {
     }
   };
 
+  const handlePayWithStripe = (event) => {
+    setPaymentLoading(true);
+    event.target.form.submit();
+  };
+
+  //! useEffect
   useEffect(() => {
     fetchOrderData();
   }, []);
@@ -83,7 +94,7 @@ function Checkout() {
             <section className="">
               <div className="row gx-lg-5">
                 <div className="col-lg-8 mb-4 mb-md-0">
-                  {/* Section: Biling details */}
+                  {/* Section: Personal Information details */}
                   <section className="">
                     <div className="alert alert-warning">
                       <strong>Review Your Shipping &amp; Order Details </strong>
@@ -267,7 +278,7 @@ function Checkout() {
                       <span>${order?.total}</span>
                     </div>
                     <div className="shadow p-3 d-flex mt-4 mb-4">
-                      {loading ? (
+                      {couponLoading ? (
                         <>
                           <input
                             readOnly
@@ -304,36 +315,36 @@ function Checkout() {
                         </>
                       )}
                     </div>
-                    {/* {paymentLoading === true && ( */}
-                    <form
-                      // action={`${API_BASE_URL}stripe-checkout/${param?.order_oid}/`}
-                      method="POST"
-                    >
-                      <button
-                        // onClick={payWithStripe}
-                        type="submit"
-                        className="btn btn-primary btn-rounded w-100 mt-2"
-                        style={{ backgroundColor: "#635BFF" }}
+                    {paymentLoading ? (
+                      <form
+                        action={`${API_BASE_URL}stripe-checkout/${param?.order_oid}/`}
+                        method="POST"
                       >
-                        Processing... <i className="fas fa-spinner fa-spin"></i>
-                      </button>
-                    </form>
-                    {/* )} */}
-                    {/* {paymentLoading === false && ( */}
-                    <form
-                      // action={`${API_BASE_URL}stripe-checkout/${param?.order_oid}/`}
-                      method="POST"
-                    >
-                      <button
-                        // onClick={payWithStripe}
-                        type="submit"
-                        className="btn btn-primary btn-rounded w-100 mt-2"
-                        style={{ backgroundColor: "#635BFF" }}
+                        <button
+                          onClick={handlePayWithStripe}
+                          type="submit"
+                          className="btn btn-primary btn-rounded w-100 mt-2"
+                          style={{ backgroundColor: "#635BFF" }}
+                        >
+                          Processing...
+                          <i className="fas fa-spinner fa-spin"></i>
+                        </button>
+                      </form>
+                    ) : (
+                      <form
+                        action={`${API_BASE_URL}stripe-checkout/${param?.order_oid}/`}
+                        method="POST"
                       >
-                        Pay Now (Stripe)
-                      </button>
-                    </form>
-                    {/* )} */}
+                        <button
+                          onClick={handlePayWithStripe}
+                          type="submit"
+                          className="btn btn-primary btn-rounded w-100 mt-2"
+                          style={{ backgroundColor: "#635BFF" }}
+                        >
+                          Pay Now (Stripe)
+                        </button>
+                      </form>
+                    )}
                     {/* <PayPalScriptProvider options={initialOptions}>
                       <PayPalButtons
                         className="mt-3"
