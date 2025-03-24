@@ -448,3 +448,12 @@ CORS_ALLOWED_ORIGINS = [
 #! Stripe Environs
 STRIPE_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY")
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
+
+#! Sending Email
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")  # ایمیل ارسال‌کننده
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")  # رمز ایمیل (یا App Password)
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER 
