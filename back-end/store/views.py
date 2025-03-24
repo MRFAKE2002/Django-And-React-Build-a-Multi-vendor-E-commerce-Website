@@ -1,6 +1,8 @@
 # Django
 from django.conf import settings
 from django.shortcuts import redirect
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 
 # Libraries
 from rest_framework import generics, status
@@ -9,8 +11,10 @@ from rest_framework.response import Response
 from decimal import Decimal
 import stripe
 
+# import requests
+
 # My apps
-from .models import Category, Coupon, Order, OrderItem, Product, Cart, Tax
+from .models import Category, Coupon, Notification, Order, OrderItem, Product, Cart, Tax
 from .serializers import (
     CategorySerializer,
     OrderSerializer,
@@ -21,6 +25,10 @@ from userauths.models import User
 
 # Stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+# # Paypal
+# PAYPAL_CLIENT_ID = settings.PAYPAL_CLIENT_ID
+# PAYPAL_SECRET_ID = settings.PAYPAL_SECRET_ID
 
 
 # dar inja ma miaim 'data' marbut be 'Product' ro be surat 'list' namayesh midim.
@@ -513,3 +521,105 @@ class StripeCheckoutAPIView(generics.CreateAPIView):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+def send_notification(user=None, vendor=None, order=None, order_item=None):
+    Notification.objects.create(
+        user=user,
+        vendor=vendor,
+        order=order,
+        order_item=order_item,
+    )
+
+
+class PaymentSuccessAPIView(generics.CreateAPIView):
+    serializer_class = OrderSerializer
+    queryset = Order.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+
+        order_oid = payload["order_oid"]
+        session_id = payload["session_id"]
+
+        order = Order.objects.select_related("buyer").get(oid=order_oid)
+        order_items = OrderItem.objects.select_related("vendor").filter(order=order)
+
+        if session_id != "null":
+            session = stripe.checkout.Session.retrieve(session_id)
+
+            if session.payment_status == "paid":
+                if order.payment_status == "processing":
+                    order.payment_status = "paid"
+                    order.save()
+
+                    # send Notification for Buyer
+                    if order.buyer is not None:
+                        send_notification(user=order.buyer, order=order)
+
+                    # send Notification for Buyer
+                    for order_item in order_items:
+                        send_notification(
+                            vendor=order_item.vendor, order=order, order_item=order_item
+                        )
+
+                        # send Email to Vendor
+                        context = {
+                            "order": order,
+                            "order_items": order_items,
+                            "vendor": order_item.vendor,
+                        }
+
+                        email_subject = "New Sale"
+                        text_body = render_to_string(
+                            "email/vendor_order_sale.txt", context
+                        )
+                        html_body = render_to_string(
+                            "email/vendor_order_sale.html", context
+                        )
+
+                        email_massage = EmailMultiAlternatives(
+                            subject=email_subject,
+                            from_email=settings.EMAIL_HOST_USER,
+                            to=[order_item.vendor.user.email],
+                            body=text_body,
+                        )
+
+                        email_massage.attach_alternative(html_body, "text/html")
+                        email_massage.send()
+
+                    # send Email to Buyer
+                    context = {
+                        "order": order,
+                        "order_items": order_items,
+                    }
+
+                    email_subject = "Order Placed Successfully"
+                    text_body = render_to_string(
+                        "email/customer_order_confirmation.txt", context
+                    )
+                    html_body = render_to_string(
+                        "email/customer_order_confirmation.html", context
+                    )
+
+                    email_massage = EmailMultiAlternatives(
+                        subject=email_subject,
+                        from_email=settings.EMAIL_HOST_USER,
+                        to=[order.email],
+                        body=text_body,
+                    )
+
+                    email_massage.attach_alternative(html_body, "text/html")
+                    email_massage.send()
+
+                    return Response({"message": "Payment Successful"})
+                else:
+                    return Response({"message": "Already Paid"})
+            elif order.payment_status == "unpaid":
+                return Response({"message": "Your Invoice Is Unpaid"})
+            elif order.payment_status == "cancelled":
+                return Response({"message": "Your Invoice Is cancelled"})
+            else:
+                return Response({"message": "An Error Occurred, Try Again..."})
+        else:
+            session = None
