@@ -86,7 +86,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -451,9 +451,16 @@ STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 
 #! Sending Email
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")  # ایمیل ارسال‌کننده
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")  # رمز ایمیل (یا App Password)
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER 
+
+# #! Celery
+# CELERY_BROKER_URL = 'redis://localhost:6379/0'  # آدرس Redis
+# CELERY_ACCEPT_CONTENT = ['json']  # فرمت داده‌ها
+# CELERY_TASK_SERIALIZER = 'json'  # فرمت ارسال داده‌ها به صورت JSON
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # برای ذخیره نتایج
