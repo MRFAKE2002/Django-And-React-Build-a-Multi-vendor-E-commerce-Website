@@ -2,12 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 // API functions
 import axiosAPIInstance from "../../utils/axios";
 
 // Server url
-import { API_BASE_URL } from "../../utils/constants";
+import { API_BASE_URL, PAYPAL_CLIENT_ID } from "../../utils/constants";
 
 // sakht tanzimat sweetalert2
 const Toast = Swal.mixin({
@@ -84,6 +85,13 @@ function Checkout() {
   useEffect(() => {
     fetchOrderData();
   }, []);
+
+  //! Paypal Option 
+  const initialOptions = {
+    clientId: PAYPAL_CLIENT_ID,
+    currency: "USD",
+    intent: "capture",
+  };
 
   return (
     <div>
@@ -345,37 +353,36 @@ function Checkout() {
                         </button>
                       </form>
                     )}
-                    {/* <PayPalScriptProvider options={initialOptions}>
-                      <PayPalButtons
-                        className="mt-3"
+                    <PayPalScriptProvider options={initialOptions}>
+                      <PayPalButtons className='mt-3'
                         createOrder={(data, actions) => {
                           return actions.order.create({
                             purchase_units: [
                               {
                                 amount: {
                                   currency_code: "USD",
-                                  value: order.total.toString(),
-                                },
-                              },
-                            ],
-                          });
+                                  value: order.total.toString()
+                                }
+                              }
+                            ]
+                          })
                         }}
+
                         onApprove={(data, actions) => {
                           return actions.order.capture().then((details) => {
                             const name = details.payer.name.given_name;
                             const status = details.status;
-                            const payapl_order_id = data.orderID;
+                            const paypal_order_id = data.orderID;
 
                             console.log(status);
                             if (status === "COMPLETED") {
-                              navigate(
-                                `/payment-success/${order.oid}/?payapl_order_id=${payapl_order_id}`
-                              );
+                              navigate(`/payment-success/${order.oid}/?paypal_order_id=${paypal_order_id}`)
                             }
-                          });
+                          })
                         }}
                       />
-                    </PayPalScriptProvider> */}
+                    </PayPalScriptProvider>
+
                     {/* <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Flutterwave)</button>
                     <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paystack)</button>
                     <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paypal)</button> */}
