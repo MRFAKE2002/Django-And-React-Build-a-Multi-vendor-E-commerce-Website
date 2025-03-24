@@ -23,6 +23,7 @@ import Footer from "./views/base/Footer";
 
 // layouts
 import MainWrapper from "./layout/MainWrapper";
+import PaymentSuccess from "./views/store/PaymentSuccess";
 
 function App() {
   return (
@@ -47,6 +48,10 @@ function App() {
           <Route path="/detail/:slug/" element={<ProductDetail />} />
           <Route path="/cart/" element={<Cart />} />
           <Route path="/checkout/:order_oid/" element={<Checkout />} />
+          <Route
+            path="/payment-success/:order_oid/"
+            element={<PaymentSuccess />}
+          />
         </Routes>
         <Footer />
       </MainWrapper>

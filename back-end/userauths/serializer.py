@@ -56,7 +56,7 @@ class JWTTokenSerializer(TokenObtainPairSerializer):
         token["fullname"] = user.fullname  # افزودن نام کامل کاربر به توکن.
         token["phone"] = user.phone  # افزودن شماره تماس کاربر به توکن.
         
-        token['vender_id'] = getattr(user, 'vender_id', 0)  # مقدار پیش‌فرض 0 اگر vender_id وجود نداشته باشد
+        token['vendor_id'] = getattr(user, 'vendor_id', 0)  # مقدار پیش‌فرض 0 اگر vendor_id وجود نداشته باشد
 
         """
             agar ma in 'data' ro befrestim be 'server' ta 'token' daryaft konim zaman 'login user' az taraf 'server'
@@ -68,7 +68,7 @@ class JWTTokenSerializer(TokenObtainPairSerializer):
                 "email": "testuser@example.com",
                 "fullname": "Test User",
                 "phone": "1234567890",
-                "vender_id": 0
+                "vendor_id": 0
             }
         """
 

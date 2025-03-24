@@ -7,7 +7,7 @@ from .models import Vendor
 
 @admin.register(Vendor)
 class VendorAdmin(admin.ModelAdmin):
-    list_display = ["image", "user", "name", "mobile", "active"]
+    list_display = ["id", "image", "user", "name", "mobile", "active"]
 
     prepopulated_fields = {"slug": ["name"]}
     

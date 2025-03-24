@@ -148,8 +148,8 @@ function Product() {
     }));
   };
 
-  console.log(productValues);
   /*
+    console.log(productValues);
     {
       "1": {
         "size": "XL",

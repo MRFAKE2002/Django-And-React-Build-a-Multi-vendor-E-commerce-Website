@@ -34,7 +34,7 @@ function Cart() {
 
   const [orderPersonalInformationForm, setOrderPersonalInformationForm] =
     useState({});
-  console.log(orderPersonalInformationForm);
+  // console.log(orderPersonalInformationForm);
 
 
   //! Custom Hooks

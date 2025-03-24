@@ -92,7 +92,7 @@ function Navbar() {
                   </li>
                 </ul>
               </li>
-              {/* Vender */}
+              {/* Vendor */}
               <li className="nav-item dropdown">
                 <a
                   className="nav-link dropdown-toggle"
