@@ -238,7 +238,7 @@ JAZZMIN_UI_TWEAKS = {
     "footer_small_text": False,
     "body_small_text": False,
     "brand_small_text": False,
-    "brand_colour": "navbar-gray",
+    "brand_color": "navbar-gray",
     "accent": "accent-primary",
     "navbar": "navbar-dark",
     "no_navbar_border": False,
@@ -459,8 +459,9 @@ EMAIL_HOST_USER = env("EMAIL_HOST_USER")  # ایمیل ارسال‌کننده
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")  # رمز ایمیل (یا App Password)
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER 
 
-# #! Celery
-# CELERY_BROKER_URL = 'redis://localhost:6379/0'  # آدرس Redis
-# CELERY_ACCEPT_CONTENT = ['json']  # فرمت داده‌ها
-# CELERY_TASK_SERIALIZER = 'json'  # فرمت ارسال داده‌ها به صورت JSON
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # برای ذخیره نتایج
+#! Celery
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # آدرس Redis
+CELERY_ACCEPT_CONTENT = ['json']  # فرمت داده‌ها
+CELERY_TASK_SERIALIZER = 'json'  # فرمت ارسال داده‌ها به صورت JSON
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # برای ذخیره نتایج
+
