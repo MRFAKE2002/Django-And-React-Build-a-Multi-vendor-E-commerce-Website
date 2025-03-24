@@ -330,7 +330,7 @@ class Order(models.Model):
         help_text="Amount saved by customer",
     )
 
-    stripe_session_id = models.CharField(max_length = 1000, null=True, blank=True)
+    stripe_session_id = models.CharField(max_length=1000, null=True, blank=True)
 
     # Personal Information
     full_name = models.CharField(max_length=1000)
@@ -549,11 +549,19 @@ class WishList(models.Model):
 
 class Notification(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="notifications"
+        User,
+        on_delete=models.SET_NULL,
+        related_name="notifications",
+        null=True,
+        blank=True,
     )
 
     vendor = models.ForeignKey(
-        Vendor, on_delete=models.CASCADE, related_name="notifications"
+        Vendor,
+        on_delete=models.SET_NULL,
+        related_name="notifications",
+        null=True,
+        blank=True,
     )
 
     order = models.ForeignKey(
