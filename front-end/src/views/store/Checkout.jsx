@@ -353,7 +353,9 @@ function Checkout() {
                         </button>
                       </form>
                     )}
-                    <PayPalScriptProvider options={initialOptions}>
+                    {/* Paypal */}
+
+                    {/* <PayPalScriptProvider options={initialOptions}>
                       <PayPalButtons className='mt-3'
                         createOrder={(data, actions) => {
                           return actions.order.create({
@@ -371,7 +373,8 @@ function Checkout() {
                         onApprove={(data, actions) => {
                           return actions.order.capture().then((details) => {
                             const name = details.payer.name.given_name;
-                            const status = details.status;
+                            // const status = details.status;
+                            const {status} = details;
                             const paypal_order_id = data.orderID;
 
                             console.log(status);
@@ -381,11 +384,8 @@ function Checkout() {
                           })
                         }}
                       />
-                    </PayPalScriptProvider>
-
-                    {/* <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Flutterwave)</button>
-                    <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paystack)</button>
-                    <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paypal)</button> */}
+                    </PayPalScriptProvider> */}
+                    
                   </section>
                 </div>
               </div>
