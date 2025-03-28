@@ -19,6 +19,8 @@ urlpatterns = [
     path("create-order/", store_views.CreateOrderAPIView.as_view(), name="create_order"),
     path("checkout/<order_oid>/", store_views.OrderCheckoutAPIView.as_view(), name="checkout"),
     path("coupon/", store_views.CreateCouponAPIView.as_view(), name="create_coupon"),
+    path('create-review/', store_views.CreateReviewAPIView.as_view(), name='create_review'),
+    path('reviews/<product_id>/', store_views.ReviewListAPIView.as_view(), name='reviews_list'),
     
     # payment
     path("stripe-checkout/<order_oid>/", store_views.StripeCheckoutAPIView.as_view(), name="stripe-checkout"),

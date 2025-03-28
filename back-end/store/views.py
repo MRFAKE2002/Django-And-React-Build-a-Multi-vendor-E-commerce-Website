@@ -14,12 +14,23 @@ import stripe
 # import requests
 
 # My apps
-from .models import Category, Coupon, Notification, Order, OrderItem, Product, Cart, Tax
+from .models import (
+    Category,
+    Coupon,
+    Notification,
+    Order,
+    OrderItem,
+    Product,
+    Cart,
+    Review,
+    Tax,
+)
 from .serializers import (
     CategorySerializer,
     OrderSerializer,
     ProductSerializer,
     CartSerializer,
+    ReviewSerializer,
 )
 from userauths.models import User
 
@@ -431,46 +442,89 @@ class CreateCouponAPIView(generics.CreateAPIView):
 
         order = Order.objects.get(oid=order_oid)
         coupon = Coupon.objects.filter(code__exact=coupon_code, active=True).first()
+        # if coupon:
+        #     order_items = OrderItem.objects.filter(order=order, vendor=coupon.vendor)
+        #     if order_items:
+        #         for i in order_items:
+        #             print("order_items =====", i.product.name)
+        #             if coupon not in i.coupon.all():
+        #                 discount = i.total * coupon.discount / 100
 
-        if coupon:
-            order_items = OrderItem.objects.filter(order=order, vendor=coupon.vendor)
-            if order_items:
-                for i in order_items:
-                    print("order_items =====", i.product.name)
-                    if coupon not in i.coupon.all():
-                        discount = i.total * coupon.discount / 100
+        #                 i.total -= discount
+        #                 i.sub_total -= discount
+        #                 i.coupon.add(coupon)
+        #                 i.saved = (i.saved or Decimal("0")) + discount
+        #                 # i.applied_coupon = True
 
-                        i.total -= discount
-                        i.sub_total -= discount
-                        i.coupon.add(coupon)
-                        i.saved = (i.saved or Decimal("0")) + discount
-                        # i.applied_coupon = True
+        #                 # اگر مقدار None باشد، به جای آن مقدار 0 تنظیم می‌شود
+        #                 order.total -= discount
+        #                 order.sub_total -= discount
+        #                 order.saved = (order.saved or Decimal("0")) + discount
 
-                        # اگر مقدار None باشد، به جای آن مقدار 0 تنظیم می‌شود
-                        order.total -= discount
-                        order.sub_total -= discount
-                        order.saved = (order.saved or Decimal("0")) + discount
-
-                        i.save()
-                        order.save()
-                        return Response(
-                            {"message": "Coupon Activated", "icon": "success"},
-                            status=status.HTTP_200_OK,
-                        )
-                    else:
-                        return Response(
-                            {"message": "Coupon Already Activated", "icon": "warning"},
-                            status=status.HTTP_200_OK,
-                        )
-            return Response(
-                {"message": "Order Item Does Not Exists", "icon": "error"},
-                status=status.HTTP_200_OK,
-            )
-        else:
+        #                 i.save()
+        #                 order.save()
+        #                 return Response(
+        #                     {"message": "Coupon Activated", "icon": "success"},
+        #                     status=status.HTTP_200_OK,
+        #                 )
+        #             else:
+        #                 return Response(
+        #                     {"message": "Coupon Already Activated", "icon": "warning"},
+        #                     status=status.HTTP_200_OK,
+        #                 )
+        #     return Response(
+        #         {"message": "Order Item Does Not Exists", "icon": "error"},
+        #         status=status.HTTP_200_OK,
+        #     )
+        # else:
+        #     return Response(
+        #         {"message": "Coupon Does Not Exists", "icon": "error"},
+        #         status=status.HTTP_404_NOT_FOUND,
+        #     )
+        if not coupon:
             return Response(
                 {"message": "Coupon Does Not Exists", "icon": "error"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+        if order_items := OrderItem.objects.filter(
+                order=order, vendor=coupon.vendor
+            ):
+            for i in order_items:
+                # print("order_items =====", i.product.name)
+                return (
+                    self._extracted_from_create_(i, coupon, order)
+                    if coupon not in i.coupon.all()
+                    else Response(
+                        {"message": "Coupon Already Activated", "icon": "warning"},
+                        status=status.HTTP_200_OK,
+                    )
+                )
+        return Response(
+            {"message": "Order Item Does Not Exists", "icon": "error"},
+            status=status.HTTP_200_OK,
+        )
+
+    # TODO Rename this here and in `create`
+    def _extracted_from_create_(self, i, coupon, order):
+        discount = i.total * coupon.discount / 100
+
+        i.total -= discount
+        i.sub_total -= discount
+        i.coupon.add(coupon)
+        i.saved = (i.saved or Decimal("0")) + discount
+        # i.applied_coupon = True
+
+        # اگر مقدار None باشد، به جای آن مقدار 0 تنظیم می‌شود
+        order.total -= discount
+        order.sub_total -= discount
+        order.saved = (order.saved or Decimal("0")) + discount
+
+        i.save()
+        order.save()
+        return Response(
+            {"message": "Coupon Activated", "icon": "success"},
+            status=status.HTTP_200_OK,
+        )
 
 
 class StripeCheckoutAPIView(generics.CreateAPIView):
@@ -623,3 +677,37 @@ class PaymentSuccessAPIView(generics.CreateAPIView):
                 return Response({"message": "An Error Occurred, Try Again..."})
         else:
             session = None
+
+
+class CreateReviewAPIView(generics.CreateAPIView):
+    serializer_class = ReviewSerializer
+    queryset = Review.objects.all()
+    permission_classes = (AllowAny,)
+
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+
+        user_id = payload["user_id"]
+        product_id = payload["product_id"]
+        rating = payload["rating"]
+        review = payload["review"]
+
+        user = User.objects.get(id=user_id)
+        product = Product.objects.get(id=product_id)
+
+        Review.objects.create(user=user, product=product, rating=rating, review=review)
+
+        return Response(
+            {"message": "Review Created Successfully."}, status=status.HTTP_201_CREATED
+        )
+
+
+class ReviewListAPIView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        product_id = self.kwargs["product_id"]
+
+        product = Product.objects.get(id=product_id)
+        return Review.objects.filter(product=product)
