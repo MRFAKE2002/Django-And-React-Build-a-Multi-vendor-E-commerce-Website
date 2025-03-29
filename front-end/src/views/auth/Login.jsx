@@ -1,9 +1,13 @@
-// libraries
+// Libraries
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { loginUser } from "../../utils/auth";
-import { useAuthStore } from "../../store/authStore";
 import Swal from "sweetalert2";
+
+// Auth Utils
+import { loginUser } from "../../utils/auth";
+
+// Zustand
+import { useAuthStore } from "../../store/authStore";
 
 // sakht tanzimat sweetalert2
 const Toast = Swal.mixin({
@@ -15,6 +19,9 @@ const Toast = Swal.mixin({
 });
 
 function Login() {
+
+  //! Custom States
+
   // sakht yek 'state' baraye 'email va password user' ke mikhaim az 'input' begirim va be 'function login' dar 'auth.js' befrestim va 'token user' dar 'cookie' zakhire shavad.
   const [userData, setUserData] = useState({
     email: "",
@@ -27,35 +34,41 @@ function Login() {
   */
   const [isLoading, setIsLoading] = useState(false);
 
+  //! Custom Hooks
+  
   // in baraye 'redirect user' bad az 'login' kardan hast.
   const navigate = useNavigate();
+
+  /* 
+      ma baraye in ke betunim befahmim 'user' az kodum safhe oumade bayad az 'useLocation' estefade konim:
+  
+      dakhel 'location' ma az 'object state' estefade mikonim ta 'data' ekhtiari gharar bedim. 
+      hala miaim migim dakhel 'state' yek 'object' dige be esm 'prevLocation' misazim va vaghti ke 'user' az har safhe miad 
+      'login' kone mitunim data oun 'location' ro dakhelesh gharar bedim; hala oun data chia mitune bashe: 
+  
+      pathname: inja 'address' safhe ke 'user' azash oumade behemun mige masalan: "/products"
+  
+      search: inja agar 'url' ke 'user' azash oumade dakhelesh 'parameter' dashte bashe mitunim ounaro begirim ta 
+      dobare 'user' ro be oun 'url' bargardunim.
+  
+      hash: inja bakhsh 'hash url' negahdari mishe.
+  
+      hala har vaghti khastim azash estefade konim bayad dar oun safhe ke mikhaim 'user' bere 'login' dobare bargarde
+      biaim in 'object' ro kenar 'navigate' besazim:
+  
+      در صفحه‌ای که ورود لازمه، مثلاً صفحه محصولات
+      
+      const location = useLocation();
+      navigate("/login", { preLocation: { from: location } });
+    */
+  const location = useLocation();
+
+  //! Zustand States
 
   // mikhaim 'isLoggedIn' ro az state begirim vaghti 'refresh' shod dakhel 'useEffect' biad check kone 'user login' hast ya na
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
-  /* 
-    ma baraye in ke betunim befahmim 'user' az kodum safhe oumade bayad az 'useLocation' estefade konim:
-
-    dakhel 'location' ma az 'object state' estefade mikonim ta 'data' ekhtiari gharar bedim. 
-    hala miaim migim dakhel 'state' yek 'object' dige be esm 'prevLocation' misazim va vaghti ke 'user' az har safhe miad 
-    'login' kone mitunim data oun 'location' ro dakhelesh gharar bedim; hala oun data chia mitune bashe: 
-
-    pathname: inja 'address' safhe ke 'user' azash oumade behemun mige masalan: "/products"
-
-    search: inja agar 'url' ke 'user' azash oumade dakhelesh 'parameter' dashte bashe mitunim ounaro begirim ta 
-    dobare 'user' ro be oun 'url' bargardunim.
-
-    hash: inja bakhsh 'hash url' negahdari mishe.
-
-    hala har vaghti khastim azash estefade konim bayad dar oun safhe ke mikhaim 'user' bere 'login' dobare bargarde
-    biaim in 'object' ro kenar 'navigate' besazim:
-
-    در صفحه‌ای که ورود لازمه، مثلاً صفحه محصولات
-    
-    const location = useLocation();
-    navigate("/login", { preLocation: { from: location } });
-  */
-  const location = useLocation();
+  //! Custom Functions
 
   const handleOnChangeInput = (event) => {
     /*
@@ -164,6 +177,8 @@ function Login() {
     // age darkhast 'login user error' nadasht bashe va 'user login' beshe miad 'redirect' mikone safhe home.
   };
 
+  //! useEffect
+
   /* 
     dar akhar ham miaim az 'useEffect' estefade mikonim migim age 'refresh' shod bia check kon dakhel 
     'store zustand' age 'allUserData null' nabud yani 'user login' hast va 'data user' az 'token' gerefte shode 
@@ -177,6 +192,8 @@ function Login() {
       navigate(location.state?.preLocation || "/");
     }
   }, []);
+
+  //! JSX
 
   return (
     <>

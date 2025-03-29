@@ -115,9 +115,12 @@ function Product() {
       mizanim ke faghat be 'button' eshare kone.
      */
     const productID = event.currentTarget.getAttribute("data-product-id");
-    const name = event.currentTarget.name; // گرفتن نام (مثل color یا size)
+    // const name = event.currentTarget.name; // گرفتن نام (مثل color یا size)
+    const {name} = event.currentTarget; // گرفتن نام (مثل color یا size)
 
-    if (!productID) return;
+    if (!productID) {
+      return;
+    }
 
     const value =
       name === "color"
@@ -136,7 +139,8 @@ function Product() {
   // Handle quantity change from input
   const handleProductQuantityOnChange = (event) => {
     const productID = event.currentTarget.getAttribute("data-product-id");
-    const value = event.target.value;
+    // const value = event.target.value;
+    const {value} = event.target;
 
     // Update the quantity in state for the specific product
     setProductValues((prevValues) => ({
