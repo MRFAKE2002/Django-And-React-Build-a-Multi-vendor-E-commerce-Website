@@ -16,6 +16,8 @@ import Product from "./views/store/Product";
 import ProductDetail from "./views/store/ProductDetail";
 import Cart from "./views/store/Cart";
 import Checkout from "./views/store/Checkout";
+import PaymentSuccess from "./views/store/PaymentSuccess";
+import Search from "./views/store/Search";
 
 // Base components
 import Navbar from "./views/base/Navbar";
@@ -23,7 +25,6 @@ import Footer from "./views/base/Footer";
 
 // layouts
 import MainWrapper from "./layout/MainWrapper";
-import PaymentSuccess from "./views/store/PaymentSuccess";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
             path="/payment-success/:order_oid/"
             element={<PaymentSuccess />}
           />
+          <Route path="/search" element={<Search />} />
         </Routes>
         <Footer />
       </MainWrapper>
