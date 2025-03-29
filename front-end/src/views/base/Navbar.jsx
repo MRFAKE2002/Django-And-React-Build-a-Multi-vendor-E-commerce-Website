@@ -14,14 +14,37 @@ import apiInstance from "../../utils/axios";
 
 function Navbar() {
   
+  //! Custom State
+
+  const [search, setSearch] = useState("");
+
+  //! Custom Hooks
+
+  const navigate = useNavigate()
+
+  //! Zustand States
+
   // mikhaim 'isLoggedIn' ro az state begirim vaghti 'refresh' shod dakhel 'useEffect' biad check kone 'user login' hast ya na
+
   // const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const getUserDetails = useAuthStore((state) => state.getUserDetails);
-
   const isLoggedIn = useAuthStore((state) => state.allUserData !== null);
 
   // console.log("is user logged in navbar?", isLoggedIn());
-  console.log("user data in zustand store?", getUserDetails());
+  // console.log("user data in zustand store?", getUserDetails());
+
+  //! Custom Functions
+
+  const handleChangeSearchButton = (event) => {
+    setSearch(event.target.value)
+    // console.log(search);
+  }
+
+  const handleSubmitSearch = () => {
+    navigate(`/search?query=${search}`)
+  }
+
+  //! JSX
 
   return (
     <div>
@@ -161,8 +184,9 @@ function Navbar() {
                 type="text"
                 placeholder="Search"
                 aria-label="Search"
+                onChange={handleChangeSearchButton}
               />
-              <button className="btn btn-outline-success me-2" type="submit">
+              <button className="btn btn-outline-success me-2" type="button" onClick={handleSubmitSearch}>
                 Search
               </button>
             </div>
