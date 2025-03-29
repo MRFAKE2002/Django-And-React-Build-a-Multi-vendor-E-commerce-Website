@@ -720,4 +720,4 @@ class SearchProductsAPIView(generics.ListAPIView):
     def get_queryset(self):
         query = self.request.GET.get('query')
         # print("query =======", query)
-        return Product.objects.filter(status="published", title__icontains=query)
+        return Product.objects.filter(status="published", name__icontains=query)
