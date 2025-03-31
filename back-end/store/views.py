@@ -602,70 +602,72 @@ class PaymentSuccessAPIView(generics.CreateAPIView):
             session = stripe.checkout.Session.retrieve(session_id)
 
             if session.payment_status == "paid":
+                #? if order.payment_status == "processing":
+                #?     order.payment_status = "paid"
+                #?     order.save()
+
+                #?     # send Notification for Buyer
+                #?     if order.buyer is not None:
+                #?         send_notification(user=order.buyer, order=order)
+
+                #?     # send Notification for Buyer
+                #?     for order_item in order_items:
+                #?         send_notification(
+                #?             vendor=order_item.vendor, order=order, order_item=order_item
+                #?         )
+
+                #?         # send Email to Vendor
+                #?         context = {
+                #?             "order": order,
+                #?             "order_items": order_items,
+                #?             "vendor": order_item.vendor,
+                #?         }
+
+                #?         email_subject = "New Sale"
+                #?         text_body = render_to_string(
+                #?             "email/vendor_order_sale.txt", context
+                #?         )
+                #?         html_body = render_to_string(
+                #?             "email/vendor_order_sale.html", context
+                #?         )
+
+                #?         email_massage = EmailMultiAlternatives(
+                #?             subject=email_subject,
+                #?             from_email=settings.EMAIL_HOST_USER,
+                #?             to=[order_item.vendor.user.email],
+                #?             body=text_body,
+                #?         )
+
+                #?         email_massage.attach_alternative(html_body, "text/html")
+                #?         email_massage.send()
+
+                #?     # send Email to Buyer
+                #?     context = {
+                #?         "order": order,
+                #?         "order_items": order_items,
+                #?     }
+
+                #?     email_subject = "Order Placed Successfully"
+                #?     text_body = render_to_string(
+                #?         "email/customer_order_confirmation.txt", context
+                #?     )
+                #?     html_body = render_to_string(
+                #?         "email/customer_order_confirmation.html", context
+                #?     )
+
+                #?     email_massage = EmailMultiAlternatives(
+                #?         subject=email_subject,
+                #?         from_email=settings.EMAIL_HOST_USER,
+                #?         to=[order.email],
+                #?         body=text_body,
+                #?     )
+
+                #?     email_massage.attach_alternative(html_body, "text/html")
+                #?     email_massage.send()
+
+                #?     return Response({"message": "Payment Successful"})
                 if order.payment_status == "processing":
-                    order.payment_status = "paid"
-                    order.save()
-
-                    # send Notification for Buyer
-                    if order.buyer is not None:
-                        send_notification(user=order.buyer, order=order)
-
-                    # send Notification for Buyer
-                    for order_item in order_items:
-                        send_notification(
-                            vendor=order_item.vendor, order=order, order_item=order_item
-                        )
-
-                        # send Email to Vendor
-                        context = {
-                            "order": order,
-                            "order_items": order_items,
-                            "vendor": order_item.vendor,
-                        }
-
-                        email_subject = "New Sale"
-                        text_body = render_to_string(
-                            "email/vendor_order_sale.txt", context
-                        )
-                        html_body = render_to_string(
-                            "email/vendor_order_sale.html", context
-                        )
-
-                        email_massage = EmailMultiAlternatives(
-                            subject=email_subject,
-                            from_email=settings.EMAIL_HOST_USER,
-                            to=[order_item.vendor.user.email],
-                            body=text_body,
-                        )
-
-                        email_massage.attach_alternative(html_body, "text/html")
-                        email_massage.send()
-
-                    # send Email to Buyer
-                    context = {
-                        "order": order,
-                        "order_items": order_items,
-                    }
-
-                    email_subject = "Order Placed Successfully"
-                    text_body = render_to_string(
-                        "email/customer_order_confirmation.txt", context
-                    )
-                    html_body = render_to_string(
-                        "email/customer_order_confirmation.html", context
-                    )
-
-                    email_massage = EmailMultiAlternatives(
-                        subject=email_subject,
-                        from_email=settings.EMAIL_HOST_USER,
-                        to=[order.email],
-                        body=text_body,
-                    )
-
-                    email_massage.attach_alternative(html_body, "text/html")
-                    email_massage.send()
-
-                    return Response({"message": "Payment Successful"})
+                    return self.paid_order(order, order_items)
                 else:
                     return Response({"message": "Already Paid"})
             elif order.payment_status == "unpaid":
@@ -676,6 +678,71 @@ class PaymentSuccessAPIView(generics.CreateAPIView):
                 return Response({"message": "An Error Occurred, Try Again..."})
         else:
             session = None
+
+    def paid_order(self, order, order_items):
+        order.payment_status = "paid"
+        order.save()
+
+        # send Notification for Vendor
+        for order_item in order_items:
+            send_notification(
+                vendor=order_item.vendor, order=order, order_item=order_item
+            )
+
+            # send Email to Vendor
+            context = {
+                "order": order,
+                "order_items": order_items,
+                "vendor": order_item.vendor,
+            }
+
+            email_subject = "New Sale"
+            text_body = render_to_string(
+                "email/vendor_order_sale.txt", context
+            )
+            html_body = render_to_string(
+                "email/vendor_order_sale.html", context
+            )
+
+            email_massage = EmailMultiAlternatives(
+                subject=email_subject,
+                from_email=settings.EMAIL_HOST_USER,
+                to=[order_item.vendor.user.email],
+                body=text_body,
+            )
+
+            email_massage.attach_alternative(html_body, "text/html")
+            email_massage.send()
+
+        # send Notification for Buyer
+        if order.buyer is not None:
+            send_notification(user=order.buyer, order=order)
+
+        # send Email to Buyer
+        context = {
+            "order": order,
+            "order_items": order_items,
+        }
+
+        email_subject = "Order Placed Successfully"
+        text_body = render_to_string(
+            "email/customer_order_confirmation.txt", context
+        )
+        html_body = render_to_string(
+            "email/customer_order_confirmation.html", context
+        )
+
+        email_massage = EmailMultiAlternatives(
+            subject=email_subject,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[order.email],
+            body=text_body,
+        )
+
+        email_massage.attach_alternative(html_body, "text/html")
+        email_massage.send()
+
+        return Response({"message": "Payment Successful"})
 
 
 class CreateReviewAPIView(generics.CreateAPIView):
