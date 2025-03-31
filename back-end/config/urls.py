@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
@@ -78,35 +79,41 @@ from drf_yasg.views import get_schema_view
 
 schema_view = get_schema_view(
     openapi.Info(
-        title = "E-commerce backend APIs",
-        default_version= "v1",
-        description= "This is documentation for backend API",
-        terms_of_service= "http://mywbsite.com/policies/",
-        contact= openapi.Contact(email="roozbehbadalis@gmail.com"),
-        license= openapi.License(name= "BSD license"),
+        title="E-commerce backend APIs",
+        default_version="v1",
+        description="This is documentation for backend API",
+        terms_of_service="http://mywbsite.com/policies/",
+        contact=openapi.Contact(email="roozbehbadalis@gmail.com"),
+        license=openapi.License(name="BSD license"),
     ),
-    public= True,
-    permission_classes= (permissions.AllowAny, )
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
 
 
 urlpatterns = [
-    # Admin
-    path('admin/', admin.site.urls),
+    #! Admin
+    path("admin/", admin.site.urls),
     
-    # User Register and Login
-    path('api/user/', include('userauths.urls')),
+    #! User Register and Login
+    path("api/user/", include("userauths.urls")),
     
-    # Store urls
-    path('api/', include('store.urls')),
-
-    # Document backend API
-    path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema_swagger_ui"),
+    #! Store urls
+    path("api/", include("store.urls")),
+    
+    #! Customer urls
+    path("api/customer/", include("customer.urls")),
+    
+    #! Document backend API
+    path(
+        "swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema_swagger_ui",
+    ),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema_redoc"),
-
 ]
 
-# static and media
+#! static and media
 if settings.DEBUG:  # اطمینان از اینکه فقط در حالت development سرویس‌دهی شود
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
