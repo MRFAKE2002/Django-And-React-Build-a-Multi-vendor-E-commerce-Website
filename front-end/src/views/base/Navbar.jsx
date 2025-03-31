@@ -11,6 +11,7 @@ import { useAuthStore } from "../../store/authStore";
 
 // API call instance
 import apiInstance from "../../utils/axios";
+import { CartContext } from "../plugin/CartContext";
 
 function Navbar() {
   
@@ -32,6 +33,11 @@ function Navbar() {
 
   // console.log("is user logged in navbar?", isLoggedIn());
   // console.log("user data in zustand store?", getUserDetails());
+
+  //! Cart Context
+
+  const cartCount = useContext(CartContext)
+  console.log(cartCount);
 
   //! Custom Functions
 
@@ -219,7 +225,7 @@ function Navbar() {
             )}
             <Link className="btn btn-danger" to="/cart/">
               <i className="fas fa-shopping-cart"></i>
-              <span id="cart-total-items"></span>
+              <span id="cart-total-items">{cartCount}</span>
             </Link>
           </div>
         </div>

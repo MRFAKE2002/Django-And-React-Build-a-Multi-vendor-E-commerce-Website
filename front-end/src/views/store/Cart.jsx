@@ -1,6 +1,6 @@
 // Libraries
-import React, { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 // API functions
@@ -10,6 +10,7 @@ import axiosAPIInstance from "../../utils/axios";
 import CartID from "../plugin/CartID";
 import UserData from "../plugin/UserData";
 import GetCurrentAddress from "../plugin/UserCountry";
+import { CartContext } from "../plugin/CartContext";
 
 // sakht tanzimat sweetalert2
 const Toast = Swal.mixin({
@@ -36,7 +37,6 @@ function Cart() {
     useState({});
   // console.log(orderPersonalInformationForm);
 
-
   //! Custom Hooks
 
   const cartID = CartID();
@@ -46,6 +46,10 @@ function Cart() {
   const currentAddress = GetCurrentAddress();
 
   const navigator = useNavigate()
+
+  //! Cart Context
+
+  const [cartCount, setCartCount] = useContext(CartContext);
 
   //! Custom Functions
 
@@ -59,6 +63,7 @@ function Cart() {
       .get(url)
       .then((response) => {
         setCartData(response.data);
+        setCartCount(response.data.length);
       })
       .catch((error) => {
         // console.log(error);

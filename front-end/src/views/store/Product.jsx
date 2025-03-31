@@ -33,6 +33,8 @@ function Product() {
   */
   const [productValues, setProductValues] = useState({});
 
+  //! Custom Hooks 
+  
   /*
     alan inja mikhaim 'address user' ro ba estefade az 'function GetCurrentAddress' begirim va dar in 'state' gharar bedim.
   */
@@ -45,7 +47,6 @@ function Product() {
 
   // inja ma miaim oun 'refresh_token' age dakhel 'cookie' bud 'decode' mikone va 'data' male 'user' ro mide.
   const userData = UserData();
-  // console.log(userData);
 
   //! Custom Functions
 
@@ -105,7 +106,7 @@ function Product() {
   //?   }
   //? }
   //? */
-
+  
   const handleProductValuesButtonClick = (event) => {
     /*
       dar in function ma mikhaim 'data' male 'product' ro ke 'user' mikhad be 'cart' befreste, begirim va dakhel yek 'state'

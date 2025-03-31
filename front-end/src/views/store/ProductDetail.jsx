@@ -11,6 +11,7 @@ import axiosAPIInstance from "../../utils/axios";
 import GetCurrentAddress from "../plugin/UserCountry";
 import CartID from "../plugin/CartID";
 import UserData from "../plugin/UserData";
+import { CartContext } from "../plugin/CartContext";
 
 // sakht tanzimat sweetalert2
 const Toast = Swal.mixin({
@@ -64,6 +65,10 @@ function ProductDetail() {
   // inja ma miaim oun 'refresh_token' age dakhel 'cookie' bud 'decode' mikone va 'data' male 'user' ro mide.
   const userData = UserData();
   // console.log(userData);
+
+  //! Cart Context
+
+  const [cartCount, setCartCount] = useContext(CartContext);
 
   //! Custom Functions
 
@@ -130,7 +135,19 @@ function ProductDetail() {
       formData.append("country", currentAddress.country);
 
       const response = await axiosAPIInstance.post("cart/", formData);
-      console.log(response.data);
+      // console.log(response.data);
+
+      useEffect(() => {
+        const url = userData
+          ? `cart-list/${cartID}/${userData?.user_id}/`
+          : `cart-list/${cartID}/`;
+
+        axiosAPIInstance.get(url).then((response) => {
+          // console.log(response.data);
+          setCartCount(response.data.length);
+        });
+      }, []);
+
       Swal.fire({
         icon: "success",
         title: response.data.message,
@@ -143,21 +160,6 @@ function ProductDetail() {
       });
     }
   };
-
-  useEffect(() => {
-    axiosAPIInstance.get(`product/${params.slug}/`).then((response) => {
-      setProductData(response.data);
-    });
-  }, []);
-
-  const fetchReviewData = async () => {
-    axios.get(`reviews/${product?.id}/`).then((res) => {
-      setReviews(res.data);
-    });
-  };
-  useEffect(() => {
-    fetchReviewData();
-  }, [loading]);
 
   const handleReviewSubmit = (e) => {
     e.preventDefault();
@@ -177,6 +179,31 @@ function ProductDetail() {
       });
     });
   };
+
+  const handleReviewChange = (event) => {
+    setCreateReview({
+      ...createReview,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  //! useEffect
+
+  useEffect(() => {
+    axiosAPIInstance.get(`product/${params.slug}/`).then((response) => {
+      setProductData(response.data);
+    });
+  }, []);
+
+  const fetchReviewData = async () => {
+    axios.get(`reviews/${product?.id}/`).then((res) => {
+      setReviews(res.data);
+    });
+  };
+
+  useEffect(() => {
+    fetchReviewData();
+  }, [loading]);
 
   //! JSX
 
