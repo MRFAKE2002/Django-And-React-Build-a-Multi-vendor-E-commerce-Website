@@ -437,8 +437,8 @@ class CreateCouponAPIView(generics.CreateAPIView):
 
         order_oid = payload["order_oid"]
         coupon_code = payload["coupon_code"]
-        print("order_oid =======", order_oid)
-        print("coupon_code =======", coupon_code)
+        # print("order_oid =======", order_oid)
+        # print("coupon_code =======", coupon_code)
 
         order = Order.objects.get(oid=order_oid)
         coupon = Coupon.objects.filter(code__exact=coupon_code, active=True).first()
@@ -492,7 +492,7 @@ class CreateCouponAPIView(generics.CreateAPIView):
             for i in order_items:
                 # print("order_items =====", i.product.name)
                 return (
-                    self._extracted_from_create_(i, coupon, order)
+                    self.Save_Order(i, coupon, order)
                     if coupon not in i.coupon.all()
                     else Response(
                         {"message": "Coupon Already Activated", "icon": "warning"},
@@ -504,8 +504,7 @@ class CreateCouponAPIView(generics.CreateAPIView):
             status=status.HTTP_200_OK,
         )
 
-    # TODO Rename this here and in `create`
-    def _extracted_from_create_(self, i, coupon, order):
+    def Save_Order(self, i, coupon, order):
         discount = i.total * coupon.discount / 100
 
         i.total -= discount
