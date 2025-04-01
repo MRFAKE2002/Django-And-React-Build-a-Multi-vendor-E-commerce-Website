@@ -37,7 +37,7 @@ function Navbar() {
   //! Cart Context
 
   const cartCount = useContext(CartContext)
-  console.log(cartCount);
+  // console.log(cartCount);
 
   //! Custom Functions
 
@@ -225,7 +225,7 @@ function Navbar() {
             )}
             <Link className="btn btn-danger" to="/cart/">
               <i className="fas fa-shopping-cart"></i>
-              <span id="cart-total-items">{cartCount}</span>
+              <span id="cart-total-items" className="ps-2">{cartCount}</span>
             </Link>
           </div>
         </div>

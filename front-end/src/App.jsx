@@ -29,11 +29,14 @@ import Footer from "./views/base/Footer";
 
 // Layouts
 import MainWrapper from "./layout/MainWrapper";
+import PrivateRoute from "./layout/PrivateRoute";
 
 // Plugins
 import { CartContext } from "./views/plugin/CartContext";
 import UserData from "./views/plugin/UserData";
 import CartID from "./views/plugin/CartID";
+
+// API Function
 import axiosAPIInstance from "./utils/axios";
 
 function App() {
@@ -91,7 +94,14 @@ function App() {
           <Route path="/search" element={<Search />} />
 
           {/* Customer Routes */}
-          <Route path="/customer/account" element={<Account />} />
+          <Route
+            path="/customer/account"
+            element={
+              <PrivateRoute>
+                <Account />
+              </PrivateRoute>
+            }
+          />
         </Routes>
         <Footer />
       </MainWrapper>
