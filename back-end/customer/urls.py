@@ -10,7 +10,7 @@ urlpatterns = [
         name="order_list_authentication",
     ),
     path(
-        "order/<user_id>/<order_oid>/",
+        "order/detail/<user_id>/<order_oid>/",
         customer_views.OrderRetrieveAPIView.as_view(),
         name="order_detail_authentication",
     ),
