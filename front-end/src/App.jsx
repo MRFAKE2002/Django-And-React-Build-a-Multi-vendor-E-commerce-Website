@@ -20,6 +20,9 @@ import Checkout from "./views/store/Checkout";
 import PaymentSuccess from "./views/store/PaymentSuccess";
 import Search from "./views/store/Search";
 
+// Customer
+import Account from "./views/customer/Account";
+
 // Base Components
 import Navbar from "./views/base/Navbar";
 import Footer from "./views/base/Footer";
@@ -54,8 +57,7 @@ function App() {
     axiosAPIInstance.get(url).then((response) => {
       // console.log(response.data);
       setCartCount(response.data.length);
-    })
-    
+    });
   }, []);
 
   //! JSX
@@ -87,6 +89,9 @@ function App() {
             element={<PaymentSuccess />}
           />
           <Route path="/search" element={<Search />} />
+
+          {/* Customer Routes */}
+          <Route path="/customer/account" element={<Account />} />
         </Routes>
         <Footer />
       </MainWrapper>
