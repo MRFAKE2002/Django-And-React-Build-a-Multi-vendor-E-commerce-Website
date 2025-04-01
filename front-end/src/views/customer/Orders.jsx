@@ -189,7 +189,7 @@ function Orders() {
                         </tbody>
                       </table>
                     </div>
-                    <canvas id="myChart" style={{ width: "100%" }} />
+                    <canvas id="myChart" style={{ width: "100%", height: "auto"}} />
                   </div>
                 </section>
                 {/* Section: MSC */}

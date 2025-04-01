@@ -23,6 +23,7 @@ import Search from "./views/store/Search";
 // Customer
 import Account from "./views/customer/Account";
 import Orders from "./views/customer/Orders";
+import OrderDetail from "./views/customer/OrderDetail";
 
 // Base Components
 import Navbar from "./views/base/Navbar";
@@ -96,7 +97,7 @@ function App() {
 
           {/* Customer Routes */}
           <Route
-            path="/customer/account"
+            path="/customer/account/"
             element={
               <PrivateRoute>
                 <Account />
@@ -104,10 +105,18 @@ function App() {
             }
           />
           <Route
-            path="/customer/orders"
+            path="/customer/orders/"
             element={
               <PrivateRoute>
                 <Orders />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/customer/order/detail/:order_oid/"
+            element={
+              <PrivateRoute>
+                <OrderDetail />
               </PrivateRoute>
             }
           />

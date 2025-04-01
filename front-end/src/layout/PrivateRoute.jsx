@@ -9,7 +9,8 @@ const PrivateRoute = ({ children }) => {
 
   // Use the 'useAuthStore' hook to check the user's authentication status.
   // It appears to be using a state management solution like 'zustand' or 'mobx-state-tree'.
-  const loggedIn = useAuthStore((state) => state.isLoggedIn)();
+  // const loggedIn = useAuthStore((state) => state.isLoggedIn)();
+  const loggedIn = useAuthStore((state) => state.allUserData !== null);
 
   //! JSX
 
