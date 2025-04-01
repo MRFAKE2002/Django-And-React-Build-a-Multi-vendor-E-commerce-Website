@@ -199,7 +199,7 @@ class CartSerializer(serializers.ModelSerializer):
 # Define a serializer for the OrderItem model
 class OrderItemSerializer(serializers.ModelSerializer):
     # Serialize the related Product model
-    # product = ProductSerializer()
+    product = ProductSerializer()
 
     class Meta:
         model = OrderItem
@@ -225,7 +225,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 # Define a serializer for the Order model
 class OrderSerializer(serializers.ModelSerializer):
     # Serialize related OrderItem models
-    order_item = OrderItemSerializer(many=True, read_only=True)
+    order_items = OrderItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
