@@ -22,6 +22,7 @@ import Search from "./views/store/Search";
 
 // Customer
 import Account from "./views/customer/Account";
+import Orders from "./views/customer/Orders";
 
 // Base Components
 import Navbar from "./views/base/Navbar";
@@ -99,6 +100,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Account />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/customer/orders"
+            element={
+              <PrivateRoute>
+                <Orders />
               </PrivateRoute>
             }
           />
