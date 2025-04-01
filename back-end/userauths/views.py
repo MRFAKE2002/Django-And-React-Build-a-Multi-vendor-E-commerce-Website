@@ -11,7 +11,7 @@ import shortuuid
 
 # My apps
 from .models import User, Profile
-from .serializer import JWTTokenSerializer, RegisterSerializer, UserSerializer
+from .serializer import JWTTokenSerializer, ProfileSerializer, RegisterSerializer, UserSerializer
 
 
 # ---------------------------------------------Login View ------------------------------------------ #
@@ -110,3 +110,16 @@ class CreateNewPasswordView(generics.CreateAPIView):
       return Response({"message" : "Password changed successfully"}, status=status.HTTP_201_CREATED)
     else:
       return Response({"message" : "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# ---------------------------------------------Profile Detail View ------------------------------------------ #
+
+class ProfileDetailAPIView(generics.RetrieveAPIView):
+  serializer_class = ProfileSerializer
+  permission_classes = [AllowAny]
+  
+  def get_object(self):
+    user_id = self.kwargs["user_id"]
+    
+    user = User.objects.get(id=user_id)
+    
+    return Profile.objects.get(user=user)
