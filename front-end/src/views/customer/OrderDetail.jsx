@@ -25,21 +25,24 @@ function OrderDetail() {
   // console.log(param);
 
   //! useEffect
-
   useEffect(() => {
-    try {
-      axiosAPIInstance
-        .get(`customer/order/detail/${userData?.user_id}/${param?.order_oid}/`)
-        .then((response) => {
-          setOrder(response.data);
-          setOrderItems(response.data.order_items);
-          setLoading(false);
-        });
-    } catch (error) {
+    if (!userData?.user_id || !param?.order_oid) {
+      // اگر user_id یا order_oid مقدار نداشت، کاربر را به صفحه لاگین هدایت کن
       <Navigate to="/login" />;
+      return;
     }
-  }, []);
-
+  
+    axiosAPIInstance
+      .get(`customer/order/detail/${userData?.user_id}/${param?.order_oid}/`)
+      .then((response) => {
+        setOrder(response.data);
+        setOrderItems(response.data.order_items);
+        setLoading(false);
+      })
+      .catch((error) => {
+        <Navigate to="/login" />;
+      });
+  }, [userData, param]);
   //! JSX
 
   return (
@@ -58,7 +61,7 @@ function OrderDetail() {
                       <section className="mb-5">
                         <h3 className="mb-3">
                           <i className="fas fa-shopping-cart text-primary" />
-                          #wuriuiwer
+                          #{order.oid}
                         </h3>
                         <div className="row gx-xl-5">
                           <div className="col-lg-3 mb-4 mb-lg-0">
@@ -273,7 +276,7 @@ function OrderDetail() {
                                       {order.tracking_id == null ||
                                       order.tracking_id == "undefined" ? (
                                         <button
-                                          class="btn btn-secondary btn-sm"
+                                          className="btn btn-secondary btn-sm"
                                           disabled
                                         >
                                           No Tracking Yet
@@ -281,7 +284,7 @@ function OrderDetail() {
                                         </button>
                                       ) : (
                                         <a
-                                          class="btn btn-success btn-sm"
+                                          className="btn btn-success btn-sm"
                                           target="_blank"
                                           href={`${order.delivery_couriers?.tracking_website}?${order.delivery_couriers?.url_parameter}=${order.tracking_id}`}
                                         >

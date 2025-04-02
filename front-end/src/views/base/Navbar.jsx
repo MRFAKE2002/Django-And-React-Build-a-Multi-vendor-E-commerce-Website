@@ -7,11 +7,10 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 
 // context functions
-// import { CartContext } from "../plugin/Context";
+import { CartContext } from "../plugin/CartContext";
 
 // API call instance
 import apiInstance from "../../utils/axios";
-import { CartContext } from "../plugin/CartContext";
 
 function Navbar() {
   
