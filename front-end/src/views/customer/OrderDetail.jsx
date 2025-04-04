@@ -1,7 +1,8 @@
 // Libraries
 import React, { useState, useEffect } from "react";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
+import Swal from "sweetalert2";
 
 // API Function
 import axiosAPIInstance from "../../utils/axios";
@@ -11,6 +12,15 @@ import UserData from "../plugin/UserData";
 
 // Sidebar
 import Sidebar from "./Sidebar";
+
+// sakht tanzimat sweetalert2
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+});
 
 function OrderDetail() {
   //! Custom State
@@ -24,14 +34,19 @@ function OrderDetail() {
   const param = useParams();
   // console.log(param);
 
+  const navigate = useNavigate()
+  const location = useLocation()
+
   //! useEffect
   useEffect(() => {
     if (!userData?.user_id || !param?.order_oid) {
-      // اگر user_id یا order_oid مقدار نداشت، کاربر را به صفحه لاگین هدایت کن
-      <Navigate to="/login" />;
-      return;
+      navigate("/login", {
+        state: { from: location?.pathname },
+        replace: true,
+      });
+      return; // برای جلوگیری از ادامه اجرا
     }
-  
+
     axiosAPIInstance
       .get(`customer/order/detail/${userData?.user_id}/${param?.order_oid}/`)
       .then((response) => {
@@ -42,7 +57,7 @@ function OrderDetail() {
       .catch((error) => {
         <Navigate to="/login" />;
       });
-  }, [userData, param]);
+  }, []);
   //! JSX
 
   return (
@@ -60,8 +75,8 @@ function OrderDetail() {
                       {/* Section: Summary */}
                       <section className="mb-5">
                         <h3 className="mb-3">
-                          <i className="fas fa-shopping-cart text-primary" />
-                          #{order.oid}
+                          <i className="fas fa-shopping-cart text-primary" />#
+                          {order.oid}
                         </h3>
                         <div className="row gx-xl-5">
                           <div className="col-lg-3 mb-4 mb-lg-0">

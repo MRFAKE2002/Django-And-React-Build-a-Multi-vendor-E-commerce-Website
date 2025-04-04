@@ -3,7 +3,7 @@ import { React, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 // Plugins
-// import UseProfileData from '../plugin/UseProfileData'
+import UseProfileData from '../plugin/UseProfileData'
 
 function Sidebar() {
   //! Custom State
@@ -12,25 +12,25 @@ function Sidebar() {
 
   //! Custom Hooks
 
-  // const userProfile = UseProfileData()
+  const userProfile = UseProfileData()
 
   //! useEffect
 
   useEffect(() => {
-    // if (userProfile) {
-    //     setLoading(false)
-    // }
+    if (userProfile) {
+        setLoading(false)
+    }
   }, []);
 
   //! JSX
 
   return (
     <div className="col-lg-3">
-      {/* {loading === false && */}
+      {loading === false &&
       <>
         <div className="d-flex justify-content-center align-items-center flex-column mb-4 shadow rounded-3">
           <img
-            // src={userProfile?.image}
+            src={userProfile?.image}
             style={{
               width: 120,
               height: 120,
@@ -40,7 +40,7 @@ function Sidebar() {
             alt=""
           />
           <div className="text-center">
-            {/* <h3 className="mb-0">{userProfile?.full_name}</h3> */}
+            <h3 className="mb-0">{userProfile?.user?.fullname}</h3>
             <p className="mt-0">
               <Link to="/customer/settings/">
                 <i className="fas fa-edit me-2"></i> Edit Account
@@ -104,7 +104,7 @@ function Sidebar() {
           </li>
         </ol>
       </>
-      {/* } */}
+      }
     </div>
   );
 }

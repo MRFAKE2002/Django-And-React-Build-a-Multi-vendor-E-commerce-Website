@@ -24,6 +24,10 @@ import Search from "./views/store/Search";
 import Account from "./views/customer/Account";
 import Orders from "./views/customer/Orders";
 import OrderDetail from "./views/customer/OrderDetail";
+import Invoice from "./views/store/Invoice";
+import Wishlist from "./views/customer/Wishlist";
+import Notifications from "./views/customer/Notifications";
+import Settings from "./views/customer/Settings";
 
 // Base Components
 import Navbar from "./views/base/Navbar";
@@ -117,6 +121,38 @@ function App() {
             element={
               <PrivateRoute>
                 <OrderDetail />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/customer/order/invoice/:order_oid/"
+            element={
+              <PrivateRoute>
+                <Invoice />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/customer/wishlist/"
+            element={
+              <PrivateRoute>
+                <Wishlist />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/customer/notifications/"
+            element={
+              <PrivateRoute>
+                <Notifications />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/customer/settings/"
+            element={
+              <PrivateRoute>
+                <Settings />
               </PrivateRoute>
             }
           />

@@ -1,15 +1,13 @@
-# Django
-from django.shortcuts import render
-
-# libraries
+# Libraries
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError, NotFound, APIException
 import shortuuid
 
-# My apps
+# My Apps
 from .models import User, Profile
 from .serializer import JWTTokenSerializer, ProfileSerializer, RegisterSerializer, UserSerializer
 
@@ -111,15 +109,29 @@ class CreateNewPasswordView(generics.CreateAPIView):
     else:
       return Response({"message" : "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# ---------------------------------------------Profile Detail View ------------------------------------------ #
+# ---------------------------------------------Profile Detail Update View ------------------------------------------ #
 
-class ProfileDetailAPIView(generics.RetrieveAPIView):
-  serializer_class = ProfileSerializer
-  permission_classes = [AllowAny]
-  
-  def get_object(self):
-    user_id = self.kwargs["user_id"]
-    
-    user = User.objects.get(id=user_id)
-    
-    return Profile.objects.get(user=user)
+
+class ProfileDetailUpdateAPIView(generics.RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [AllowAny]
+    lookup_field = "user_id"
+
+    def get_object(self):
+      user_id = self.kwargs.get("user_id")
+
+      if not user_id or user_id == "undefined":
+          raise ValidationError({"message": "User ID is missing!"})
+
+
+      try:
+        user = User.objects.get(id=user_id)
+        return Profile.objects.select_related("user").get(user=user)
+      except user.DoesNotExist:
+          return Response(
+              {"message": "User not found."}, status=status.HTTP_404_NOT_FOUND
+          )
+      except Profile.DoesNotExist as e:
+        raise NotFound({"message": "Profile not found."}) from e
+      except Exception as e:
+        raise APIException({"detail": str(e)}) from e

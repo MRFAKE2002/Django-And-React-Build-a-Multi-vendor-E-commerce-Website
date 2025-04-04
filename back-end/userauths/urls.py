@@ -1,6 +1,10 @@
+# Django
 from django.urls import path
+
+# Libraries
 from rest_framework_simplejwt.views import TokenRefreshView
 
+# My Apps
 from userauths import views as userauths_views
 
 
@@ -31,8 +35,8 @@ urlpatterns = [
     ),
     #! User Profile
     path(
-        "user/profile/<user_id>/",
-        userauths_views.ProfileDetailAPIView.as_view(),
-        name="profile_detail",
+        "profile/<user_id>/",
+        userauths_views.ProfileDetailUpdateAPIView.as_view(),
+        name="profile_detail_update",
     ),
 ]

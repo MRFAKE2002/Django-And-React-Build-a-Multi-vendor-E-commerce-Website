@@ -44,6 +44,7 @@ class Profile(models.Model):
     country = models.CharField(max_length=100, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     address = models.CharField(max_length=100, blank=True, null=True)
+    state = models.CharField(max_length=100, blank=True, null=True)
 
     date_created = models.DateField(auto_now_add=True)
     date_updated = models.DateField(auto_now=True)

@@ -49,6 +49,17 @@ function Navbar() {
     navigate(`/search?query=${search}`)
   }
 
+  // //! useEffect
+
+  useEffect(() => {
+    // اگر داده‌های کاربر به درستی در حالت ذخیره شده نیست، بروزرسانی کن
+    if (isLoggedIn) {
+      // console.log("کاربر وارد شده است.");
+    } else {
+      // console.log("کاربر وارد نشده است.");
+    }
+  }, [isLoggedIn]);  // وابسته به isLoggedIn برای نظارت بر تغییرات
+
   //! JSX
 
   return (

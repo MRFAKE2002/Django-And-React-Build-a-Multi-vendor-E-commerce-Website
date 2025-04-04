@@ -9,6 +9,10 @@ function UserData() {
   // Retrieve the access token and refresh token from browser cookies and if there isn't it returns undefined.
   let accessToken = Cookies.get("access_token");
   let refreshToken = Cookies.get("refresh_token");
+  console.log(accessToken);
+  console.log(refreshToken);
+
+
 
   if (accessToken && refreshToken && refreshToken != 'undefined') {
     
@@ -18,9 +22,7 @@ function UserData() {
 
     // inja 'data user' ro az 'token' migire va 'decode' mikone va 'object data' return mikone.
     const decoded = jwtDecode(token);
-
-    // Extract the user's unique identifier (user_id) from the decoded token
-    const user_id = decoded.user_id;
+    console.log(decoded);
 
     /*
       console.log(decoded);

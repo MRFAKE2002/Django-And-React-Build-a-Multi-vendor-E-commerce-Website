@@ -69,7 +69,7 @@ function Cart() {
         // console.log(error);
         Swal.fire({
           icon: "error",
-          title: response.data.message,
+          title: error?.response?.data.message,
         });
       });
   };

@@ -73,7 +73,7 @@ export const loginUser = async (email, password) => {
       email,
       password,
     });
-    console.log("response: ", response); // مشاهده پاسخ
+    // console.log("response: ", response); // مشاهده پاسخ
 
     // If the request is successful (status code 200), set authentication user and display success toast
     if (response.status === 200) {

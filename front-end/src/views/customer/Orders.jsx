@@ -1,7 +1,8 @@
 // Libraries
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import moment from "moment";
+import Swal from "sweetalert2";
 
 // API Function
 import axiosAPIInstance from "../../utils/axios";
@@ -12,6 +13,15 @@ import UserData from "../plugin/UserData";
 // Sidebar
 import Sidebar from "./Sidebar";
 
+// sakht tanzimat sweetalert2
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+});
+
 function Orders() {
   //! Custom State
 
@@ -20,18 +30,28 @@ function Orders() {
   //! Custom Hooks
 
   const userData = UserData();
+  const navigate = useNavigate()
+  const location = useLocation()
 
   //! useEffect
 
   useEffect(() => {
+    if (!userData?.user_id) {
+      
+      navigate("/login", {
+        state: { from: location?.pathname },
+        replace: true,
+      });
+      return; // برای جلوگیری از ادامه اجرا
+    }
     axiosAPIInstance
       .get(`customer/orders/${userData?.user_id}/`)
-      .then((res) => {
-        setOrders(res.data);
+      .then((response) => {
+        setOrders(response.data);
       });
   }, []);
 
-  console.log(orders);
+  // console.log(orders);
 
   return (
     <div className="container mt-5">
@@ -183,13 +203,22 @@ function Orders() {
                                 >
                                   View <i className="fas fa-eye" />
                                 </Link>
+                                <Link
+                                  className="btn btn-link btn-sm btn-rounded"
+                                  to={`/customer/order/invoice/${order.oid}/`}
+                                >
+                                  Invoice <i className="fas fa-file-invoice" />
+                                </Link>
                               </td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
-                    <canvas id="myChart" style={{ width: "100%", height: "auto"}} />
+                    <canvas
+                      id="myChart"
+                      style={{ width: "100%", height: "auto" }}
+                    />
                   </div>
                 </section>
                 {/* Section: MSC */}
