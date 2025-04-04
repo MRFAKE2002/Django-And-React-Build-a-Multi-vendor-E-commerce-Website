@@ -104,6 +104,10 @@ urlpatterns = [
     #! Customer urls
     path("api/customer/", include("customer.urls")),
     
+    
+    #! Vendor urls
+    path("api/vendor/", include("vendor.urls")),
+    
     #! Document backend API
     path(
         "swagger/",
