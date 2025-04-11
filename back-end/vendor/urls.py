@@ -22,5 +22,23 @@ urlpatterns = [
         "vendor-products-report-chart/<vendor_id>/",
         vendor_views.MonthlyProductsChartAPIView,
         name="monthly_products_chart",
-    )
+    ),
+    #! Products | List
+    path(
+        "products/<vendor_id>/",
+        vendor_views.ProductsAPIView.as_view(),
+        name="vendor_products_list",
+    ),
+    #! Orders | List
+    path(
+        "orders/<vendor_id>/<order_oid>/",
+        vendor_views.OrdersAPIView.as_view(),
+        name="vendor_orders_list",
+    ),
+    #! OrderItems Revenue | List
+    path(
+        "revenue/<vendor_id>/",
+        vendor_views.RevenueAPIView.as_view(),
+        name="vendor_revenue_list",
+    ),
 ]

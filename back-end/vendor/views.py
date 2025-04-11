@@ -1,5 +1,5 @@
 # Django
-from django.db.models import F, Sum
+from django.db.models import F, Sum, Count
 from django.db.models.functions import ExtractMonth
 
 # Libraries
@@ -13,6 +13,7 @@ from rest_framework.decorators import api_view
 from .serializers import SummarySerializers
 from .models import Vendor
 from store.models import Order, OrderItem, Product
+from store.serializers import OrderItemSerializer, OrderSerializer, ProductSerializer
 
 # ---------------------------------------------Stats List View ------------------------------------------ #
 
@@ -76,7 +77,7 @@ def MonthlyOrdersChartAPIView(request, vendor_id):
     orders_by_months = (
         orders.annotate(month=ExtractMonth("datetime_created"))
         .values("month")
-        .annotate(orders=Sum("id"))
+        .annotate(orders=Count("id"))
         .order_by("month")
     )
 
@@ -101,8 +102,91 @@ def MonthlyProductsChartAPIView(request, vendor_id):
     products_by_months = (
         products.annotate(month=ExtractMonth("datetime_created"))
         .values("month")
-        .annotate(orders=Sum("id"))
+        .annotate(orders=Count("id"))
         .order_by("month")
     )
 
     return Response(products_by_months)
+
+
+# ---------------------------------------------Product List View ------------------------------------------ #
+
+
+class ProductsAPIView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        vendor_id = self.kwargs.get("vendor_id")
+
+        if not vendor_id or vendor_id == "undefined":
+            raise ValidationError({"message": "Vendor ID is missing."})
+
+        try:
+            vendor = Vendor.objects.get(id=vendor_id)
+        except Vendor.DoesNotExist as e:
+            raise NotFound({"message": "Vendor not found."}) from e
+
+        try:
+            products = Product.objects.select_related("vendor").filter(vendor=vendor)
+        except Product.DoesNotExist as e:
+            raise NotFound({"message": "Product not found."}) from e
+
+        return products
+
+
+# ---------------------------------------------Order List View ------------------------------------------ #
+
+class OrdersAPIView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        vendor_id = self.kwargs.get("vendor_id")
+        if not vendor_id or vendor_id == "undefined":
+            raise ValidationError({"message": "Vendor ID is missing."})
+
+        order_oid = self.kwargs.get("order_oid")
+        if not order_oid or order_oid == "undefined":
+            raise ValidationError({"message": "Order OID is missing."})
+
+        try:
+            vendor = Vendor.objects.get(id=vendor_id)
+        except Vendor.DoesNotExist as e:
+            raise NotFound({"message": "Vendor not found."}) from e
+
+        try:
+            orders = Order.objects.select_related("vendor").filter(
+                vendor=vendor, oid=order_oid, payment_status="paid"
+            )
+        except Order.DoesNotExist as e:
+            raise NotFound({"message": "Order not found."}) from e
+
+        return orders
+
+# ---------------------------------------------OrderItem Revenue List View ------------------------------------------ #
+
+class RevenueAPIView(generics.ListAPIView):
+    serializer_class = OrderItemSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        vendor_id = self.kwargs.get("vendor_id")
+        if not vendor_id or vendor_id == "undefined":
+            raise ValidationError({"message": "Vendor ID is missing."})
+
+        try:
+            vendor = Vendor.objects.get(id=vendor_id)
+        except Vendor.DoesNotExist as e:
+            raise NotFound({"message": "Vendor not found."}) from e
+
+        revenue = (
+            OrderItem.objects.select_related("order")
+            .filter(vendor=vendor, order__payment_status="paid")
+            .aggregate(total_revenue=Sum(F("sub_total") + F("shipping_amount")))[
+                "total_revenue"
+            ]
+            or 0
+        )
+
+        return revenue
