@@ -23,17 +23,16 @@ urlpatterns = [
         vendor_views.MonthlyProductsChartAPIView,
         name="monthly_products_chart",
     ),
-    #! Products | List
+    #! Products & Filter Products | List
     path(
         "products/<vendor_id>/",
         vendor_views.ProductsAPIView.as_view(),
         name="vendor_products_list",
     ),
-    #! Filter Products | List
     path(
-        "products/<vendor_id>/",
-        vendor_views.ProductsAPIView.as_view(),
-        name="vendor_products_list",
+        "filter-products/<vendor_id>/",
+        vendor_views.FilterProductsAPIView.as_view(),
+        name="vendor_filter_products_list",
     ),
     #! Orders | List
     path(
@@ -51,12 +50,23 @@ urlpatterns = [
     path(
         "last-month-revenue/<vendor_id>/",
         vendor_views.EarningLastMonthRevenueAPIView.as_view(),
-        name="vendor_revenue_list",
+        name="vendor_last_month_revenue_list",
     ),
     #! OrderItems Monthly Revenue Tracker
     path(
         "monthly-revenue/<vendor_id>/",
         vendor_views.MonthlyEarningTracker,
-        name="vendor_revenue_list",
+        name="vendor_monthly_revenue_list",
+    ),
+    #! Review | List & Detail & Update
+    path(
+        "reviews/<vendor_id>/",
+        vendor_views.ReviewsListAPIView.as_view(),
+        name="vendor__reviews_list",
+    ),
+    path(
+        "review/<vendor_id>/<review_id>/",
+        vendor_views.ReviewsDetailUpdateAPIView.as_view(),
+        name="vendor_revenue_Detail_update",
     ),
 ]

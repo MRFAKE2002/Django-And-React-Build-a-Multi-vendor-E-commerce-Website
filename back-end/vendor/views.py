@@ -153,6 +153,7 @@ class FilterProductsAPIView(generics.ListAPIView):
         vendor_id = self.kwargs.get("vendor_id")
         if not vendor_id or vendor_id == "undefined":
             raise ValidationError({"message": "Vendor ID is missing."})
+        
         filter = self.request.GET.get("filter")
         if not filter:
             raise ValidationError({"message": "filter attribute is missing."})
@@ -312,5 +313,61 @@ def MonthlyEarningTracker(request, vendor_id):
         .order_by("-month")
     )
     return Response(monthly_earning_tracker)
+
+
+
+# ---------------------------------------------Review List & Detail & Update View ------------------------------------------ #
+
+
+class ReviewsListAPIView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        vendor_id = self.kwargs.get("vendor_id")
+        if not vendor_id or vendor_id == "undefined":
+            raise ValidationError({"message": "Vendor ID is missing."})
+
+        try:
+            vendor = Vendor.objects.get(id=vendor_id)
+        except Vendor.DoesNotExist as e:
+            raise NotFound({"message": "Vendor not found."}) from e
+
+        try:
+            reviews = Review.objects.select_related("product").filter(
+                product__vendor=vendor
+            )
+        except Review.DoesNotExist as e:
+            raise NotFound({"message": "Review not found."}) from e
+        
+        return reviews
+
+
+class ReviewsDetailUpdateAPIView(generics.RetrieveUpdateAPIView):
+    serializer_class = ReviewSerializer
+    permission_classes = (AllowAny,)
+
+    def get_object(self):
+        vendor_id = self.kwargs.get("vendor_id")
+        if not vendor_id or vendor_id == "undefined":
+            raise ValidationError({"message": "Vendor ID is missing."})
+
+        review_id = self.kwargs("review_id")
+        if not review_id or review_id == "undefined":
+            raise ValidationError({"message": "Vendor ID is missing."})
+
+        try:
+            vendor = Vendor.objects.get(id=vendor_id)
+        except Vendor.DoesNotExist as e:
+            raise NotFound({"message": "Vendor not found."}) from e
+
+        try:
+            review = Review.objects.select_related("product").get(
+                product__vendor=vendor, id=review_id
+            )
+        except Review.DoesNotExist as e:
+            raise NotFound({"message": "Review not found."}) from e
+
+        return review
 
 
