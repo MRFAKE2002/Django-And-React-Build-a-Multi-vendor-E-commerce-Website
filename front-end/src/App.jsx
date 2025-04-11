@@ -29,6 +29,9 @@ import Wishlist from "./views/customer/Wishlist";
 import Notifications from "./views/customer/Notifications";
 import Settings from "./views/customer/Settings";
 
+// Vendor
+import Dashboard from "./views/vendor/Dashboard";
+
 // Base Components
 import Navbar from "./views/base/Navbar";
 import Footer from "./views/base/Footer";
@@ -153,6 +156,16 @@ function App() {
             element={
               <PrivateRoute>
                 <Settings />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Vendor Routes */}
+          <Route
+            path="/vendor/dashboard/"
+            element={
+              <PrivateRoute>
+                <Dashboard />
               </PrivateRoute>
             }
           />
