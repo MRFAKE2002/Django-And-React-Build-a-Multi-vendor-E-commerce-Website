@@ -9,11 +9,18 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.decorators import api_view
 
+from datetime import datetime, timedelta
+
 # My Apps
-from .serializers import SummarySerializers
+from .serializers import EarningRevenueSerializers, SummarySerializers
 from .models import Vendor
-from store.models import Order, OrderItem, Product
-from store.serializers import OrderItemSerializer, OrderSerializer, ProductSerializer
+from store.models import Order, OrderItem, Product, Review
+from store.serializers import (
+    OrderItemSerializer,
+    OrderSerializer,
+    ProductSerializer,
+    ReviewSerializer,
+)
 
 # ---------------------------------------------Stats List View ------------------------------------------ #
 
@@ -137,6 +144,7 @@ class ProductsAPIView(generics.ListAPIView):
 
 # ---------------------------------------------Order List View ------------------------------------------ #
 
+
 class OrdersAPIView(generics.ListAPIView):
     serializer_class = OrderSerializer
     permission_classes = (AllowAny,)
@@ -164,7 +172,9 @@ class OrdersAPIView(generics.ListAPIView):
 
         return orders
 
+
 # ---------------------------------------------OrderItem Revenue List View ------------------------------------------ #
+
 
 class RevenueAPIView(generics.ListAPIView):
     serializer_class = OrderItemSerializer
@@ -190,3 +200,40 @@ class RevenueAPIView(generics.ListAPIView):
         )
 
         return revenue
+
+
+# ---------------------------------------------Filter Product List View ------------------------------------------ #
+
+
+class FilterProductsAPIView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        vendor_id = self.kwargs.get("vendor_id")
+        if not vendor_id or vendor_id == "undefined":
+            raise ValidationError({"message": "Vendor ID is missing."})
+        filter = self.request.GET.get("filter")
+        if not filter:
+            raise ValidationError({"message": "filter attribute is missing."})
+
+        # print("filter =======", filter)
+
+        vendor = Vendor.objects.get(id=vendor_id)
+        if filter == "published":
+            products = Product.objects.filter(vendor=vendor, status="published")
+        elif filter == "draft":
+            products = Product.objects.filter(vendor=vendor, status="draft")
+        elif filter == "disabled":
+            products = Product.objects.filter(vendor=vendor, status="disabled")
+        elif filter == "in-review":
+            products = Product.objects.filter(vendor=vendor, status="in-review")
+        elif filter == "latest":
+            products = Product.objects.filter(vendor=vendor).order_by("-id")
+        elif filter == "oldest":
+            products = Product.objects.filter(vendor=vendor).order_by("id")
+        else:
+            products = Product.objects.filter(vendor=vendor)
+        return products
+
+

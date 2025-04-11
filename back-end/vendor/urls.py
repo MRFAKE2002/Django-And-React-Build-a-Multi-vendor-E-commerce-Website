@@ -29,6 +29,12 @@ urlpatterns = [
         vendor_views.ProductsAPIView.as_view(),
         name="vendor_products_list",
     ),
+    #! Filter Products | List
+    path(
+        "products/<vendor_id>/",
+        vendor_views.ProductsAPIView.as_view(),
+        name="vendor_products_list",
+    ),
     #! Orders | List
     path(
         "orders/<vendor_id>/<order_oid>/",
