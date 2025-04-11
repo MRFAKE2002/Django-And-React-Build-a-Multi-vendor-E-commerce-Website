@@ -46,7 +46,7 @@ class SummaryStatsAPIView(generics.ListAPIView):
 
         return [{"products": product_count, "orders": order_count, "revenue": revenue}]
 
-    def list(self):
+    def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
 
@@ -74,7 +74,7 @@ def MonthlyOrdersChartAPIView(request, vendor_id):
         raise NotFound({"message": "Order not found."}) from e
 
     orders_by_months = (
-        orders.annotate(month=ExtractMonth("date"))
+        orders.annotate(month=ExtractMonth("datetime_created"))
         .values("month")
         .annotate(orders=Sum("id"))
         .order_by("month")
@@ -99,7 +99,7 @@ def MonthlyProductsChartAPIView(request, vendor_id):
         raise NotFound({"message": "Product not found."}) from e
 
     products_by_months = (
-        products.annotate(month=ExtractMonth("date"))
+        products.annotate(month=ExtractMonth("datetime_created"))
         .values("month")
         .annotate(orders=Sum("id"))
         .order_by("month")

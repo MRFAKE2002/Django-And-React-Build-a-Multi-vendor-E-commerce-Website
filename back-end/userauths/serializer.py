@@ -55,9 +55,11 @@ class JWTTokenSerializer(TokenObtainPairSerializer):
         token["email"] = user.email  # افزودن ایمیل کاربر به توکن.
         token["fullname"] = user.fullname  # افزودن نام کامل کاربر به توکن.
         token["phone"] = user.phone  # افزودن شماره تماس کاربر به توکن.
-        
-        token['vendor_id'] = getattr(user, 'vendor_id', 0)  # مقدار پیش‌فرض 0 اگر vendor_id وجود نداشته باشد
 
+        try:
+            token["vendor_id"] = user.vendor.id
+        except Exception:
+            token["vendor_id"] = 0
         """
             agar ma in 'data' ro befrestim be 'server' ta 'token' daryaft konim zaman 'login user' az taraf 'server'
             be ma data va token dade khahad shod:
@@ -78,30 +80,30 @@ class JWTTokenSerializer(TokenObtainPairSerializer):
 # dar inja mikhaim baraye 'sign up user' oumadim 'RegisterSerializer' sakhtim.
 class RegisterSerializer(serializers.ModelSerializer):
     """
-        dar inja miaim 'field' ke mikhaim ro aval misazim:
-        
-        password: field baraye 'password user' ke dar inja 'write_only' yani faghat zamani ke 'data' be server mire 
-        ferestade beshe va dige zamani ke server mikhad 'data user' ro be ma neshun bede 'password' dade nashe ke in kar
-        baraye amniat bishtare. 
-        chizi ke be server ferestade mishe: {
-            "fullname": "Ali Ahmad",
-            "email": "ali@example.com",
-            "phone": "09123456789",
-            "password": "my_secure_password",
-            "password2": "my_secure_password"
-        }
-        chizi ke az server 'data user' ersal mishe: {
-            "id": 1,
-            "fullname": "Ali Ahmad",
-            "email": "ali@example.com",
-            "phone": "09123456789"
-        }
-        
-        dar akhar 'validate_password' yani 'password user' ba 'standard' moshakhas 
-        
-        password2: field baraye 'password validation' ke 'user' bayad dobare benevise.
+    dar inja miaim 'field' ke mikhaim ro aval misazim:
+
+    password: field baraye 'password user' ke dar inja 'write_only' yani faghat zamani ke 'data' be server mire
+    ferestade beshe va dige zamani ke server mikhad 'data user' ro be ma neshun bede 'password' dade nashe ke in kar
+    baraye amniat bishtare.
+    chizi ke be server ferestade mishe: {
+        "fullname": "Ali Ahmad",
+        "email": "ali@example.com",
+        "phone": "09123456789",
+        "password": "my_secure_password",
+        "password2": "my_secure_password"
+    }
+    chizi ke az server 'data user' ersal mishe: {
+        "id": 1,
+        "fullname": "Ali Ahmad",
+        "email": "ali@example.com",
+        "phone": "09123456789"
+    }
+
+    dar akhar 'validate_password' yani 'password user' ba 'standard' moshakhas
+
+    password2: field baraye 'password validation' ke 'user' bayad dobare benevise.
     """
-    
+
     password = serializers.CharField(
         write_only=True, required=True, validators=[validate_password]
     )
@@ -126,11 +128,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
 
         email_username, _ = user.email.split("@")
-    
+
         user.username = email_username
-        
+
         # az 'set_password' estefade kardim ta 'password user' ramz gozari shode zakhire beshe.
         user.set_password(validated_data["password"])
         user.save()
-        
+
         return user

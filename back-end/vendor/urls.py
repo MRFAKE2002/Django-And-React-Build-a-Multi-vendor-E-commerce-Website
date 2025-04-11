@@ -14,12 +14,12 @@ urlpatterns = [
     ),
     #! Order & Product | Monthly Chart 
     path(
-        "vendor-orders-chart/<vendor_id>/",
+        "vendor-orders-report-chart/<vendor_id>/",
         vendor_views.MonthlyOrdersChartAPIView,
         name="monthly_orders_chart",
     ),
     path(
-        "vendor-products-chart/<vendor_id>/",
+        "vendor-products-report-chart/<vendor_id>/",
         vendor_views.MonthlyProductsChartAPIView,
         name="monthly_products_chart",
     )
