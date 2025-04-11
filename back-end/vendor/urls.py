@@ -47,4 +47,10 @@ urlpatterns = [
         vendor_views.RevenueAPIView.as_view(),
         name="vendor_revenue_list",
     ),
+    #! OrderItems Last Month Revenue | List
+    path(
+        "last-month-revenue/<vendor_id>/",
+        vendor_views.EarningLastMonthRevenueAPIView.as_view(),
+        name="vendor_revenue_list",
+    ),
 ]

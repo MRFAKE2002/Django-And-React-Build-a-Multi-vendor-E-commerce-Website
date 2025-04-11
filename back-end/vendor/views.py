@@ -142,6 +142,41 @@ class ProductsAPIView(generics.ListAPIView):
         return products
 
 
+# ---------------------------------------------Filter Product List View ------------------------------------------ #
+
+
+class FilterProductsAPIView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        vendor_id = self.kwargs.get("vendor_id")
+        if not vendor_id or vendor_id == "undefined":
+            raise ValidationError({"message": "Vendor ID is missing."})
+        filter = self.request.GET.get("filter")
+        if not filter:
+            raise ValidationError({"message": "filter attribute is missing."})
+
+        # print("filter =======", filter)
+
+        vendor = Vendor.objects.get(id=vendor_id)
+        if filter == "published":
+            products = Product.objects.filter(vendor=vendor, status="published")
+        elif filter == "draft":
+            products = Product.objects.filter(vendor=vendor, status="draft")
+        elif filter == "disabled":
+            products = Product.objects.filter(vendor=vendor, status="disabled")
+        elif filter == "in-review":
+            products = Product.objects.filter(vendor=vendor, status="in-review")
+        elif filter == "latest":
+            products = Product.objects.filter(vendor=vendor).order_by("-id")
+        elif filter == "oldest":
+            products = Product.objects.filter(vendor=vendor).order_by("id")
+        else:
+            products = Product.objects.filter(vendor=vendor)
+        return products
+
+
 # ---------------------------------------------Order List View ------------------------------------------ #
 
 
@@ -202,38 +237,54 @@ class RevenueAPIView(generics.ListAPIView):
         return revenue
 
 
-# ---------------------------------------------Filter Product List View ------------------------------------------ #
+# ---------------------------------------------Earing Month Revenue List View ------------------------------------------ #
 
 
-class FilterProductsAPIView(generics.ListAPIView):
-    serializer_class = ProductSerializer
-    permission_classes = (AllowAny,)
+class EarningLastMonthRevenueAPIView(generics.ListAPIView):
+    serializer_class = EarningRevenueSerializers
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
+
         vendor_id = self.kwargs.get("vendor_id")
         if not vendor_id or vendor_id == "undefined":
             raise ValidationError({"message": "Vendor ID is missing."})
-        filter = self.request.GET.get("filter")
-        if not filter:
-            raise ValidationError({"message": "filter attribute is missing."})
-
-        # print("filter =======", filter)
-
+        
         vendor = Vendor.objects.get(id=vendor_id)
-        if filter == "published":
-            products = Product.objects.filter(vendor=vendor, status="published")
-        elif filter == "draft":
-            products = Product.objects.filter(vendor=vendor, status="draft")
-        elif filter == "disabled":
-            products = Product.objects.filter(vendor=vendor, status="disabled")
-        elif filter == "in-review":
-            products = Product.objects.filter(vendor=vendor, status="in-review")
-        elif filter == "latest":
-            products = Product.objects.filter(vendor=vendor).order_by("-id")
-        elif filter == "oldest":
-            products = Product.objects.filter(vendor=vendor).order_by("id")
-        else:
-            products = Product.objects.filter(vendor=vendor)
-        return products
+        if not vendor:
+            raise ValidationError({"message": "Vendor attribute is missing."})
 
+        one_month_ago = datetime.today() - timedelta(days=28)
+        monthly_revenue = (
+            OrderItem.objects.select_related("order")
+            .filter(
+                vendor=vendor,
+                order__payment_status="paid",
+                datetime_created__gte=one_month_ago,
+            )
+            .aggregate(total_revenue=Sum(F("sub_total") + F("shipping_amount")))[
+                "total_revenue"
+            ]
+            or 0
+        )
+        total_revenue = (
+            OrderItem.objects.select_related("order")
+            .filter(vendor=vendor, order__payment_status="paid")
+            .aggregate(total_revenue=Sum(F("sub_total") + F("shipping_amount")))[
+                "total_revenue"
+            ]
+            or 0
+        )
+
+        return [
+            {
+                "monthly_revenue": monthly_revenue,
+                "total_revenue": total_revenue,
+            }
+        ]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
