@@ -3,8 +3,11 @@ import { useEffect, useState } from "react";
 
 // auth functions
 import { updateUserToken } from "../utils/auth";
+import { useNavigate } from "react-router-dom";
 
 function MainWrapper({ children }) {
+  const navigate = useNavigate();
+
   /*
     nahve kar in component injuri ke shoma har moghe dakhel 'site' mishid miad 'check' mikone ke shoma 
     dakhel 'cookie access token ya refresh token' dari ya na be ebarati mige 'login' hasti ya na hala:
@@ -24,6 +27,10 @@ function MainWrapper({ children }) {
   useEffect(() => {
     const handle = async () => {
       setLoading(true);
+      navigate("/login", {
+        state: { from: location?.pathname },
+        replace: true,
+      });
       await updateUserToken();
       setLoading(false);
     };

@@ -148,7 +148,7 @@ export const userLogout = () => {
 
   // Displaying a success toast notification
   Toast.fire({
-      icon: 'success',
+      icon: 'error',
       title: 'You have been logged out.'
   });
 };
@@ -199,7 +199,7 @@ export const updateUserToken = async () => {
       setTokenInCookie(accessToken, refreshToken);
     }
   } catch (err) {
-    console.error("Token refresh failed:", err);
+    // console.error("Token refresh failed:", err);
     userLogout(); // برای جلوگیری از لوپ
   }
 };
