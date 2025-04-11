@@ -288,3 +288,29 @@ class EarningLastMonthRevenueAPIView(generics.ListAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+# ---------------------------------------------Earing Monthly Revenue Tracker View ------------------------------------------ #
+
+
+@api_view(("GET",))
+def MonthlyEarningTracker(request, vendor_id):
+    if not vendor_id or vendor_id == "undefined":
+        raise ValidationError({"message": "Vendor ID is missing!"})
+
+    try:
+        vendor = Vendor.objects.get(id=vendor_id)
+    except Vendor.DoesNotExist as e:
+        raise NotFound({"message": "Vendor not found."}) from e
+
+    monthly_earning_tracker = (
+        OrderItem.objects.select_related("order").filter(vendor=vendor, order__payment_status="paid")
+        .annotate(month=ExtractMonth("datetime_created"))
+        .values("month")
+        .annotate(
+            sales_count=Sum("quantity"),
+            total_earning=Sum(F("sub_total") + F("shipping_amount")),
+        )
+        .order_by("-month")
+    )
+    return Response(monthly_earning_tracker)
+
+
