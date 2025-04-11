@@ -22,7 +22,6 @@ const Toast = Swal.mixin({
   timerProgressBar: true,
 });
 
-
 // Function to handle user registration
 export const registerUser = async (
   fullname,
@@ -46,12 +45,12 @@ export const registerUser = async (
 
     // Displaying a success toast notification
     Toast.fire({
-        icon: 'success',
-        title: 'Signed Up Successfully'
+      icon: "success",
+      title: "Signed Up Successfully",
     });
 
     // Returning data and error information
-    return { data:response.data, error: null };
+    return { data: response.data, error: null };
   } catch (error) {
     console.error("Registration error:", error.response.data); // Log server response for debugging
     // Handling errors and returning data and error information
@@ -85,8 +84,8 @@ export const loginUser = async (email, password) => {
 
       // Displaying a success toast notification
       Toast.fire({
-          icon: 'success',
-          title: 'Signed in successfully'
+        icon: "success",
+        title: "Signed in successfully",
       });
     }
 
@@ -125,7 +124,11 @@ export const setTokenInCookie = (access_token, refresh_token) => {
       meghdar 'data user' ke az 'token' gereftim ro ke dakhel 'userData' gozashtim behesh befrestim va oun ham miad dakhel 'store' baramun meghdar 'data user' 
       ro dakhel 'allAuthData' mizar va age ma 'data user' ro khastim mitunim az 'function user' dakhel 'useAuthStore' estefade konim.
     */
-    console.log("User data that get from token in setTokenInCookie function:", userData);
+    console.log(
+      "User data that get from token in setTokenInCookie function:",
+      userData
+    );
+
     useAuthStore.getState().setUserData(userData);
   }
   useAuthStore.getState().setLoading(false);
@@ -144,10 +147,10 @@ export const userLogout = () => {
   useAuthStore.getState().setUserData(null);
 
   // Displaying a success toast notification
-  // Toast.fire({
-  //     icon: 'success',
-  //     title: 'You have been logged out.'
-  // });
+  Toast.fire({
+      icon: 'success',
+      title: 'You have been logged out.'
+  });
 };
 
 /* 
@@ -159,22 +162,45 @@ export const updateUserToken = async () => {
   const accessToken = Cookies.get("access_token");
   const refreshToken = Cookies.get("refresh_token");
 
-  // age 'token' vojud nadasht 'null' return mikone.
-  if (!accessToken || !refreshToken || refreshToken === "undefined") {
+  //? // age 'token' vojud nadasht 'null' return mikone.
+  //? if (!accessToken || !refreshToken || refreshToken === "undefined") {
+  //?   return;
+  //? }
+
+  //? /*
+  //?   agar tarikh 'expired token' tamum shode bashe behesh 'accessToken' midim va baramun ba estefade az 'function getRefreshToken' estefade
+  //?   mikonim ta dobare 'access va refresh token' bede.
+  //? */
+  //? if (isAccessTokenExpired(accessToken)) {
+  //?   const response = await getRefreshToken(refreshToken);
+  //?   // oun 'access va refresh token' ke dobare gereftim ro miaim dakhel 'cookie' gharar midim.
+  //?   setTokenInCookie(response.access, response.refresh);
+  //? } else {
+  //?   // age 'tarikh expired token' tamum nashode bud oun 'access va refresh token' ro dakhel 'cookie' zakhire mikonim.
+  //?   setTokenInCookie(accessToken, refreshToken);
+  //? }
+
+  // اگر refresh token وجود نداره، اصلا ادامه نده
+  if (!refreshToken || refreshToken === "undefined") {
+    console.warn("Refresh token is missing or undefined!");
     return;
   }
 
-  /*
-    agar tarikh 'expired token' tamum shode bashe behesh 'accessToken' midim va baramun ba estefade az 'function getRefreshToken' estefade
-    mikonim ta dobare 'access va refresh token' bede.
-  */
-  if (isAccessTokenExpired(accessToken)) {
-    const response = await getRefreshToken(refreshToken);
-    // oun 'access va refresh token' ke dobare gereftim ro miaim dakhel 'cookie' gharar midim.
-    setTokenInCookie(response.access, response.refresh);
-  } else {
-    // age 'tarikh expired token' tamum nashode bud oun 'access va refresh token' ro dakhel 'cookie' zakhire mikonim.
-    setTokenInCookie(accessToken, refreshToken);
+  try {
+    if (!accessToken || isAccessTokenExpired(accessToken)) {
+      const response = await getRefreshToken();
+      if (response?.access && response?.refresh) {
+        setTokenInCookie(response.access, response.refresh);
+      } else {
+        console.warn("New tokens not returned. Logging out.");
+        userLogout();
+      }
+    } else {
+      setTokenInCookie(accessToken, refreshToken);
+    }
+  } catch (err) {
+    console.error("Token refresh failed:", err);
+    userLogout(); // برای جلوگیری از لوپ
   }
 };
 
@@ -182,9 +208,18 @@ export const updateUserToken = async () => {
 export const getRefreshToken = async () => {
   // Retrieving refresh token from cookies and making a POST request to refresh the access token
   const refresh_token = Cookies.get("refresh_token");
+
+  console.log("getRefreshToken Function refresh_token:", refresh_token);
+
+  if (!refresh_token || refresh_token === "undefined") {
+    throw new Error("No refresh token found");
+  }
+  
   const response = await axiosAPIInstance.post("user/token/refresh/", {
     refresh: refresh_token,
   });
+
+  console.log("getRefreshToken Function response:", response);
 
   // Returning the refreshed access token
   return response.data;
@@ -195,6 +230,8 @@ export const isAccessTokenExpired = (accessToken) => {
   try {
     // inja miaim 'data' dakhel 'cookie' ro mesl 'data user' va 'zaman expired token' ro migirim.
     const decodedToken = jwtDecode(accessToken);
+    console.log("isAccessTokenExpired Function:", decodedToken.exp);
+
     // inja check mikonim 'tarikh expired token' ke be 'millisecond' kamtar az 'tarikh emruz' ke be 'millisecond' tabdil kardim hast ya na.
     return decodedToken.exp < Date.now() / 1000;
   } catch (err) {
